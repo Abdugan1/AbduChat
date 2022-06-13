@@ -70,6 +70,19 @@ bool UsersTable::insertUser(const QString &username, const QString &password)
     return true;
 }
 
+QSqlRecord UsersTable::getUser(const QString &username) const
+{
+    const QString execute = QString("SELECT * FROM users WHERE username=:username");
+    QSqlQuery query;
+    query.prepare(execute);
+    query.bindValue(":username", username);
+    if (!query.exec()) {
+        qFatal("Cannot get user %s: %s", qPrintable(username), qPrintable(query.lastError().text()));
+    }
+    query.next();
+    return query.record();
+}
+
 void UsersTable::createTable()
 {
     if (QSqlDatabase::database().tables().contains(db::users::TableName))

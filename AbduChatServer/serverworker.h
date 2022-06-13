@@ -21,6 +21,9 @@ public:
     QString peerAddress() const;
     QString peerName() const;
 
+    int id() const;
+    void setId(int newId);
+
 signals:
     void jsonReceived(const QJsonObject& jsonObject);
     void disconnectedFromClient();
@@ -37,6 +40,7 @@ private:
 private:
     QTcpSocket* serverSocket_ = nullptr;
     QString username_;
+    int id_ = -1;
 
 };
 

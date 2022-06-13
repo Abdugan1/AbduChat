@@ -4,12 +4,17 @@ import QtQuick.Layouts 1.15
 
 Page {
     id: root
+
+    property string username: usernameField.text
+    property string password: passwordField.text
+
     signal loginButtonClicked();
     signal registerButtonClicked();
     signal reconnectButtonClicked();
 
-    property string username: usernameField.text
-    property string password: passwordField.text
+    function setReconnectButtionVisible(visible) {
+        reconnectButton.visible = visible;
+    }
 
     ColumnLayout {
         anchors.centerIn: parent
@@ -63,7 +68,5 @@ Page {
         }
     }
 
-    function setReconnectButtionVisible(visible) {
-        reconnectButton.visible = visible;
-    }
+
 }

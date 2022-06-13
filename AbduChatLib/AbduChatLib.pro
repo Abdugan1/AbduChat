@@ -9,8 +9,11 @@ TARGET = abduchatlib
 
 SOURCES += \
     contactstable.cpp \
+    database_names.cpp \
     message.cpp \
-    messagestable.cpp \
+    messagestableclient.cpp \
+    messagestableserver.cpp \
+    request_and_reply_constants.cpp \
     serverlogstable.cpp \
     userstable.cpp
 
@@ -26,7 +29,8 @@ HEADERS += \
     database_names.h \
     datastream.h \
     message.h \
-    messagestable.h \
+    messagestableclient.h \
+    messagestableserver.h \
     request_and_reply_constants.h \
     serverlogstable.h \
     userstable.h

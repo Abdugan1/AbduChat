@@ -9,11 +9,15 @@ TARGET = AbduChatClient
 INCLUDEPATH += ../
 LIBS += -L../AbduChatLib -labduchatlib
 
-SOURCES += \
-        chatclient.cpp \
-        main.cpp
+HEADERS += \
+    src/chatclient.h
 
-RESOURCES += qml.qrc
+SOURCES += \
+        src/chatclient.cpp \
+        src/main.cpp
+
+RESOURCES += src/qml.qrc \
+    resources/images.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -25,6 +29,3 @@ QML_DESIGNER_IMPORT_PATH =
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-HEADERS += \
-    chatclient.h

@@ -15,6 +15,8 @@ public:
     bool hasUser(const QString& username, const QString& password);
     bool insertUser(const QString& username, const QString& password);
 
+    QSqlRecord getUser(const QString& username) const;
+
 private:
     void createTable();
 };

@@ -1,15 +1,15 @@
-#ifndef MESSAGESTABLE_H
-#define MESSAGESTABLE_H
+#ifndef MESSAGESTABLESERVER_H
+#define MESSAGESTABLESERVER_H
 
 #include <QSqlTableModel>
 
 class Message;
 
-class MessagesTable : public QSqlTableModel
+class MessagesTableServer : public QSqlTableModel
 {
     Q_OBJECT
 public:
-    explicit MessagesTable(QObject* parent = nullptr);
+    explicit MessagesTableServer(QObject* parent = nullptr);
 
     QVariant data(const QModelIndex &index, int role) const;
     QHash<int, QByteArray> roleNames() const;
@@ -21,4 +21,4 @@ private:
     void createTable();
 };
 
-#endif // MESSAGESTABLE_H
+#endif // MESSAGESTABLESERVER_H

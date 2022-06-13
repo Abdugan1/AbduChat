@@ -1,4 +1,7 @@
 #include "message.h"
+#include "request_and_reply_constants.h"
+
+#include <QJsonObject>
 
 Message::Message()
 {
@@ -15,24 +18,24 @@ void Message::setId(int newId)
     id_ = newId;
 }
 
-const QString &Message::fromUser() const
+int Message::fromUserId() const
 {
-    return fromUser_;
+    return fromUserId_;
 }
 
-void Message::setFromUser(const QString &newFromUser)
+void Message::setFromUserId(int newFromUserId)
 {
-    fromUser_ = newFromUser;
+    fromUserId_ = newFromUserId;
 }
 
-const QString &Message::toUser() const
+int Message::toUserId() const
 {
-    return toUser_;
+    return toUserId_;
 }
 
-void Message::setToUser(const QString &newToUser)
+void Message::setToUserId(int newToUserId)
 {
-    toUser_ = newToUser;
+    toUserId_ = newToUserId;
 }
 
 const QString &Message::text() const
@@ -45,12 +48,46 @@ void Message::setText(const QString &newText)
     text_ = newText;
 }
 
-const QDateTime &Message::sentDatetime() const
+const QString &Message::sentDatetime() const
 {
     return sentDatetime_;
 }
 
-void Message::setSentDatetime(const QDateTime &newSentDatetime)
+void Message::setSentDatetime(const QString &newSentDatetime)
 {
     sentDatetime_ = newSentDatetime;
+}
+
+Message jsonToMessageSentDatetimeIsCurrentDatetime(const QJsonObject& jsonObject, int messageId)
+{
+    const int fromUserId       = jsonObject.value(request::headers::FromUserId).toInt();
+    const int toUserId         = jsonObject.value(request::headers::ToUserId).toInt();
+    const QString text         = jsonObject.value(request::headers::Text).toString();
+    const QString sentDatetime = QDateTime::currentDateTime().toString(Qt::ISODate);
+
+    Message message;
+    message.setId(messageId);
+    message.setFromUserId(fromUserId);
+    message.setToUserId(toUserId);
+    message.setText(text);
+    message.setSentDatetime(sentDatetime);
+
+    return message;
+}
+
+Message jsonToMessageSentDatetimeIsFromJsonObject(const QJsonObject &jsonObject, int messageId)
+{
+    const int fromUserId        = jsonObject.value(request::headers::FromUserId).toInt();
+    const int toUserId          = jsonObject.value(request::headers::ToUserId).toInt();
+    const QString text          = jsonObject.value(request::headers::Text).toString();
+    const QString sentDatetime  = jsonObject.value(request::headers::SentDatetime).toString();
+
+    Message message;
+    message.setId(messageId);
+    message.setFromUserId(fromUserId);
+    message.setToUserId(toUserId);
+    message.setText(text);
+    message.setSentDatetime(sentDatetime);
+
+    return message;
 }

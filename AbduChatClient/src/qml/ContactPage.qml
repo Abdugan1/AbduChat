@@ -7,7 +7,7 @@ import AbduChatLib 1.0
 Page {
     id: root
 
-    signal userClicked(string username)
+    signal userClicked(string username, int id)
 
     header: ToolBar {
         Label {
@@ -24,32 +24,27 @@ Page {
             id: listView
             Layout.fillWidth: true
             Layout.fillHeight: true
+            topMargin: 48
+            leftMargin: 48
+            bottomMargin: 48
+            rightMargin: 48
+
             model: contactsTable
 
             delegate: ItemDelegate {
                 text: model.username
                 font.pixelSize: 16
+                width: listView.width - listView.leftMargin - listView.rightMargin
+                leftPadding: avatar.implicitWidth + 16
 
                 onClicked: {
-                    userClicked(model.username)
+                    userClicked(model.username, model.id)
                 }
-            }
-        }
 
-        RowLayout {
-            Layout.fillWidth: true
-
-            TextField {
-                id: usernameField
-                Layout.fillWidth: true
-            }
-
-            Button {
-                id: insertButton
-
-                onClicked: {
-                    contactsTable.insertUsername(usernameField.text);
-                    usernameField.text = ""
+                Image {
+                    id: avatar
+                    source: "qrc:/images/avatar.png"
+                    anchors.verticalCenter: parent.verticalCenter
                 }
             }
         }
@@ -58,5 +53,6 @@ Page {
     ContactsTable {
         id: contactsTable
         objectName: "contactsTable"
+        myId: getId()
     }
 }

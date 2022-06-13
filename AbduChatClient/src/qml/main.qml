@@ -10,14 +10,27 @@ ApplicationWindow {
     height: 760
     visible: true
 
+    property string username: chatClient.username
+    property int id: chatClient.id
+
+    function getUsername() {return username}
+    function getId() {return id}
+
     ChatClient {
         id: chatClient
+        objectName: "chatClient"
 
         Component.onCompleted: {
             connectToHost();
         }
 
+        onLoggedIn: {
+            synchronizeAll();
+            stackView.push(contactPage)
+        }
+
         onErrorOccurred: {
+            stackView.pop(null);
             logInPage.setReconnectButtionVisible(true);
             messageDialog.text = errorString;
             messageDialog.open();
@@ -49,12 +62,17 @@ ApplicationWindow {
         id: contactPage
 
         onUserClicked: {
-            stackView.push(conversationPage, {inConversationWith: username})
+            stackView.push(conversationPage, {inConversationWith: username, inConversationWithId: id})
         }
     }
 
     ConversationPage {
         id: conversationPage
+
+        onSendButtonClicked: {
+            chatClient.sendMessage(inConversationWithId, messageField.text);
+            messageField.clear();
+        }
     }
 
     StackView {

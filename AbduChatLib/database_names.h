@@ -6,14 +6,14 @@ namespace db {
 //--------contacts--------
     namespace contacts {
 
-        static const char* TableName = "contacts";
+        extern const char* TableName;
 
 
         namespace fieldnames {
 
-            static const char* Id = "id";
-            static const char* Username = "username";
-            static const char* InsertDatetime = "insert_datetime";
+            extern const char* Id;
+            extern const char* Username;
+            extern const char* InsertDatetime;
 
         } // fieldnames
 
@@ -34,20 +34,20 @@ namespace db {
 //--------messages--------
     namespace messages {
 
-    static const char* TableName = "messages";
+    extern const char* TableName;
 
 
     namespace fieldnames {
 
-        static const char* MessageId = "id";
+        extern const char* MessageId;
 
-        static const char* FromUser = "from_user";
+        extern const char* FromUserId;
 
-        static const char* ToUser = "to_user";
+        extern const char* ToUserId;
 
-        static const char* Text = "text";
+        extern const char* Text;
 
-        static const char* SentDatetime = "sent_datetime";
+        extern const char* SentDatetime;
 
     } // fieldnames
 
@@ -56,8 +56,8 @@ namespace db {
 
         enum FieldNums {
             MessageId,
-            FromUser,
-            ToUser,
+            FromUserId,
+            ToUserId,
             Text,
             SentDatetime
         };
@@ -69,13 +69,13 @@ namespace db {
 
 //--------server_logs--------
     namespace server_logs {
-        static const char* TableName = "server_logs";
+        extern const char* TableName;
 
         namespace fieldnames {
 
-            static const char* Id = "id";
-            static const char* Text = "text";
-            static const char* InsertDatetime = "insert_datetime";
+            extern const char* Id;
+            extern const char* Text;
+            extern const char* InsertDatetime;
 
         } // fieldnames
 
@@ -95,14 +95,14 @@ namespace db {
 //--------users--------
     namespace users {
 
-        static const char* TableName = "users";
+        extern const char* TableName;
 
         namespace fieldnames {
 
-            static const char* Id = "id";
-            static const char* Username = "username";
-            static const char* Password = "password";
-            static const char* InsertDatetime = "insert_datetime";
+            extern const char* Id;
+            extern const char* Username;
+            extern const char* Password;
+            extern const char* InsertDatetime;
 
         } // fieldnames
 

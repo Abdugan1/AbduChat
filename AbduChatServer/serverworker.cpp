@@ -51,6 +51,16 @@ QString ServerWorker::peerName() const
     return serverSocket_->peerName();
 }
 
+int ServerWorker::id() const
+{
+    return id_;
+}
+
+void ServerWorker::setId(int newId)
+{
+    id_ = newId;
+}
+
 void ServerWorker::disconnectFromClient()
 {
     serverSocket_->disconnectFromHost();

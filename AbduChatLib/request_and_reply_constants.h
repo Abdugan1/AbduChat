@@ -5,24 +5,36 @@ namespace request {
 
 namespace types {
 
-const char* Login = "login";
-const char* Register = "register";
-const char* SendMessage = "send_message";
+extern const char* Login;
+extern const char* Register;
+extern const char* SendMessage;
+
+// synchronize
+extern const char* SynchronizeContacts;
+extern const char* SynchronizeMessages;
 
 } // types
 
 namespace headers {
 
-const char* Type = "type";
-const char* FromUser = "from_user";
-const char* ToUser = "to_user";
-const char* Text = "text";
-const char* SentDatetime = "sent_datetime";
+extern const char* Type;
+extern const char* FromUserId;
+extern const char* ToUserId;
+extern const char* Text;
+extern const char* SentDatetime;
 
-const char* Username = "username";
-const char* Password = "password";
+extern const char* Username;
+extern const char* Password;
+
+extern const char* InsertDatetime;
 
 } // headers
+
+namespace values {
+
+extern const char* AllData;
+
+} // values
 
 } // requqest
 
@@ -31,31 +43,42 @@ namespace reply {
 
 namespace types {
 
-const char* Login = "login";
-const char* Register = "register";
-const char* Message = "message";
-const char* NewUser = "new_user";
-const char* UserList = "user_list";
+extern const char* Login;
+extern const char* Register;
+extern const char* Message;
+extern const char* NewUser;
+extern const char* UserDisconnected;
+extern const char* UserList;
+extern const char* MessageList;
 
 } // types
 
 namespace headers {
 
-const char* Type = "type";
-const char* MessageId = "message_id";
-const char* FromUser = "from_user";
-const char* ToUser = "to_user";
-const char* Text = "text";
-const char* SentDatetime = "sent_datetime";
+extern const char* Type;
+extern const char* Id;
+extern const char* FromUserId;
+extern const char* ToUserId;
+extern const char* Text;
+extern const char* SentDatetime;
 
-const char* Success = "success";
-const char* Reason = "reason";
+extern const char* Success;
+extern const char* Reason;
 
-const char* Username = "username";
+extern const char* Username;
 
-const char* Users = "users";
+extern const char* Users;
+extern const char* Messages;
+
+extern const char* InsertDatetime;
 
 } // headers
+
+namespace values {
+
+extern const char* AllData;
+
+} // values
 
 } // reply
 

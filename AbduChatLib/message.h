@@ -4,6 +4,8 @@
 #include <QString>
 #include <QDateTime>
 
+class QJsonObject;
+
 class Message
 {
 public:
@@ -12,24 +14,27 @@ public:
     int id() const;
     void setId(int newId);
 
-    const QString &fromUser() const;
-    void setFromUser(const QString &newFromUser);
+    int fromUserId() const;
+    void setFromUserId(int newFromUserId);
 
-    const QString &toUser() const;
-    void setToUser(const QString &newToUser);
+    int toUserId() const;
+    void setToUserId(int newToUserId);
 
     const QString &text() const;
     void setText(const QString &newText);
 
-    const QDateTime &sentDatetime() const;
-    void setSentDatetime(const QDateTime &newSentDatetime);
+    const QString &sentDatetime() const;
+    void setSentDatetime(const QString &newSentDatetime);
 
 private:
     int id_ = -1;
-    QString fromUser_;
-    QString toUser_;
+    int fromUserId_;
+    int toUserId_;
     QString text_;
-    QDateTime sentDatetime_;
+    QString sentDatetime_;
 };
+
+Message jsonToMessageSentDatetimeIsCurrentDatetime(const QJsonObject& jsonObject, int messageId = -1);
+Message jsonToMessageSentDatetimeIsFromJsonObject(const QJsonObject& jsonObject, int messageId = -1);
 
 #endif // MESSAGE_H

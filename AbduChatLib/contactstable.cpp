@@ -1,9 +1,12 @@
 #include "contactstable.h"
 #include "database_names.h"
+#include "request_and_reply_constants.h"
 
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
+#include <QJsonObject>
+#include <QJsonArray>
 #include <QDebug>
 
 namespace FieldNames = db::contacts::fieldnames;
@@ -15,7 +18,6 @@ ContactsTable::ContactsTable(QObject *parent)
     createTable();
     setTable(db::contacts::TableName);
     setEditStrategy(QSqlTableModel::OnManualSubmit);
-    select();
 }
 
 QVariant ContactsTable::data(const QModelIndex &index, int role) const
@@ -36,12 +38,40 @@ QHash<int, QByteArray> ContactsTable::roleNames() const
     return names;
 }
 
-void ContactsTable::insertUsername(const QString &username)
+int ContactsTable::myId() const
 {
-    qDebug() << "Inserting:" << username;
+    return myId_;
+}
 
+void ContactsTable::setMyId(int newMyId)
+{
+    if (myId_ == newMyId)
+        return;
+    myId_ = newMyId;
+
+    const QString filterString = QString("id != '%1'").arg(myId());
+    setFilter(filterString);
+    select();
+
+    emit myIdChanged();
+}
+
+
+void ContactsTable::insertContacts(const QJsonArray &contacts)
+{
+    for (const auto& contactRef : contacts) {
+        const QJsonObject contact = contactRef.toObject();
+        const QString username = contact.value(reply::headers::Username).toString();
+        const QString insertDatetime = contact.value(reply::headers::InsertDatetime).toString();
+        insertContact(username, insertDatetime);
+    }
+}
+
+void ContactsTable::insertContact(const QString &username, const QString &insertDatetime)
+{
     QSqlRecord newRecord = record();
     newRecord.setValue(FieldNames::Username, username);
+    newRecord.setValue(FieldNames::InsertDatetime, insertDatetime);
 
     if (!insertRecord(rowCount(), newRecord)) {
         qFatal("Cannot insert '%s' to %s: %s",
@@ -56,6 +86,8 @@ void ContactsTable::insertUsername(const QString &username)
                qPrintable(tableName()),
                qPrintable(lastError().text()));
     }
+
+    select();
 }
 
 void ContactsTable::createTable()
