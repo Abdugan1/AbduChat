@@ -7,7 +7,7 @@
 class ServerLogsWindow
 {
 public:
-    explicit ServerLogsWindow(int initStdscrHeight, int initStdscrWidth);
+    explicit ServerLogsWindow(int physicalYPos, int physicalXPos, int height, int width);
 
     WINDOW *pad() const;
 
@@ -25,6 +25,9 @@ public:
     void scrollUp();
     void scrollDown();
 
+    void scrollToBegin();
+    void scrollToEnd();
+
     void refresh();
 
 private:
@@ -36,11 +39,14 @@ private:
     int rows_ = 32;
     int cols_ = 0;
 
-    int initialTerminalHeight_ = 0;
-    int initialTerminalWidth_  = 0;
+    int height_ = 0;
+    int width_  = 0;
 
     int xStart_ = 0;
     int yStart_ = 0;
+
+    int physicalYPos_ = 0;
+    int physicalXPos_ = 0;
 
     int printY_ = 0;
     int endY_ = 0;

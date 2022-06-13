@@ -41,17 +41,20 @@ Console::Console(QMutex* serverLogsMutex)
     initscr();
     getmaxyx(stdscr, initialHeight_, initialWidth_);
 
-    windowHeight_ = initialHeight_ - 2;
-    windowWidth_  = initialWidth_  - 2;
+    windowY_ = 2;
+    windowX_ = 2;
+    windowHeight_ = initialHeight_ - 3;
+    windowWidth_  = initialWidth_  - 3;
 
     curs_set(0); // no cursor
 
-    headerWindow_ = newwin(1, initialWidth_, 0, 0);
+    headerWindow_ = newwin(1, windowWidth_, 1, windowX_);
 
-    contentWindow_ = newwin(windowHeight_, windowWidth_, 1, 1);
+    contentWindow_ = newwin(windowHeight_, windowWidth_, windowY_, windowX_);
     keypad(contentWindow_, true);
+    noecho();
 
-    serverLogsPad_ = new ServerLogsWindow(initialHeight_, initialWidth_);
+    serverLogsPad_ = new ServerLogsWindow(windowY_, windowX_, windowHeight_, windowWidth_);
 }
 
 Console::~Console()
@@ -81,14 +84,20 @@ void Console::printCurrentPage()
     }
 }
 
+void Console::printHeader(const char *headerText)
+{
+    mvwaddstr(headerWindow_, 0, windowWidth_ / 2 - strlen(headerText) / 2, headerText);
+    wrefresh(headerWindow_);
+}
+
 void Console::printMainMenu()
 {
     // Info
-    mvwprintw(contentWindow_, 0, initialWidth_ / 2 - strlen(MainMenuHeader) / 2, MainMenuHeader);
+    printHeader(MainMenuHeader);
 
     WINDOW* infoWindow = subwin(contentWindow_, 5, 25, 2, initialWidth_ - 26);
     box(infoWindow, 0, 0);
-    mvwprintw(infoWindow, 1, 2, (std::string("Server enabled: ") + (serverEnabled_ ? "true" : "false")).c_str());
+    mvwprintw(infoWindow, 1, 2, (std::string("Server enabled: ") + (serverEnabled_ ? "true " : "false")).c_str());
     mvwprintw(infoWindow, 2, 2, ("IP: " + ipAddress_).c_str());
     mvwprintw(infoWindow, 3, 2, ("Port: " + std::to_string(Port)).c_str());
     wrefresh(infoWindow);
@@ -134,6 +143,7 @@ void Console::parseMainMenuChoice(char choice)
     case 1:
         currentPage_ = ServerLogs;
         wclear(contentWindow_);
+        wclear(headerWindow_);
         break;
     case 2:
         quit();
@@ -162,6 +172,8 @@ void Console::printServerLogs()
 {
     namespace FieldNames = db::server_logs::fieldnames;
 
+    printHeader(ServerLogsHeader);
+
     QMutexLocker serverLogsLocker(serverLogsMutex_);
 
     serverLogsPad_->refreshPrintYPos();
@@ -176,6 +188,8 @@ void Console::printServerLogs()
         serverLogsPad_->print(log);
     }
 
+    serverLogsPad_->saveEndYPos();
+
     switch (wgetch(serverLogsPad_->pad())) {
     case KEY_UP: {
         serverLogsPad_->scrollUp();
@@ -185,9 +199,16 @@ void Console::printServerLogs()
         serverLogsPad_->scrollDown();
         break;
     }
-    case 'x':
+    case KEY_BACKSPACE:
         currentPage_ = MainMenu;
         wclear(serverLogsPad_->pad());
+        wclear(headerWindow_);
+        break;
+    case KEY_PPAGE: // page up
+        serverLogsPad_->scrollToBegin();
+        break;
+    case KEY_NPAGE: // page down
+        serverLogsPad_->scrollToEnd();
         break;
     }
 

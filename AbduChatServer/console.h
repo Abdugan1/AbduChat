@@ -36,6 +36,8 @@ signals:
 private:
     void printCurrentPage();
 
+    void printHeader(const char* headerText);
+
     // MainMenu
     void printMainMenu();
     void parseMainMenuChoice(char choice);
@@ -54,6 +56,8 @@ private:
     int initialWidth_ = 0;
     int initialHeight_ = 0;
 
+    int windowY_ = 0;
+    int windowX_ = 0;
     int windowHeight_ = 0;
     int windowWidth_  = 0;
 

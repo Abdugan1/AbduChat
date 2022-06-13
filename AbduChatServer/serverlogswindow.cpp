@@ -1,11 +1,14 @@
 #include "serverlogswindow.h"
 
-ServerLogsWindow::ServerLogsWindow(int initStdscrHeight, int initStdscrWidth)
+ServerLogsWindow::ServerLogsWindow(int physicalYPos, int physicalXPos, int height, int width)
 {
-    initialTerminalHeight_ = initStdscrHeight;
-    initialTerminalWidth_  = initStdscrWidth;
+    physicalYPos_ = physicalYPos;
+    physicalXPos_ = physicalXPos;
 
-    cols_ = initStdscrWidth;
+    height_ = height;
+    width_  = width;
+
+    cols_ = width;
 
     createNewPad();
 }
@@ -68,15 +71,25 @@ void ServerLogsWindow::scrollDown()
     }
 }
 
+void ServerLogsWindow::scrollToBegin()
+{
+    yStart_ = 0;
+}
+
+void ServerLogsWindow::scrollToEnd()
+{
+    yStart_ = endY_ - height_ + 2;
+}
+
 void ServerLogsWindow::refresh()
 {
     prefresh(pad_, //pad
              yStart_, // startY
              xStart_,  // startX
-             0,  // phisical_y_pos
-             0,  // phisical_x_pos
-             initialTerminalHeight_ - 1,  // how many rows after startY. Logic is <=, NOT the <
-             initialTerminalWidth_  - 1  // how many cols after startX. Logic is <=, NOT the <
+             physicalYPos_,  // phisical_y_pos
+             physicalXPos_,  // phisical_x_pos
+             height_ - 1,  // how many rows after startY. Logic is <=, NOT the <
+             width_  - 1  // how many cols after startX. Logic is <=, NOT the <
              );
 }
 
