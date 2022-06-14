@@ -6,15 +6,18 @@ import AbduChatClient 1.0
 
 ApplicationWindow {
     id: window
-    width: 440
-    height: 760
-    visible: true
 
     property string username: chatClient.username
     property int id: chatClient.id
 
     function getUsername() {return username}
     function getId() {return id}
+
+    function rollBackToLoginPage() {stackView.pop(null);}
+
+    width: 440
+    height: 760
+    visible: true
 
     ChatClient {
         id: chatClient
@@ -29,8 +32,11 @@ ApplicationWindow {
             stackView.push(contactPage)
         }
 
+        onLoginError: {
+        }
+
         onErrorOccurred: {
-            stackView.pop(null);
+            rollBackToLoginPage();
             logInPage.setReconnectButtionVisible(true);
             messageDialog.text = errorString;
             messageDialog.open();

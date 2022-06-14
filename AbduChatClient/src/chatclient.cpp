@@ -64,7 +64,7 @@ ChatClient::ChatClient(QObject *parent)
 {
     connect(socket_, &QTcpSocket::connected, this, &ChatClient::connected);
     connect(socket_, &QTcpSocket::disconnected, this, &ChatClient::disconnected);
-    connect(socket_, &QTcpSocket::disconnected, this, [this]() {username_.clear();});
+    connect(socket_, &QTcpSocket::disconnected, this, &ChatClient::clearData);
     connect(socket_, &QTcpSocket::readyRead, this, &ChatClient::onReadyRead);
     connect(socket_, &QTcpSocket::errorOccurred, this, [this]() {emit errorOccurred(socket_->errorString());});
 }
@@ -241,4 +241,10 @@ void ChatClient::sendRequest(const QJsonObject &jsonRequest)
 {
     DataStream socketStream(socket_);
     socketStream << jsonRequest;
+}
+
+void ChatClient::clearData()
+{
+    setUsername("");
+    setId(-1);
 }

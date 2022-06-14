@@ -75,7 +75,8 @@ const char* InsertDatetime = "insert_datetime";
 
 namespace values {
 
-const char* AllData = "ALL_DATA";
+const char* LoginFailed = "Login failed";
+const char* UsernameIsUsed = "The username is already in use";
 
 } // values
 

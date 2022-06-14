@@ -169,7 +169,7 @@ void ChatServer::sendLogInFailedReply(ServerWorker *recipient)
     QJsonObject logInFailedReply;
     logInFailedReply[reply::headers::Type]      = reply::types::Login;
     logInFailedReply[reply::headers::Success]   = false;
-    logInFailedReply[reply::headers::Reason]    = "Login failed";
+    logInFailedReply[reply::headers::Reason]    = reply::values::LoginFailed;
 
     recipient->sendJson(logInFailedReply);
 }
@@ -201,7 +201,7 @@ void ChatServer::sendRegisterFailedReply(ServerWorker *recipient)
     QJsonObject registerFailedReply;
     registerFailedReply[reply::headers::Type]      = reply::types::Register;
     registerFailedReply[reply::headers::Success]   = false;
-    registerFailedReply[reply::headers::Reason]    = "The username is already in use";
+    registerFailedReply[reply::headers::Reason]    = reply::values::UsernameIsUsed;
 
     recipient->sendJson(registerFailedReply);
 }

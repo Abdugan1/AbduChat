@@ -76,7 +76,8 @@ extern const char* InsertDatetime;
 
 namespace values {
 
-extern const char* AllData;
+extern const char* LoginFailed;
+extern const char* UsernameIsUsed;
 
 } // values
 

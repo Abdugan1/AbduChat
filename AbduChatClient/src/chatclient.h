@@ -63,6 +63,8 @@ private:
 
     void sendRequest(const QJsonObject& jsonRequest);
 
+    void clearData();
+
 private:
     QTcpSocket* socket_ = nullptr;
     QString username_;
