@@ -8,5 +8,7 @@
         <file>images/app_logo_256.png</file>
         <file>images/app_logo_512.png</file>
         <file>images/app_logo_128.png</file>
+        <file>images/show_password.png</file>
+        <file>images/hide_password.png</file>
     </qresource>
 </RCC>

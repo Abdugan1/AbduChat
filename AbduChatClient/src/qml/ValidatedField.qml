@@ -9,7 +9,9 @@ TextField {
     property int borderWidth: 1
     property real borderRadius: 0.0
 
-    property url iconSource
+    property alias iconSource: icon.source
+    property alias iconSourceSize: icon.sourceSize
+
 
     implicitHeight: 40
     implicitWidth: 40

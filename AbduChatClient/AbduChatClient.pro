@@ -19,6 +19,8 @@ SOURCES += \
 RESOURCES += src/qml.qrc \
     resources/images.qrc
 
+QMLDESIGNER_RC_PATHS="qrc:/images=../../resources/images"
+
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 

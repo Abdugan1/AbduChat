@@ -25,7 +25,7 @@ Page {
         anchors.topMargin: 17
         placeholderText: qsTr("Username")
         anchors.horizontalCenter: parent.horizontalCenter
-        iconSource: "../../resources/images/user.png"
+        iconSource: "qrc:/images/user.png"
         borderRadius: 40
         borderWidth: 2
     }
@@ -35,25 +35,12 @@ Page {
         width: 200
         height: 200
         anchors.top: parent.top
-        source: "../../resources/images/app_logo_256.png"
+        source: "qrc:/images/app_logo_256.png"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 61
         sourceSize.height: 256
         sourceSize.width: 256
         fillMode: Image.PreserveAspectFit
-    }
-
-    ValidatedField {
-        id: passwordField
-        width: 300
-        height: 54
-        anchors.top: usernameField.bottom
-        placeholderText: qsTr("Password")
-        anchors.topMargin: 10
-        anchors.horizontalCenter: parent.horizontalCenter
-        borderRadius: 40
-        borderWidth: 2
-        iconSource: "../../resources/images/padlock.png"
     }
 
     Label {
@@ -71,10 +58,24 @@ Page {
         width: 300
         height: 50
         text: "LOGIN"
-        enabled: false
+        borderWidth: 0
+        state: ""
         borderRadius: 50
         textColor: "#ffffff"
         backgroundColor: "#000000"
         anchors.horizontalCenter: parent.horizontalCenter
+    }
+
+    PasswordField {
+        id: passwordField
+        x: 70
+        height: 54
+        anchors.top: usernameField.bottom
+        state: "showPasswordState"
+        anchors.topMargin: 10
+        placeholderText: "Password"
+        iconSource: "qrc:/images/padlock.png"
+        borderWidth: 2
+        borderRadius: 40
     }
 }

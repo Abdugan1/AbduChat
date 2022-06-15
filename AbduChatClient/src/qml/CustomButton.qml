@@ -4,6 +4,10 @@ import QtQuick.Controls 2.15
 Button {
     id: root
 
+    onHoveredChanged: {
+        console.log("hovered change");
+    }
+
     property color backgroundColor: "white"
     property color borderColor: "black"
     property int borderWidth: 1
@@ -11,6 +15,16 @@ Button {
     property color hoverColor: "grey"
 
     property color textColor: "black"
+    states: [
+        State {
+            name: "hoveredState"
+            when: hovered
+            PropertyChanges {
+                target: root
+                backgroundColor: "#7ee6a1"
+            }
+        }
+    ]
 
     implicitWidth: 40
     implicitHeight: 40
@@ -33,3 +47,9 @@ Button {
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;height:50;width:300}
+}
+##^##*/
