@@ -37,9 +37,7 @@ Page {
                 width: listView.width - listView.leftMargin - listView.rightMargin
                 leftPadding: avatar.implicitWidth + 16
 
-                onClicked: {
-                    userClicked(model.username, model.id)
-                }
+                onClicked: { userClicked(model.username, model.id) }
 
                 Image {
                     id: avatar

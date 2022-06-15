@@ -1,5 +1,12 @@
 <RCC>
     <qresource prefix="/">
         <file>images/avatar.png</file>
+        <file>images/connection_error.png</file>
+        <file>images/padlock.png</file>
+        <file>images/user.png</file>
+        <file>images/app_logo_64.png</file>
+        <file>images/app_logo_256.png</file>
+        <file>images/app_logo_512.png</file>
+        <file>images/app_logo_128.png</file>
     </qresource>
 </RCC>

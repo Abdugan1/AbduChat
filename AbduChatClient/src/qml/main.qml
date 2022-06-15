@@ -13,19 +13,19 @@ ApplicationWindow {
     function getUsername() {return username}
     function getId() {return id}
 
-    function rollBackToLoginPage() {stackView.pop(null);}
+    function rollBackToBegin() {stackView.pop(null);}
 
     width: 440
     height: 760
     visible: true
 
+    Component.onCompleted: {
+        chatClient.connectToHost();
+    }
+
     ChatClient {
         id: chatClient
         objectName: "chatClient"
-
-        Component.onCompleted: {
-            connectToHost();
-        }
 
         onLoggedIn: {
             synchronizeAll();
@@ -35,17 +35,17 @@ ApplicationWindow {
         onLoginError: {
         }
 
-        onErrorOccurred: {
-            rollBackToLoginPage();
-            logInPage.setReconnectButtionVisible(true);
-            messageDialog.text = errorString;
-            messageDialog.open();
+        onConnected: {
+            if (stackView.currentItem == connectionErrorPage)
+                stackView.replace(connectionErrorPage, logInPage)
         }
-    }
 
-    MessageDialog {
-        id: messageDialog
-        title: "Error"
+        onErrorOccurred: {
+            connectionErrorPage.reconnectIndicator.running = false
+            if (stackView.currentItem != connectionErrorPage)
+                stackView.replace(logInPage, connectionErrorPage)
+            rollBackToBegin();
+        }
     }
 
     LogInPage {
@@ -57,10 +57,6 @@ ApplicationWindow {
 
         onRegisterButtonClicked: {
             chatClient.attempToRegister(username, password);
-        }
-
-        onReconnectButtonClicked: {
-            chatClient.connectToHost();
         }
     }
 
@@ -79,6 +75,12 @@ ApplicationWindow {
             chatClient.sendMessage(inConversationWithId, messageField.text);
             messageField.clear();
         }
+    }
+
+    ConnectionErrorPage {
+        id: connectionErrorPage
+
+        onReconnectButtonClicked: chatClient.connectToHost()
     }
 
     StackView {

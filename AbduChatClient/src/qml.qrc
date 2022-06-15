@@ -4,5 +4,9 @@
         <file>qml/ConversationPage.qml</file>
         <file>qml/LogInPage.qml</file>
         <file>qml/main.qml</file>
+        <file>qml/ConnectionErrorPage.qml</file>
+        <file>qml/ValidatedField.qml</file>
+        <file>qml/CustomButton.qml</file>
+        <file>qml/PasswordField.qml</file>
     </qresource>
 </RCC>

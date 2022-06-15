@@ -19,9 +19,7 @@ Page {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
 
-            onClicked: {
-                root.StackView.view.pop();
-            }
+            onClicked: { root.StackView.view.pop(); }
         }
 
         Label {
@@ -112,9 +110,7 @@ Page {
                     id: sendButton
                     text: qsTr("Send")
 
-                    onClicked: {
-                        sendButtonClicked();
-                    }
+                    onClicked: { sendButtonClicked(); }
                 }
             }
         }
