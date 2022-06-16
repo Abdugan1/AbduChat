@@ -4,10 +4,6 @@ import QtQuick.Controls 2.15
 Button {
     id: root
 
-    onHoveredChanged: {
-        console.log("hovered change");
-    }
-
     property color backgroundColor: "white"
     property color borderColor: "black"
     property int borderWidth: 1

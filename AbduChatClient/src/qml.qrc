@@ -8,5 +8,6 @@
         <file>qml/ValidatedField.qml</file>
         <file>qml/CustomButton.qml</file>
         <file>qml/PasswordField.qml</file>
+        <file>qml/ChatDelegate.qml</file>
     </qresource>
 </RCC>

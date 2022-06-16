@@ -8,44 +8,29 @@ Page {
     id: root
 
     signal userClicked(string username, int id)
+    width: 440
+    height: 760
 
     header: ToolBar {
+        id: header
+        bottomPadding: 12
+        topPadding: 12
         Label {
-            text: qsTr("Contacts")
+            text: qsTr("AbduChat")
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
             font.pixelSize: 20
-            anchors.centerIn: parent
+            anchors.leftMargin: 42
         }
     }
 
-    ColumnLayout {
+    ListView {
+        id: listView
         anchors.fill: parent
 
-        ListView {
-            id: listView
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            topMargin: 48
-            leftMargin: 48
-            bottomMargin: 48
-            rightMargin: 48
+        model: contactsTable
 
-            model: contactsTable
-
-            delegate: ItemDelegate {
-                text: model.username
-                font.pixelSize: 16
-                width: listView.width - listView.leftMargin - listView.rightMargin
-                leftPadding: avatar.implicitWidth + 16
-
-                onClicked: { userClicked(model.username, model.id) }
-
-                Image {
-                    id: avatar
-                    source: "qrc:/images/avatar.png"
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-            }
-        }
+        delegate: ChatDelegate {}
     }
 
     ContactsTable {

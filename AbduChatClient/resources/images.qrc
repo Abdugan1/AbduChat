@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/avatar.png</file>
         <file>images/connection_error.png</file>
         <file>images/padlock.png</file>
         <file>images/user.png</file>
@@ -10,5 +9,7 @@
         <file>images/app_logo_128.png</file>
         <file>images/show_password.png</file>
         <file>images/hide_password.png</file>
+        <file>images/avatar_32.png</file>
+        <file>images/avatar_64.png</file>
     </qresource>
 </RCC>

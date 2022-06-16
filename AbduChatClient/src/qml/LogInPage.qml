@@ -64,6 +64,8 @@ Page {
         textColor: "#ffffff"
         backgroundColor: "#000000"
         anchors.horizontalCenter: parent.horizontalCenter
+
+        onClicked: { root.loginButtonClicked() }
     }
 
     PasswordField {
@@ -77,5 +79,17 @@ Page {
         iconSource: "qrc:/images/padlock.png"
         borderWidth: 2
         borderRadius: 40
+    }
+
+    Label {
+        id: label
+        y: 676
+        text: qsTr("Don't have an account yet? <a href=\":\">Sign up</a>")
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+        anchors.horizontalCenter: parent.horizontalCenter
+        onLinkActivated: {
+            console.log("Go to sign up page")
+        }
     }
 }

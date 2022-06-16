@@ -30,7 +30,6 @@ ValidatedField {
             }
             PropertyChanges {
                 target: root
-                state: "hidePasswordState"
                 echoMode: TextInput.Password
             }
         }
