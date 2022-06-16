@@ -1,6 +1,7 @@
 #include "chatclient.h"
 
 #include <AbduChatLib/request_and_reply_constants.h>
+#include <AbduChatLib/database_names.h>
 #include <AbduChatLib/message.h>
 #include <AbduChatLib/datastream.h>
 
@@ -14,9 +15,12 @@
 const char* IpAddress = "127.0.0.1";
 const int Port = 2002;
 
-QString lastInsertDatetimeContactsTable()
+QString lastDateFromUsersTable()
 {
-    const QString execute = QString("SELECT insert_datetime FROM contacts ORDER BY id DESC LIMIT 1");
+    const QString execute = QString("SELECT %1 FROM %2 ORDER BY %3 DESC LIMIT 1")
+                            .arg(db::users::fieldnames::Date)
+                            .arg(db::users::TableName)
+                            .arg(db::users::fieldnames::Id);
     QSqlQuery query;
     if (!query.exec(execute)) {
         qFatal("Cannot get last insert datetime: %s", qPrintable(query.lastError().text()));
@@ -25,9 +29,12 @@ QString lastInsertDatetimeContactsTable()
     return query.value(0).toString();
 }
 
-QString lastSentDatetimeMessagesTable()
+QString lastDateFromMessagesTable()
 {
-    const QString execute = QString("SELECT sent_datetime FROM messages ORDER BY id DESC LIMIT 1");
+    const QString execute = QString("SELECT %1 FROM %2 ORDER BY %3 DESC LIMIT 1")
+                            .arg(db::messages::fieldnames::Date)
+                            .arg(db::messages::TableName)
+                            .arg(db::messages::fieldnames::Id);
     QSqlQuery query;
     if (!query.exec(execute)) {
         qFatal("Cannot get last sent datetime: %s", qPrintable(query.lastError().text()));
@@ -36,9 +43,9 @@ QString lastSentDatetimeMessagesTable()
     return query.value(0).toString();
 }
 
-int contactsTableRowCount()
+int usersTableRowCount()
 {
-    const QString execute = QString("SELECT COUNT(*) FROM contacts");
+    const QString execute = QString("SELECT COUNT(*) FROM %1").arg(db::users::TableName);
     QSqlQuery query;
     if (!query.exec(execute)) {
         qFatal("Cannot get contacts table row count: %s", qPrintable(query.lastError().text()));
@@ -49,7 +56,7 @@ int contactsTableRowCount()
 
 int messagesTableRowCount()
 {
-    const QString execute = QString("SELECT COUNT(*) FROM messages");
+    const QString execute = QString("SELECT COUNT(*) FROM %1").arg(db::messages::TableName);
     QSqlQuery query;
     if (!query.exec(execute)) {
         qFatal("Cannot get messages table row count: %s", qPrintable(query.lastError().text()));
@@ -64,35 +71,24 @@ ChatClient::ChatClient(QObject *parent)
 {
     connect(socket_, &QTcpSocket::connected, this, &ChatClient::connected);
     connect(socket_, &QTcpSocket::disconnected, this, &ChatClient::disconnected);
-    connect(socket_, &QTcpSocket::disconnected, this, &ChatClient::clearData);
+    connect(socket_, &QTcpSocket::disconnected, this, &ChatClient::resetUser);
     connect(socket_, &QTcpSocket::readyRead, this, &ChatClient::onReadyRead);
     connect(socket_, &QTcpSocket::errorOccurred, this, [this]() {emit errorOccurred(socket_->errorString());});
 }
 
-const QString &ChatClient::username() const
+const User &ChatClient::user() const
 {
-    return username_;
+    return user_;
 }
 
-void ChatClient::setUsername(const QString &newUsername)
+void ChatClient::setUser(const User &newUser)
 {
-    if (username_ == newUsername)
-        return;
-    username_ = newUsername;
-    emit usernameChanged();
+    user_ = newUser;
 }
 
-int ChatClient::id() const
+void ChatClient::resetUser()
 {
-    return id_;
-}
-
-void ChatClient::setId(int newId)
-{
-    if (id_ == newId)
-        return;
-    id_ = newId;
-    emit idChanged();
+    setUser(User{}); // TODO: Adapt to use your actual default value
 }
 
 void ChatClient::connectToHost()
@@ -115,23 +111,27 @@ void ChatClient::attempToLogIn(const QString &username, const QString &password)
     sendRequest(loginInfo);
 }
 
-void ChatClient::attempToRegister(const QString &username, const QString &password)
+void ChatClient::attempToRegister(const User &userInfo, const QString &password)
 {
+    QJsonObject info = userInfo.toJson();
+    info[request::headers::Password] = password;
+
     QJsonObject registerInfo;
-    registerInfo[request::headers::Type] = request::types::Register;
-    registerInfo[request::headers::Username] = username;
-    registerInfo[request::headers::Password] = password;
+    registerInfo[request::headers::Type]         = request::types::Register;
+    registerInfo[request::headers::RegisterInfo] = info;
 
     sendRequest(registerInfo);
 }
 
-void ChatClient::sendMessage(int recipientId, const QString &messageText)
+void ChatClient::sendMessage(const Chat &chat, const QString &messageText)
 {
-    QJsonObject messageInfo;
-    messageInfo[request::headers::Type]     = request::types::SendMessage;
-    messageInfo[request::headers::Text]     = messageText;
-    messageInfo[request::headers::FromUserId] = id();
-    messageInfo[request::headers::ToUserId]   = recipientId;
+    Message message;
+    // 'id' and 'date' is get from server. So we dont need to specify it.
+    message.setFrom(user());
+    message.setChat(chat);
+    message.setText(messageText);
+
+    QJsonObject messageInfo = message.toJson();
 
     sendRequest(messageInfo);
 }
@@ -184,20 +184,14 @@ void ChatClient::parseLogInReply(const QJsonObject &jsonReply)
     if (!successLogIn) {
         emit loginError(jsonReply.value(reply::headers::Reason).toString());
     } else {
-        setUsername(jsonReply.value(reply::headers::Username).toString());
-        setId(jsonReply.value(reply::headers::Id).toInt());
+        setUser(User::fromJson(jsonReply));
         emit loggedIn();
     }
 }
 
 void ChatClient::parseMessageReply(const QJsonObject &jsonReply)
 {
-    Message message;
-    message.setId(jsonReply.value(reply::headers::Id).toInt());
-    message.setFromUserId(jsonReply.value(reply::headers::FromUserId).toInt());
-    message.setToUserId(jsonReply.value(reply::headers::ToUserId).toInt());
-    message.setText(jsonReply.value(reply::headers::Text).toString());
-    message.setSentDatetime(jsonReply.value(reply::headers::SentDatetime).toString());
+    Message message = Message::fromJson(jsonReply);
 
     emit messageReceived(message);
 }
@@ -221,18 +215,18 @@ void ChatClient::parseSynchronizeMessagesReply(const QJsonObject &jsonReply)
 void ChatClient::synchronizeContacts()
 {
     QJsonObject synchronizeInfo;
-    synchronizeInfo[request::headers::Type]           = request::types::SynchronizeContacts;
-    synchronizeInfo[request::headers::InsertDatetime] = contactsTableRowCount() > 0 ? lastInsertDatetimeContactsTable()
-                                                                                    : request::values::AllData;
+    synchronizeInfo[request::headers::Type] = request::types::SynchronizeContacts;
+    synchronizeInfo[request::headers::Date] = usersTableRowCount() > 0 ? lastDateFromUsersTable()
+                                                                       : request::values::AllData;
     sendRequest(synchronizeInfo);
 }
 
 void ChatClient::synchronizeMessages()
 {
     QJsonObject synchronizeInfo;
-    synchronizeInfo[request::headers::Type]         = request::types::SynchronizeMessages;
-    synchronizeInfo[request::headers::SentDatetime] = messagesTableRowCount() > 0 ? lastSentDatetimeMessagesTable()
-                                                                                  : request::values::AllData;
+    synchronizeInfo[request::headers::Type] = request::types::SynchronizeMessages;
+    synchronizeInfo[request::headers::Date] = messagesTableRowCount() > 0 ? lastDateFromMessagesTable()
+                                                                          : request::values::AllData;
 
     sendRequest(synchronizeInfo);
 }
@@ -241,10 +235,4 @@ void ChatClient::sendRequest(const QJsonObject &jsonRequest)
 {
     DataStream socketStream(socket_);
     socketStream << jsonRequest;
-}
-
-void ChatClient::clearData()
-{
-    setUsername("");
-    setId(-1);
 }

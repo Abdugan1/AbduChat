@@ -4,21 +4,20 @@
 #include <QObject>
 #include <QTcpSocket>
 
+#include <AbduChatLib/user.h>
+
+class Chat;
 class Message;
 
 class ChatClient : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString username READ username WRITE setUsername NOTIFY usernameChanged)
-    Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged)
 public:
     explicit ChatClient(QObject *parent = nullptr);
 
-    const QString &username() const;
-    void setUsername(const QString &newUsername);
-
-    int id() const;
-    void setId(int newId);
+    const User &user() const;
+    void setUser(const User &newUser);
+    void resetUser();
 
 signals:
     void connected();
@@ -33,18 +32,15 @@ signals:
     void contactsAvailable(const QJsonArray& contacts);
     void messagesAvailable(const QJsonArray& messages);
 
-    void usernameChanged();
-
-    void idChanged();
 
 public slots:
     void connectToHost();
     void disconnectFromHost();
 
     void attempToLogIn(const QString& username, const QString& password);
-    void attempToRegister(const QString& username, const QString& password);
+    void attempToRegister(const User& userInfo, const QString& password);
 
-    void sendMessage(int recipientId, const QString& messageText);
+    void sendMessage(const Chat& chat, const QString& messageText);
 
     void synchronizeAll();
 
@@ -63,12 +59,9 @@ private:
 
     void sendRequest(const QJsonObject& jsonRequest);
 
-    void clearData();
-
 private:
     QTcpSocket* socket_ = nullptr;
-    QString username_;
-    int id_ = -1;
+    User user_;
 };
 
 #endif // CHATCLIENT_H

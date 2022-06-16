@@ -8,6 +8,7 @@ TARGET = abduchatlib
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    chat.cpp \
     contactstable.cpp \
     database_names.cpp \
     message.cpp \
@@ -15,6 +16,7 @@ SOURCES += \
     messagestableserver.cpp \
     request_and_reply_constants.cpp \
     serverlogstable.cpp \
+    user.cpp \
     userstable.cpp
 
 
@@ -24,6 +26,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    chat.h \
     connect_to_database.h \
     contactstable.h \
     database_names.h \
@@ -33,4 +36,5 @@ HEADERS += \
     messagestableserver.h \
     request_and_reply_constants.h \
     serverlogstable.h \
+    user.h \
     userstable.h

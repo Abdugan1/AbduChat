@@ -3,8 +3,8 @@
 
 namespace db {
 
-//--------contacts--------
-    namespace contacts {
+//--------users--------
+    namespace users {
 
         extern const char* TableName;
 
@@ -12,8 +12,10 @@ namespace db {
         namespace fieldnames {
 
             extern const char* Id;
+            extern const char* FirstName;
+            extern const char* LastName;
             extern const char* Username;
-            extern const char* InsertDatetime;
+            extern const char* Date;
 
         } // fieldnames
 
@@ -22,14 +24,66 @@ namespace db {
 
             enum FieldNums {
                 Id,
+                FirstName,
+                LastName,
                 Username,
-                InsertDatetime
+                Date,
             };
 
         } // fieldnums
 
-    } // contacts
-//--------!contacts--------
+    } // users
+//--------!users--------
+
+
+//--------chats--------
+    namespace chats {
+        extern const char* TableName;
+
+        namespace fieldnames {
+            extern const char* Id;
+            extern const char* Type;
+            extern const char* Username;
+            extern const char* Date;
+        } // fieldnames
+
+        namespace fieldnums {
+            enum FieldNums {
+                Id,
+                Type,
+                Username,
+                Date,
+            };
+        } // fieldnums
+
+
+    } // chats
+//--------!chats--------
+
+
+//--------chat_participants--------
+    namespace chat_participants {
+        extern const char* TableName;
+
+        namespace fieldnames {
+            extern const char* Id;
+            extern const char* ChatId;
+            extern const char* UserId;
+            extern const char* Date;
+        } // fieldnames
+
+        namespace fieldnums {
+            enum FieldNums {
+                Id,
+                ChatId,
+                UserId,
+                Date,
+            };
+        }
+
+    } // chat_participants
+//--------!chat_participants--------
+
 
 //--------messages--------
     namespace messages {
@@ -39,15 +93,11 @@ namespace db {
 
     namespace fieldnames {
 
-        extern const char* MessageId;
-
+        extern const char* Id;
         extern const char* FromUserId;
-
-        extern const char* ToUserId;
-
+        extern const char* ChatId;
         extern const char* Text;
-
-        extern const char* SentDatetime;
+        extern const char* Date;
 
     } // fieldnames
 
@@ -55,11 +105,11 @@ namespace db {
     namespace fieldnums {
 
         enum FieldNums {
-            MessageId,
+            Id,
             FromUserId,
-            ToUserId,
+            ChatId,
             Text,
-            SentDatetime
+            Date
         };
 
     } // fieldnums
@@ -75,7 +125,7 @@ namespace db {
 
             extern const char* Id;
             extern const char* Text;
-            extern const char* InsertDatetime;
+            extern const char* Date;
 
         } // fieldnames
 
@@ -85,15 +135,15 @@ namespace db {
             enum FieldNums {
                 Id,
                 Text,
-                InsertDatetime
+                Date
             };
 
         } // fieldnums
     }
 //--------!server_logs--------
 
-//--------users--------
-    namespace users {
+//--------users_server--------
+    namespace users_server {
 
         extern const char* TableName;
 
@@ -102,7 +152,6 @@ namespace db {
             extern const char* Id;
             extern const char* Username;
             extern const char* Password;
-            extern const char* InsertDatetime;
 
         } // fieldnames
 
@@ -113,13 +162,12 @@ namespace db {
                 Id,
                 Username,
                 Password,
-                InsertDatetime
             };
 
         } // fieldnums
 
     }
-//--------!users--------
+//--------!users_server--------
 
 } // db
 

@@ -2,62 +2,68 @@
 
 namespace db {
 
-//--------contacts--------
-    namespace contacts {
-
+    namespace users {
         const char* TableName = "contacts";
 
-
         namespace fieldnames {
-
             const char* Id = "id";
+            const char* FirstName = "first_name";
+            const char* LastName = "last_name";
             const char* Username = "username";
-            const char* InsertDatetime = "insert_datetime";
-
+            const char* Date = "date";
         } // fieldnames
 
     } // contacts
-//--------!contacts--------
 
-//--------messages--------
+    namespace chats {
+        extern const char* TableName;
+
+        namespace fieldnames {
+            const char* Id = "id";
+            const char* Type = "type";
+            const char* Username = "username";
+            const char* Date = "date";
+        } // fieldnames
+
+
+    } // chats
+
+    namespace chat_participants {
+        extern const char* TableName;
+
+        namespace fieldnames {
+            const char* Id = "id";
+            const char* ChatId = "chat_id";
+            const char* UserId = "user_id";
+            const char* Date = "date";
+        } // fieldnames
+
+    } // chat_participants
+
     namespace messages {
+        const char* TableName = "messages";
 
-    const char* TableName = "messages";
-
-
-    namespace fieldnames {
-
-        const char* MessageId = "id";
-
-        const char* FromUserId = "from_user_id";
-
-        const char* ToUserId = "to_user_id";
-
-        const char* Text = "text";
-
-        const char* SentDatetime = "sent_datetime";
-
-    } // fieldnames
+        namespace fieldnames {
+            const char* Id = "id";
+            const char* FromUserId = "from_user_id";
+            const char* ChatId = "chat_id";
+            const char* Text = "text";
+            const char* Date = "date";
+        } // fieldnames
 
     } // messages
-//--------!messages--------
 
-//--------server_logs--------
     namespace server_logs {
         const char* TableName = "server_logs";
 
         namespace fieldnames {
-
             const char* Id = "id";
             const char* Text = "text";
-            const char* InsertDatetime = "insert_datetime";
-
+            const char* Date = "date";
         } // fieldnames
-    }
-//--------!server_logs--------
+    } // server_logs
 
-//--------users--------
-    namespace users {
+    namespace users_server {
 
         const char* TableName = "users";
 
@@ -66,11 +72,9 @@ namespace db {
             const char* Id = "id";
             const char* Username = "username";
             const char* Password = "password";
-            const char* InsertDatetime = "insert_datetime";
 
         } // fieldnames
 
-    }
-//--------!users--------
+    } // users_server
 
 } // db

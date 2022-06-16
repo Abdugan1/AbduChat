@@ -182,7 +182,7 @@ void Console::printServerLogs()
     for (int i = 0; i < rowCount; ++i) {
         QSqlRecord record = serverLogsTable_->record(i);
         QString text = record.value(FieldNames::Text).toString();
-        QString insertDatetime = record.value(FieldNames::InsertDatetime).toString();
+        QString insertDatetime = record.value(FieldNames::Date).toString();
 
         QString  log = (insertDatetime + ": " + text + "\n");
         serverLogsPad_->print(log);

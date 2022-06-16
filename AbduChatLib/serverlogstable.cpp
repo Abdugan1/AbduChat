@@ -29,9 +29,9 @@ QVariant ServerLogsTable::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> ServerLogsTable::roleNames() const
 {
     QHash<int, QByteArray> names;
-    names[FieldNums::Id             + Qt::UserRole] = FieldNames::Id;
-    names[FieldNums::Text           + Qt::UserRole] = FieldNames::Text;
-    names[FieldNums::InsertDatetime + Qt::UserRole] = FieldNames::InsertDatetime;
+    names[FieldNums::Id   + Qt::UserRole] = FieldNames::Id;
+    names[FieldNums::Text + Qt::UserRole] = FieldNames::Text;
+    names[FieldNums::Date + Qt::UserRole] = FieldNames::Date;
     return names;
 }
 
@@ -39,7 +39,7 @@ void ServerLogsTable::insertLog(const QString &text, const QString &insertDateti
 {
     QSqlRecord newRecord = record();
     newRecord.setValue(FieldNames::Text, text);
-    newRecord.setValue(FieldNames::InsertDatetime, insertDatetime);
+    newRecord.setValue(FieldNames::Date, insertDatetime);
 
     if (!insertRecord(rowCount(), newRecord)) {
         qFatal("Cannot insert '%s' to %s: %s",
@@ -62,20 +62,20 @@ void ServerLogsTable::createTable()
     if (QSqlDatabase::database().tables().contains(db::server_logs::TableName))
         return;
 
-    const QString execute = QString("CREATE TABLE IF NOT EXISTS %1 (" // TableName: server_logs
-                                    " '%2' INTEGER PRIMARY KEY," // contact_id
-                                    " '%3' TEXT NOT NULL," // text
-                                    " '%4' TEXT NOT NULL" // data_insert
-                                    ")")
-            .arg(db::server_logs::TableName)
-            .arg(FieldNames::Id)
-            .arg(FieldNames::Text)
-            .arg(FieldNames::InsertDatetime);
+//    const QString execute = QString("CREATE TABLE IF NOT EXISTS %1 (" // TableName: server_logs
+//                                    " '%2' INTEGER PRIMARY KEY," // contact_id
+//                                    " '%3' TEXT NOT NULL," // text
+//                                    " '%4' TEXT NOT NULL" // data_insert
+//                                    ")")
+//            .arg(db::server_logs::TableName)
+//            .arg(FieldNames::Id)
+//            .arg(FieldNames::Text)
+//            .arg(FieldNames::InsertDatetime);
 
-    QSqlQuery query;
-    if (!query.exec(execute)) {
-        qFatal("Cannot create table '%s': %s",
-               qPrintable(tableName()),
-               qPrintable(query.lastError().text()));
-    }
+//    QSqlQuery query;
+//    if (!query.exec(execute)) {
+//        qFatal("Cannot create table '%s': %s",
+//               qPrintable(tableName()),
+//               qPrintable(query.lastError().text()));
+//    }
 }

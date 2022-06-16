@@ -21,12 +21,11 @@ extern const char* Type;
 extern const char* FromUserId;
 extern const char* ToUserId;
 extern const char* Text;
-extern const char* SentDatetime;
+extern const char* Date;
 
+extern const char* RegisterInfo;
 extern const char* Username;
 extern const char* Password;
-
-extern const char* InsertDatetime;
 
 } // headers
 
@@ -57,10 +56,7 @@ namespace headers {
 
 extern const char* Type;
 extern const char* Id;
-extern const char* FromUserId;
-extern const char* ToUserId;
-extern const char* Text;
-extern const char* SentDatetime;
+extern const char* Message;
 
 extern const char* Success;
 extern const char* Reason;
@@ -70,7 +66,7 @@ extern const char* Username;
 extern const char* Users;
 extern const char* Messages;
 
-extern const char* InsertDatetime;
+extern const char* Date;
 
 } // headers
 
@@ -82,5 +78,53 @@ extern const char* UsernameIsUsed;
 } // values
 
 } // reply
+
+
+namespace user {
+
+namespace headers {
+
+extern const char* Id;
+extern const char* FirstName;
+extern const char* LastName;
+extern const char* Username;
+
+} // headers
+
+} // user
+
+
+namespace chat {
+
+namespace headers {
+
+extern const char* Id;
+extern const char* Type;
+extern const char* Username;
+
+} // headers
+
+namespace values {
+
+extern const char* Private;
+
+} // values
+
+} // chat
+
+
+namespace message {
+
+namespace headers {
+
+extern const char* Id;
+extern const char* From;
+extern const char* Chat;
+extern const char* Text;
+extern const char* Date;
+
+} // headers
+
+} // message
 
 #endif // REQUEST_AND_REPLY_CONSTANTS_H

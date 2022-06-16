@@ -2,9 +2,12 @@
 #define MESSAGE_H
 
 #include <QString>
-#include <QDateTime>
+
+#include "user.h"
+#include "chat.h"
 
 class QJsonObject;
+class QSqlRecord;
 
 class Message
 {
@@ -14,27 +17,28 @@ public:
     int id() const;
     void setId(int newId);
 
-    int fromUserId() const;
-    void setFromUserId(int newFromUserId);
+    const User &from() const;
+    void setFrom(const User &newFrom);
 
-    int toUserId() const;
-    void setToUserId(int newToUserId);
+    const Chat &chat() const;
+    void setChat(const Chat &newChat);
 
     const QString &text() const;
     void setText(const QString &newText);
 
-    const QString &sentDatetime() const;
-    void setSentDatetime(const QString &newSentDatetime);
+    const QString &date() const;
+    void setDate(const QString &newDate);
+
+    QJsonObject toJson() const;
+    static Message fromJson(const QJsonObject& json);
+    static Message fromSqlRecord(const QSqlRecord& record);
 
 private:
     int id_ = -1;
-    int fromUserId_;
-    int toUserId_;
+    User from_;
+    Chat chat_;
     QString text_;
-    QString sentDatetime_;
+    QString date_;
 };
-
-Message jsonToMessageSentDatetimeIsCurrentDatetime(const QJsonObject& jsonObject, int messageId = -1);
-Message jsonToMessageSentDatetimeIsFromJsonObject(const QJsonObject& jsonObject, int messageId = -1);
 
 #endif // MESSAGE_H

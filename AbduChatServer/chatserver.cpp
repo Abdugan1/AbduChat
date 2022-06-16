@@ -21,7 +21,7 @@ const int Port = 2002;
 
 ChatServer::ChatServer(QMutex *serverLogsMutex, QObject *parent)
     : QTcpServer{parent}
-    , usersTable_(new UsersTable(this))
+    , usersTable_(new UsersServerTable(this))
     , serverLogsTable_(new ServerLogsTable(this))
     , messagesTable_(new MessagesTableServer(this))
     , serverLogsMutex_(serverLogsMutex)
@@ -208,12 +208,12 @@ void ChatServer::sendRegisterFailedReply(ServerWorker *recipient)
 
 void ChatServer::parseSendMessageRequest(ServerWorker *sender, const QJsonObject &jsonRequest)
 {
-    Message message = jsonToMessageSentDatetimeIsCurrentDatetime(jsonRequest);
+    Message message = Message::fromJson(jsonRequest);
     messagesTable_->insertMessage(message);
 
     // last inserted message id.
     message.setId(messagesTable_->record(messagesTable_->rowCount() - 1)
-                  .value(db::messages::fieldnames::MessageId).toInt());
+                  .value(db::messages::fieldnames::Id).toInt());
 
     sendMessageReply(sender, message);
 }
@@ -221,106 +221,90 @@ void ChatServer::parseSendMessageRequest(ServerWorker *sender, const QJsonObject
 void ChatServer::sendMessageReply(ServerWorker *recipient, const Message &message)
 {
     QJsonObject messageReply;
-    messageReply[reply::headers::Type]          = reply::types::Message;
-    messageReply[reply::headers::Id]            = message.id();
-    messageReply[reply::headers::FromUserId]    = message.fromUserId();
-    messageReply[reply::headers::ToUserId]      = message.toUserId();
-    messageReply[reply::headers::Text]          = message.text();
-    messageReply[reply::headers::SentDatetime]  = message.sentDatetime();
+    messageReply[reply::headers::Type]    = reply::types::Message;
+    messageReply[reply::headers::Message] = message.toJson();
 
     recipient->sendJson(messageReply);
 }
 
 void ChatServer::parseSynchronizeContactsRequest(ServerWorker *sender, const QJsonObject &jsonRequest)
 {
-    const QString lastInsertDatetime = jsonRequest[request::headers::InsertDatetime].toString();
+    const QString lastDate = jsonRequest[request::headers::Date].toString();
 
-    if (lastInsertDatetime == request::values::AllData) {
+    if (lastDate == request::values::AllData) {
         sendAllContactsReply(sender);
     } else {
-        const QString insertDatetime = jsonRequest.value(request::headers::InsertDatetime).toString();
+        const QString insertDatetime = jsonRequest.value(request::headers::Date).toString();
         sendNewerContactsAfterDatetimeReply(sender, insertDatetime);
     }
 }
 
 void ChatServer::sendAllContactsReply(ServerWorker *recipient)
 {
-    namespace FieldNames = db::contacts::fieldnames;
+    QJsonArray users;
 
-    QJsonArray contacts;
-    int rowCount = usersTable_->rowCount();
+    const int rowCount = usersTable_->rowCount();
     for (int i = 0; i < rowCount; ++i) {
         const QSqlRecord record = usersTable_->record(i);
-        QJsonObject contact;
-        contact[reply::headers::Username] = record.value(FieldNames::Username).toString();
-        contact[reply::headers::InsertDatetime] = record.value(FieldNames::InsertDatetime).toString();
-        contacts.push_back(contact);
+        QJsonObject user = User::fromSqlRecord(record).toJson();
+        users.push_back(user);
     }
 
     QJsonObject contactsReply;
     contactsReply[reply::headers::Type]  = reply::types::UserList;
-    contactsReply[reply::headers::Users] = contacts;
+    contactsReply[reply::headers::Users] = users;
 
     recipient->sendJson(contactsReply);
 }
 
 void ChatServer::sendNewerContactsAfterDatetimeReply(ServerWorker *recipient, const QString &insertDatetime)
 {
-    const QString execute = QString("SELECT * FROM users WHERE insert_datetime > :insert_datetime");
+    const QString execute = QString("SELECT * FROM users WHERE %1 > :date")
+                            .arg(db::users::fieldnames::Date);
 
     QSqlQuery query;
     query.prepare(execute);
-    query.bindValue(":insert_datetime", insertDatetime);
+    query.bindValue(":date", insertDatetime);
 
     if (!query.exec()) {
         qFatal("Cannot get last contacts from %s: %s",
                qPrintable(insertDatetime), qPrintable(query.lastError().text()));
     }
 
-    namespace FieldNames = db::contacts::fieldnames;
-
-    QJsonArray contacts;
+    QJsonArray users;
     while (query.next()) {
-        QJsonObject contact;
-        contact[reply::headers::Username]       = query.value(FieldNames::Username).toString();
-        contact[reply::headers::InsertDatetime] = query.value(FieldNames::InsertDatetime).toString();
+        // TODO: Check info about value() and record()
+        QJsonObject contact = User::fromSqlRecord(query.record()).toJson();
 
-        contacts.push_back(contact);
+        users.push_back(contact);
     }
 
     QJsonObject contactsReply;
     contactsReply[reply::headers::Type]  = reply::types::UserList;
-    contactsReply[reply::headers::Users] = contacts;
+    contactsReply[reply::headers::Users] = users;
 
     recipient->sendJson(contactsReply);
 }
 
 void ChatServer::parseSynchronizeMessagesRequest(ServerWorker *sender, const QJsonObject &jsonRequest)
 {
-    const QString lastSentDatetime = jsonRequest[request::headers::SentDatetime].toString();
+    const QString lastSentDatetime = jsonRequest[request::headers::Date].toString();
 
     if (lastSentDatetime == request::values::AllData) {
         sendAllMessagesReply(sender);
     } else {
-        const QString sentDatetime = jsonRequest.value(request::headers::SentDatetime).toString();
+        const QString sentDatetime = jsonRequest.value(request::headers::Date).toString();
         sendNewerMessagesAfterDatetimeReply(sender, sentDatetime);
     }
 }
 
 void ChatServer::sendAllMessagesReply(ServerWorker *recipient)
 {
-    namespace FieldNames = db::messages::fieldnames;
-
     QJsonArray messages;
-    int rowCount = messagesTable_->rowCount();
+    const int rowCount = messagesTable_->rowCount();
     for (int i = 0; i < rowCount; ++i) {
         const QSqlRecord record = messagesTable_->record(i);
-        QJsonObject message;
-        message[reply::headers::Id]    = record.value(FieldNames::MessageId).toInt();
-        message[reply::headers::FromUserId]     = record.value(FieldNames::FromUserId).toInt();
-        message[reply::headers::ToUserId]       = record.value(FieldNames::ToUserId).toInt();
-        message[reply::headers::Text]         = record.value(FieldNames::Text).toString();
-        message[reply::headers::SentDatetime] = record.value(FieldNames::SentDatetime).toString();
+        QJsonObject message = Message::fromSqlRecord(record).toJson();
         messages.push_back(message);
     }
 
@@ -333,27 +317,22 @@ void ChatServer::sendAllMessagesReply(ServerWorker *recipient)
 
 void ChatServer::sendNewerMessagesAfterDatetimeReply(ServerWorker *recipient, const QString &sentDatetime)
 {
-    const QString execute = QString("SELECT * FROM messages WHERE sent_datetime > :sent_datetime");
+    const QString execute = QString("SELECT * FROM messages WHERE %1 > :date")
+            .arg(db::messages::fieldnames::Date);
 
     QSqlQuery query;
     query.prepare(execute);
-    query.bindValue(":sent_datetime", sentDatetime);
+    query.bindValue(":date", sentDatetime);
 
     if (!query.exec()) {
         qFatal("Cannot get last messages from %s: %s",
                qPrintable(sentDatetime), qPrintable(query.lastError().text()));
     }
 
-    namespace FieldNames = db::messages::fieldnames;
-
     QJsonArray messages;
     while (query.next()) {
-        QJsonObject message;
-        message[reply::headers::Id]    = query.value(FieldNames::MessageId).toInt();
-        message[reply::headers::FromUserId]     = query.value(FieldNames::FromUserId).toInt();
-        message[reply::headers::ToUserId]       = query.value(FieldNames::ToUserId).toInt();
-        message[reply::headers::Text]         = query.value(FieldNames::Text).toString();
-        message[reply::headers::SentDatetime] = query.value(FieldNames::SentDatetime).toString();
+        // TODO: Check info about value() and record()
+        QJsonObject message = Message::fromSqlRecord(query.record()).toJson();
 
         messages.push_back(message);
     }

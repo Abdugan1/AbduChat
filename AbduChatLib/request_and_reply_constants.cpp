@@ -20,12 +20,11 @@ const char* Type = "type";
 const char* FromUserId = "from_user_id";
 const char* ToUserId = "to_user_id";
 const char* Text = "text";
-const char* SentDatetime = "sent_datetime";
+const char* Date = "sent_datetime";
 
+const char* RegisterInfo = "register_info";
 const char* Username = "username";
 const char* Password = "password";
-
-const char* InsertDatetime = "insert_datetime";
 
 } // headers
 
@@ -56,10 +55,7 @@ namespace headers {
 
 const char* Type = "type";
 const char* Id = "id";
-const char* FromUserId = "from_user_id";
-const char* ToUserId = "to_user_id";
-const char* Text = "text";
-const char* SentDatetime = "sent_datetime";
+const char* Message = "message";
 
 const char* Success = "success";
 const char* Reason = "reason";
@@ -69,7 +65,7 @@ const char* Username = "username";
 const char* Users = "users";
 const char* Messages = "messages";
 
-const char* InsertDatetime = "insert_datetime";
+const char* Date = "date";
 
 } // headers
 
@@ -81,3 +77,51 @@ const char* UsernameIsUsed = "The username is already in use";
 } // values
 
 } // reply
+
+
+namespace user {
+
+namespace headers {
+
+const char* Id = "id";
+const char* FirstName = "first_name";
+const char* LastName = "last_name";
+const char* Username = "username";
+
+} // headers
+
+} // user
+
+
+namespace chat {
+
+namespace headers {
+
+const char* Id = "id";
+const char* Type = "type";
+const char* Username = "username";
+
+} // headers
+
+namespace values {
+
+const char* Private = "private";
+
+} // values
+
+} // chat
+
+
+namespace message {
+
+namespace headers {
+
+const char* Id = "id";
+const char* From = "from";
+const char* Chat = "chat";
+const char* Text = "text";
+const char* Date = "date";
+
+} // headers
+
+} // message

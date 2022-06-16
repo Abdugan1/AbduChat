@@ -9,18 +9,18 @@
 #include <QJsonArray>
 #include <QDebug>
 
-namespace FieldNames = db::contacts::fieldnames;
-namespace FieldNums = db::contacts::fieldnums;
+namespace FieldNames = db::users::fieldnames;
+namespace FieldNums = db::users::fieldnums;
 
-ContactsTable::ContactsTable(QObject *parent)
+UsersTable::UsersTable(QObject *parent)
     : QSqlTableModel{parent}
 {
     createTable();
-    setTable(db::contacts::TableName);
+    setTable(db::users::TableName);
     setEditStrategy(QSqlTableModel::OnManualSubmit);
 }
 
-QVariant ContactsTable::data(const QModelIndex &index, int role) const
+QVariant UsersTable::data(const QModelIndex &index, int role) const
 {
     if (role < Qt::UserRole)
         return QSqlTableModel::data(index, role);
@@ -29,21 +29,21 @@ QVariant ContactsTable::data(const QModelIndex &index, int role) const
     return sqlRecord.value(role - Qt::UserRole);
 }
 
-QHash<int, QByteArray> ContactsTable::roleNames() const
+QHash<int, QByteArray> UsersTable::roleNames() const
 {
     QHash<int, QByteArray> names;
-    names[FieldNums::Id             + Qt::UserRole] = FieldNames::Id;
-    names[FieldNums::Username       + Qt::UserRole] = FieldNames::Username;
-    names[FieldNums::InsertDatetime + Qt::UserRole] = FieldNames::InsertDatetime;
+    names[FieldNums::Id       + Qt::UserRole] = FieldNames::Id;
+    names[FieldNums::Username + Qt::UserRole] = FieldNames::Username;
+    names[FieldNums::Date     + Qt::UserRole] = FieldNames::Date;
     return names;
 }
 
-int ContactsTable::myId() const
+int UsersTable::myId() const
 {
     return myId_;
 }
 
-void ContactsTable::setMyId(int newMyId)
+void UsersTable::setMyId(int newMyId)
 {
     if (myId_ == newMyId)
         return;
@@ -57,21 +57,21 @@ void ContactsTable::setMyId(int newMyId)
 }
 
 
-void ContactsTable::insertContacts(const QJsonArray &contacts)
+void UsersTable::insertContacts(const QJsonArray &contacts)
 {
     for (const auto& contactRef : contacts) {
         const QJsonObject contact = contactRef.toObject();
         const QString username = contact.value(reply::headers::Username).toString();
-        const QString insertDatetime = contact.value(reply::headers::InsertDatetime).toString();
+        const QString insertDatetime = contact.value(reply::headers::Date).toString();
         insertContact(username, insertDatetime);
     }
 }
 
-void ContactsTable::insertContact(const QString &username, const QString &insertDatetime)
+void UsersTable::insertContact(const QString &username, const QString &insertDatetime)
 {
     QSqlRecord newRecord = record();
     newRecord.setValue(FieldNames::Username, username);
-    newRecord.setValue(FieldNames::InsertDatetime, insertDatetime);
+    newRecord.setValue(FieldNames::Date, insertDatetime);
 
     if (!insertRecord(rowCount(), newRecord)) {
         qFatal("Cannot insert '%s' to %s: %s",
@@ -90,25 +90,25 @@ void ContactsTable::insertContact(const QString &username, const QString &insert
     select();
 }
 
-void ContactsTable::createTable()
+void UsersTable::createTable()
 {
-    if (QSqlDatabase::database().tables().contains(db::contacts::TableName))
+    if (QSqlDatabase::database().tables().contains(db::users::TableName))
         return;
 
-    const QString execute = QString("CREATE TABLE IF NOT EXISTS %1 (" // TableName: contacts
-                                    " '%2' INTEGER PRIMARY KEY," // contact_id
-                                    " '%3' TEXT NOT NULL," // username
-                                    " '%4' TEXT NOT NULL" // insert_datetime
-                                    ")")
-            .arg(db::contacts::TableName)
-            .arg(FieldNames::Id)
-            .arg(FieldNames::Username)
-            .arg(FieldNames::InsertDatetime);
+//    const QString execute = QString("CREATE TABLE IF NOT EXISTS %1 (" // TableName: contacts
+//                                    " '%2' INTEGER PRIMARY KEY," // contact_id
+//                                    " '%3' TEXT NOT NULL," // username
+//                                    " '%4' TEXT NOT NULL" // insert_datetime
+//                                    ")")
+//            .arg(db::contacts::TableName)
+//            .arg(FieldNames::Id)
+//            .arg(FieldNames::Username)
+//            .arg(FieldNames::InsertDatetime);
 
-    QSqlQuery query;
-    if (!query.exec(execute)) {
-        qFatal("Cannot create table '%s': %s",
-               qPrintable(tableName()),
-               qPrintable(query.lastError().text()));
-    }
+//    QSqlQuery query;
+//    if (!query.exec(execute)) {
+//        qFatal("Cannot create table '%s': %s",
+//               qPrintable(tableName()),
+//               qPrintable(query.lastError().text()));
+//    }
 }

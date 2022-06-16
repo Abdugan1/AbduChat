@@ -33,11 +33,11 @@ QVariant MessagesTableServer::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> MessagesTableServer::roleNames() const
 {
     QHash<int, QByteArray> names;
-    names[FieldNums::MessageId      + Qt::UserRole] = FieldNames::MessageId;
-    names[FieldNums::FromUserId     + Qt::UserRole] = FieldNames::FromUserId;
-    names[FieldNums::ToUserId       + Qt::UserRole] = FieldNames::ToUserId;
-    names[FieldNums::Text           + Qt::UserRole] = FieldNames::Text;
-    names[FieldNums::SentDatetime   + Qt::UserRole] = FieldNames::SentDatetime;
+    names[FieldNums::Id         + Qt::UserRole] = FieldNames::Id;
+    names[FieldNums::FromUserId + Qt::UserRole] = FieldNames::FromUserId;
+    names[FieldNums::ChatId     + Qt::UserRole] = FieldNames::ChatId;
+    names[FieldNums::Text       + Qt::UserRole] = FieldNames::Text;
+    names[FieldNums::Date       + Qt::UserRole] = FieldNames::Date;
     return names;
 }
 
@@ -45,13 +45,14 @@ void MessagesTableServer::insertMessage(const Message &message)
 {
     QSqlRecord newRecord = record();
 
+    // Because 'id' is PK. So it is default auto-incremented
     if (message.id() != -1)
-        newRecord.setValue(FieldNames::MessageId, message.id());
+        newRecord.setValue(FieldNames::Id, message.id());
 
-    newRecord.setValue(FieldNames::FromUserId, message.fromUserId());
-    newRecord.setValue(FieldNames::ToUserId, message.toUserId());
-    newRecord.setValue(FieldNames::Text, message.text());
-    newRecord.setValue(FieldNames::SentDatetime, message.sentDatetime());
+    newRecord.setValue(FieldNames::FromUserId,  message.from().id());
+    newRecord.setValue(FieldNames::ChatId,      message.chat().id());
+    newRecord.setValue(FieldNames::Text,        message.text());
+    newRecord.setValue(FieldNames::Date,        message.date());
 
     if (!insertRecord(rowCount(), newRecord)) {
         qFatal("Cannot insert '%s' to %s: %s",
@@ -75,24 +76,24 @@ void MessagesTableServer::createTable()
     if (QSqlDatabase::database().tables().contains(db::messages::TableName))
         return;
 
-    const QString execute = QString("CREATE TABLE IF NOT EXISTS '%1' (" // messages
-                                    "   '%2' INTEGER PRIMARY KEY," // message_id
-                                    "   '%3' INT NOT NULL," // from_user_id
-                                    "   '%4' INT NOT NULL," // to_user_id
-                                    "   '%5' TEXT NOT NULL," // text
-                                    "   '%6' TEXT NOT NULL"  // sent_datetime
-                                    ")")
-            .arg(db::messages::TableName)
-            .arg(FieldNames::MessageId)
-            .arg(FieldNames::FromUserId)
-            .arg(FieldNames::ToUserId)
-            .arg(FieldNames::Text)
-            .arg(FieldNames::SentDatetime);
+//    const QString execute = QString("CREATE TABLE IF NOT EXISTS '%1' (" // messages
+//                                    "   '%2' INTEGER PRIMARY KEY," // message_id
+//                                    "   '%3' INT NOT NULL," // from_user_id
+//                                    "   '%4' INT NOT NULL," // to_user_id
+//                                    "   '%5' TEXT NOT NULL," // text
+//                                    "   '%6' TEXT NOT NULL"  // sent_datetime
+//                                    ")")
+//            .arg(db::messages::TableName)
+//            .arg(FieldNames::MessageId)
+//            .arg(FieldNames::FromUserId)
+//            .arg(FieldNames::ToUserId)
+//            .arg(FieldNames::Text)
+//            .arg(FieldNames::Date);
 
-    QSqlQuery query;
-    if (!query.exec(execute)) {
-        qFatal("Cannot create table '%s': %s",
-               qPrintable(db::messages::TableName),
-               qPrintable(query.lastError().text()));
-    }
+//    QSqlQuery query;
+//    if (!query.exec(execute)) {
+//        qFatal("Cannot create table '%s': %s",
+//               qPrintable(db::messages::TableName),
+//               qPrintable(query.lastError().text()));
+//    }
 }

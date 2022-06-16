@@ -5,7 +5,7 @@
 
 class ServerWorker;
 
-class UsersTable;
+class UsersServerTable;
 class ServerLogsTable;
 class MessagesTableServer;
 class Message;
@@ -63,7 +63,7 @@ private:
 private:
     QList<ServerWorker*> clients_;
 
-    UsersTable* usersTable_ = nullptr;
+    UsersServerTable* usersTable_ = nullptr;
     ServerLogsTable* serverLogsTable_ = nullptr;
     MessagesTableServer* messagesTable_ = nullptr;
 

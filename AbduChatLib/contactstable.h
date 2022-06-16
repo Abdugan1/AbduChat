@@ -3,12 +3,12 @@
 
 #include <QSqlTableModel>
 
-class ContactsTable : public QSqlTableModel
+class UsersTable : public QSqlTableModel
 {
     Q_OBJECT
     Q_PROPERTY(int myId READ myId WRITE setMyId NOTIFY myIdChanged)
 public:
-    explicit ContactsTable(QObject* parent = nullptr);
+    explicit UsersTable(QObject* parent = nullptr);
 
     QVariant data(const QModelIndex &index, int role) const;
     QHash<int, QByteArray> roleNames() const;

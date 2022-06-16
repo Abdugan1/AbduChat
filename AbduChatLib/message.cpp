@@ -1,7 +1,9 @@
 #include "message.h"
 #include "request_and_reply_constants.h"
+#include "database_names.h"
 
 #include <QJsonObject>
+#include <QSqlRecord>
 
 Message::Message()
 {
@@ -18,24 +20,24 @@ void Message::setId(int newId)
     id_ = newId;
 }
 
-int Message::fromUserId() const
+const User &Message::from() const
 {
-    return fromUserId_;
+    return from_;
 }
 
-void Message::setFromUserId(int newFromUserId)
+void Message::setFrom(const User &newFrom)
 {
-    fromUserId_ = newFromUserId;
+    from_ = newFrom;
 }
 
-int Message::toUserId() const
+const Chat &Message::chat() const
 {
-    return toUserId_;
+    return chat_;
 }
 
-void Message::setToUserId(int newToUserId)
+void Message::setChat(const Chat &newChat)
 {
-    toUserId_ = newToUserId;
+    chat_ = newChat;
 }
 
 const QString &Message::text() const
@@ -48,46 +50,53 @@ void Message::setText(const QString &newText)
     text_ = newText;
 }
 
-const QString &Message::sentDatetime() const
+const QString &Message::date() const
 {
-    return sentDatetime_;
+    return date_;
 }
 
-void Message::setSentDatetime(const QString &newSentDatetime)
+void Message::setDate(const QString &newDate)
 {
-    sentDatetime_ = newSentDatetime;
+    date_ = newDate;
 }
 
-Message jsonToMessageSentDatetimeIsCurrentDatetime(const QJsonObject& jsonObject, int messageId)
+QJsonObject Message::toJson() const
 {
-    const int fromUserId       = jsonObject.value(request::headers::FromUserId).toInt();
-    const int toUserId         = jsonObject.value(request::headers::ToUserId).toInt();
-    const QString text         = jsonObject.value(request::headers::Text).toString();
-    const QString sentDatetime = QDateTime::currentDateTime().toString(Qt::ISODate);
+    QJsonObject json;
 
+    json[message::headers::Id]   = id();
+    json[message::headers::From] = from().toJson();
+    json[message::headers::Chat] = chat().toJson();
+    json[message::headers::Text] = text();
+    json[message::headers::Date] = date();
+
+    return json;
+}
+
+Message Message::fromJson(const QJsonObject &json)
+{
     Message message;
-    message.setId(messageId);
-    message.setFromUserId(fromUserId);
-    message.setToUserId(toUserId);
-    message.setText(text);
-    message.setSentDatetime(sentDatetime);
+
+    message.setId(json.value(message::headers::Id).toInt());
+    message.setFrom(User::fromJson(json.value(message::headers::From).toObject()));
+    message.setChat(Chat::fromJson(json.value(message::headers::Chat).toObject()));
+    message.setText(json.value(message::headers::Text).toString());
+    message.setDate(json.value(message::headers::Date).toString());
 
     return message;
 }
 
-Message jsonToMessageSentDatetimeIsFromJsonObject(const QJsonObject &jsonObject, int messageId)
+Message Message::fromSqlRecord(const QSqlRecord &record)
 {
-    const int fromUserId        = jsonObject.value(request::headers::FromUserId).toInt();
-    const int toUserId          = jsonObject.value(request::headers::ToUserId).toInt();
-    const QString text          = jsonObject.value(request::headers::Text).toString();
-    const QString sentDatetime  = jsonObject.value(request::headers::SentDatetime).toString();
-
     Message message;
-    message.setId(messageId);
-    message.setFromUserId(fromUserId);
-    message.setToUserId(toUserId);
-    message.setText(text);
-    message.setSentDatetime(sentDatetime);
+
+    namespace FieldNames = db::messages::fieldnames;
+
+    message.setId(record.value(FieldNames::Id).toInt());
+    message.setFrom(User::fromSqlRecord(record));
+    message.setChat(Chat::fromSqlRecord(record));
+    message.setText(record.value(FieldNames::Text).toString());
+    message.setDate(record.value(FieldNames::Date).toString());
 
     return message;
 }

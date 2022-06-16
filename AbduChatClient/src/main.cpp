@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 
     connectToDatabase();
 
-    qmlRegisterType<ContactsTable>("AbduChatLib", 1, 0, "ContactsTable");
+    qmlRegisterType<UsersTable>("AbduChatLib", 1, 0, "ContactsTable");
     qmlRegisterType<MessagesTableClient>("AbduChatLib", 1, 0, "MessagesTable");
 
     qmlRegisterType<ChatClient>("AbduChatClient", 1, 0, "ChatClient");

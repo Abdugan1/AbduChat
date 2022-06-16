@@ -3,11 +3,11 @@
 
 #include <QSqlTableModel>
 
-class UsersTable : public QSqlTableModel
+class UsersServerTable : public QSqlTableModel
 {
     Q_OBJECT
 public:
-    explicit UsersTable(QObject *parent = nullptr);
+    explicit UsersServerTable(QObject *parent = nullptr);
 
     QVariant data(const QModelIndex &index, int role) const;
     QHash<int, QByteArray> roleNames() const;
