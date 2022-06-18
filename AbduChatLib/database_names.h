@@ -1,21 +1,23 @@
 #ifndef DATABASE_NAMES_H
 #define DATABASE_NAMES_H
 
+#include <QString>
+
 namespace db {
 
 //--------users--------
     namespace users {
 
-        extern const char* TableName;
+        extern const QString TableName;
 
 
         namespace fieldnames {
 
-            extern const char* Id;
-            extern const char* FirstName;
-            extern const char* LastName;
-            extern const char* Username;
-            extern const char* Date;
+            extern const QString Id;
+            extern const QString FirstName;
+            extern const QString LastName;
+            extern const QString Username;
+            extern const QString Date;
 
         } // fieldnames
 
@@ -38,13 +40,13 @@ namespace db {
 
 //--------chats--------
     namespace chats {
-        extern const char* TableName;
+        extern const QString TableName;
 
         namespace fieldnames {
-            extern const char* Id;
-            extern const char* Type;
-            extern const char* Username;
-            extern const char* Date;
+            extern const QString Id;
+            extern const QString Type;
+            extern const QString Username;
+            extern const QString Date;
         } // fieldnames
 
         namespace fieldnums {
@@ -63,13 +65,13 @@ namespace db {
 
 //--------chat_participants--------
     namespace chat_participants {
-        extern const char* TableName;
+        extern const QString TableName;
 
         namespace fieldnames {
-            extern const char* Id;
-            extern const char* ChatId;
-            extern const char* UserId;
-            extern const char* Date;
+            extern const QString Id;
+            extern const QString ChatId;
+            extern const QString UserId;
+            extern const QString Date;
         } // fieldnames
 
         namespace fieldnums {
@@ -84,20 +86,47 @@ namespace db {
     } // chat_participants
 //--------!chat_participants--------
 
+//--------chats_view--------
+    namespace chats_view {
+    extern const QString ViewName;
+
+    namespace fieldnames {
+        extern const QString ChatId;
+        extern const QString ChatType;
+        extern const QString ChatUsername;
+        extern const QString LastMessage;
+        extern const QString FromUser;
+        extern const QString Date;
+    } // fieldnames
+
+    namespace fieldnums {
+        enum FieldNums {
+            ChatId,
+            ChatType,
+            ChatUsername,
+            LastMessage,
+            FromUser,
+            Date,
+        };
+    } // fieldnums
+
+    } // chats_view
+//--------!chats_view--------
+
 
 //--------messages--------
     namespace messages {
 
-    extern const char* TableName;
+    extern const QString TableName;
 
 
     namespace fieldnames {
 
-        extern const char* Id;
-        extern const char* FromUserId;
-        extern const char* ChatId;
-        extern const char* Text;
-        extern const char* Date;
+        extern const QString Id;
+        extern const QString FromUserId;
+        extern const QString ChatId;
+        extern const QString Text;
+        extern const QString Date;
 
     } // fieldnames
 
@@ -119,13 +148,13 @@ namespace db {
 
 //--------server_logs--------
     namespace server_logs {
-        extern const char* TableName;
+        extern const QString TableName;
 
         namespace fieldnames {
 
-            extern const char* Id;
-            extern const char* Text;
-            extern const char* Date;
+            extern const QString Id;
+            extern const QString Text;
+            extern const QString Date;
 
         } // fieldnames
 
@@ -145,13 +174,13 @@ namespace db {
 //--------users_server--------
     namespace users_server {
 
-        extern const char* TableName;
+        extern const QString TableName;
 
         namespace fieldnames {
 
-            extern const char* Id;
-            extern const char* Username;
-            extern const char* Password;
+            extern const QString Id;
+            extern const QString Username;
+            extern const QString Password;
 
         } // fieldnames
 

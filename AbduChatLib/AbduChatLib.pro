@@ -16,6 +16,7 @@ SOURCES += \
     messagestableserver.cpp \
     request_and_reply_constants.cpp \
     serverlogstable.cpp \
+    sqldatabase.cpp \
     user.cpp \
     userstable.cpp
 
@@ -36,5 +37,6 @@ HEADERS += \
     messagestableserver.h \
     request_and_reply_constants.h \
     serverlogstable.h \
+    sqldatabase.h \
     user.h \
     userstable.h
