@@ -3,7 +3,7 @@
 namespace db {
 
     namespace users {
-        const QString TableName = "contacts";
+        const QString TableName = "users";
 
         namespace fieldnames {
             const QString Id = "id";
@@ -16,7 +16,7 @@ namespace db {
     } // contacts
 
     namespace chats {
-        extern const QString TableName;
+        const QString TableName = "chats";
 
         namespace fieldnames {
             const QString Id = "id";
@@ -29,7 +29,7 @@ namespace db {
     } // chats
 
     namespace chat_participants {
-        extern const QString TableName;
+        const QString TableName = "chat_participants";
 
         namespace fieldnames {
             const QString Id = "id";

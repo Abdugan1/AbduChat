@@ -1,6 +1,8 @@
 #ifndef SERVERWORKER_H
 #define SERVERWORKER_H
 
+#include <AbduChatLib/user.h>
+
 #include <QObject>
 
 class QTcpSocket;
@@ -15,14 +17,12 @@ public:
 
     void sendJson(const QJsonObject& jsonObject);
 
-    const QString &username() const;
-    void setUsername(const QString &newUsername);
-
     QString peerAddress() const;
     QString peerName() const;
 
-    int id() const;
-    void setId(int newId);
+    const User &user() const;
+    void setUser(const User &newUser);
+    void resetUser();
 
 signals:
     void jsonReceived(const QJsonObject& jsonObject);
@@ -30,6 +30,8 @@ signals:
     void errorOccurred();
 
     void logMessage(const QString& text);
+
+    void userChanged();
 
 public slots:
     void disconnectFromClient();
@@ -39,8 +41,7 @@ private:
 
 private:
     QTcpSocket* serverSocket_ = nullptr;
-    QString username_;
-    int id_ = -1;
+    User user_;
 
 };
 

@@ -4,10 +4,12 @@
 #include <QTcpServer>
 
 class ServerWorker;
+class User;
 
+class SqlDatabase;
 class UsersServerTable;
 class ServerLogsTable;
-class MessagesTableServer;
+class MessagesTable;
 class Message;
 
 class QMutex;
@@ -16,7 +18,7 @@ class ChatServer : public QTcpServer
 {
     Q_OBJECT
 public:
-    explicit ChatServer(QMutex* serverLogsMutex, QObject* parent = nullptr);
+    explicit ChatServer(SqlDatabase* database, QMutex* serverLogsMutex, QObject* parent = nullptr);
     ~ChatServer();
 
     ServerLogsTable *serverLogsTable() const;
@@ -40,11 +42,11 @@ private:
     void parseJsonRequestFromUnauthorized(ServerWorker* sender, const QJsonObject& jsonRequest);
 
     void parseLogInRequest(ServerWorker* sender, const QJsonObject jsonRequest);
-    void sendLogInSucceedReply(ServerWorker* recipient, const QString& username, int id);
+    void sendLogInSucceedReply(ServerWorker* recipient, const User& user);
     void sendLogInFailedReply(ServerWorker* recipient);
 
     void parseRegisterRequest(ServerWorker* sender, const QJsonObject& jsonRequest);
-    void sendRegisterSucceedReply(ServerWorker* recipient, const QString& username);
+    void sendRegisterSucceedReply(ServerWorker* recipient);
     void sendRegisterFailedReply(ServerWorker* recipient);
 
     void parseSendMessageRequest(ServerWorker* sender, const QJsonObject& jsonRequest);
@@ -63,9 +65,11 @@ private:
 private:
     QList<ServerWorker*> clients_;
 
-    UsersServerTable* usersTable_ = nullptr;
-    ServerLogsTable* serverLogsTable_ = nullptr;
-    MessagesTableServer* messagesTable_ = nullptr;
+    SqlDatabase* database_ = nullptr;
+
+    UsersServerTable* usersServerTable_ = nullptr;
+    ServerLogsTable*  serverLogsTable_  = nullptr;
+    MessagesTable*    messagesTable_    = nullptr;
 
     QMutex* serverLogsMutex_ = nullptr;
 };

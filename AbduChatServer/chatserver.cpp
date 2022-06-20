@@ -12,21 +12,22 @@
 
 #include <AbduChatLib/request_and_reply_constants.h>
 #include <AbduChatLib/database_names.h>
-#include <AbduChatLib/userstable.h>
+#include <AbduChatLib/sqldatabase.h>
+#include <AbduChatLib/usersservertable.h>
 #include <AbduChatLib/serverlogstable.h>
-#include <AbduChatLib/messagestableserver.h>
+#include <AbduChatLib/messagestableclient.h>
 #include <AbduChatLib/message.h>
 
 const int Port = 2002;
 
-ChatServer::ChatServer(QMutex *serverLogsMutex, QObject *parent)
+ChatServer::ChatServer(SqlDatabase* database, QMutex *serverLogsMutex, QObject *parent)
     : QTcpServer{parent}
-    , usersTable_(new UsersServerTable(this))
-    , serverLogsTable_(new ServerLogsTable(this))
-    , messagesTable_(new MessagesTableServer(this))
+    , database_(database)
     , serverLogsMutex_(serverLogsMutex)
 {
-
+    usersServerTable_ = database_->userServerTable();
+    serverLogsTable_  = database_->serverLogsTable();
+    messagesTable_    = database_->messagesTable();
 }
 
 ChatServer::~ChatServer()
@@ -60,13 +61,13 @@ void ChatServer::logMessage(const QString &text)
 void ChatServer::parseJsonRequest(ServerWorker *sender, const QJsonObject &jsonRequest)
 {    
     const QString log = QString("JSON received from '%1'-%2: %3")
-            .arg(sender->username())
+            .arg(sender->user().username())
             .arg(sender->peerAddress())
             .arg(QString(QJsonDocument(jsonRequest).toJson()));
 
     logMessage(log);
 
-    if (sender->username().isEmpty()) {
+    if (!sender->user().isValid()) {
         parseJsonRequestFromUnauthorized(sender, jsonRequest);
     } else {
         parseJsonRequestFromAuthorized(sender, jsonRequest);
@@ -76,14 +77,14 @@ void ChatServer::parseJsonRequest(ServerWorker *sender, const QJsonObject &jsonR
 void ChatServer::onUserDisconnected(ServerWorker *client)
 {
     clients_.removeAll(client);
-    if (client->id() != -1) {
+    if (client->user().isValid()) {
         QJsonObject disconnectedMessage;
         disconnectedMessage[reply::headers::Type] = reply::types::UserDisconnected;
-        disconnectedMessage[reply::headers::Id]   = client->id();
+        disconnectedMessage[reply::headers::User]   = client->user().toJson();
         broadcast(disconnectedMessage, nullptr);
 
         logMessage(QString("%1 disconnected.\nIP: %2\nName: %3")
-                   .arg(client->username(), client->peerAddress(), client->peerName()));
+                   .arg(client->user().username(), client->peerAddress(), client->peerName()));
     }
 }
 
@@ -143,23 +144,21 @@ void ChatServer::parseLogInRequest(ServerWorker *sender, const QJsonObject jsonR
     const QString username = jsonRequest.value(request::headers::Username).toString();
     const QString password = jsonRequest.value(request::headers::Password).toString();
 
-    if (!usersTable_->hasUser(username, password)) {
+    if (!usersServerTable_->hasUser(username, password)) {
         sendLogInFailedReply(sender);
     } else {
-        int id = usersTable_->getUser(username).value(db::users::fieldnames::Id).toInt();
-        sendLogInSucceedReply(sender, username, id);
-        sender->setUsername(username);
-        sender->setId(id);
+        User user = User::fromSqlRecord(usersServerTable_->getUser(username));
+        sendLogInSucceedReply(sender, user);
+        sender->setUser(user);
     }
 }
 
-void ChatServer::sendLogInSucceedReply(ServerWorker *recipient, const QString &username, int id)
+void ChatServer::sendLogInSucceedReply(ServerWorker *recipient, const User& user)
 {
     QJsonObject logInSuccessReply;
     logInSuccessReply[reply::headers::Type]     = reply::types::Login;
     logInSuccessReply[reply::headers::Success]  = true;
-    logInSuccessReply[reply::headers::Username] = username;
-    logInSuccessReply[reply::headers::Id]       = id;
+    logInSuccessReply[reply::headers::User]     = user.toJson();
 
     recipient->sendJson(logInSuccessReply);
 }
@@ -176,22 +175,21 @@ void ChatServer::sendLogInFailedReply(ServerWorker *recipient)
 
 void ChatServer::parseRegisterRequest(ServerWorker *sender, const QJsonObject &jsonRequest)
 {
-    const QString username = jsonRequest.value(request::headers::Username).toString();
+    const User user = User::fromJson(jsonRequest);
     const QString password = jsonRequest.value(request::headers::Password).toString();
 
-    if (usersTable_->insertUser(username, password)) {
-        sendRegisterSucceedReply(sender, username);
+    if (database_->addUser(user, password)) {
+        sendRegisterSucceedReply(sender);
     } else {
         sendRegisterFailedReply(sender);
     }
 }
 
-void ChatServer::sendRegisterSucceedReply(ServerWorker *recipient, const QString &username)
+void ChatServer::sendRegisterSucceedReply(ServerWorker *recipient)
 {
     QJsonObject registerSuccessReply;
     registerSuccessReply[reply::headers::Type]     = reply::types::Register;
     registerSuccessReply[reply::headers::Success]  = true;
-    registerSuccessReply[reply::headers::Username] = username;
 
     recipient->sendJson(registerSuccessReply);
 }
@@ -209,7 +207,7 @@ void ChatServer::sendRegisterFailedReply(ServerWorker *recipient)
 void ChatServer::parseSendMessageRequest(ServerWorker *sender, const QJsonObject &jsonRequest)
 {
     Message message = Message::fromJson(jsonRequest);
-    messagesTable_->insertMessage(message);
+    database_->addMessage(message);
 
     // last inserted message id.
     message.setId(messagesTable_->record(messagesTable_->rowCount() - 1)
@@ -243,9 +241,9 @@ void ChatServer::sendAllContactsReply(ServerWorker *recipient)
 {
     QJsonArray users;
 
-    const int rowCount = usersTable_->rowCount();
+    const int rowCount = usersServerTable_->rowCount();
     for (int i = 0; i < rowCount; ++i) {
-        const QSqlRecord record = usersTable_->record(i);
+        const QSqlRecord record = usersServerTable_->record(i);
         QJsonObject user = User::fromSqlRecord(record).toJson();
         users.push_back(user);
     }

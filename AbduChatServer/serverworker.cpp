@@ -28,17 +28,7 @@ void ServerWorker::sendJson(const QJsonObject &jsonObject)
     DataStream socketStream(serverSocket_);
     socketStream << jsonData;
 
-    emit logMessage("Sending to \'" + username_ + "\'-" + peerAddress() + " - " + QString::fromUtf8(jsonData));
-}
-
-const QString &ServerWorker::username() const
-{
-    return username_;
-}
-
-void ServerWorker::setUsername(const QString &newUsername)
-{
-    username_ = newUsername;
+    emit logMessage("Sending to \'" + user().username() + "\'-" + peerAddress() + " - " + QString::fromUtf8(jsonData));
 }
 
 QString ServerWorker::peerAddress() const
@@ -51,14 +41,22 @@ QString ServerWorker::peerName() const
     return serverSocket_->peerName();
 }
 
-int ServerWorker::id() const
+const User &ServerWorker::user() const
 {
-    return id_;
+    return user_;
 }
 
-void ServerWorker::setId(int newId)
+void ServerWorker::setUser(const User &newUser)
 {
-    id_ = newId;
+    if (user_ == newUser)
+        return;
+    user_ = newUser;
+    emit userChanged();
+}
+
+void ServerWorker::resetUser()
+{
+    setUser(User{}); // TODO: Adapt to use your actual default value
 }
 
 void ServerWorker::disconnectFromClient()

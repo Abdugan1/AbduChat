@@ -178,7 +178,7 @@ void Console::printServerLogs()
 
     serverLogsPad_->refreshPrintYPos();
 
-    int rowCount = serverLogsTable_->rowCount();
+    const int rowCount = serverLogsTable_->rowCount();
     for (int i = 0; i < rowCount; ++i) {
         QSqlRecord record = serverLogsTable_->record(i);
         QString text = record.value(FieldNames::Text).toString();

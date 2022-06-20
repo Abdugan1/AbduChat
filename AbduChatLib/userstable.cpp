@@ -1,112 +1,58 @@
 #include "userstable.h"
 #include "database_names.h"
+#include "request_and_reply_constants.h"
+#include "user.h"
 
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
-#include <QDateTime>
-
+#include <QJsonObject>
+#include <QJsonArray>
 #include <QDebug>
 
-namespace FieldNames = db::users_server::fieldnames;
-namespace FieldNums = db::users_server::fieldnums;
+namespace FieldNames = db::users::fieldnames;
+namespace FieldNums = db::users::fieldnums;
 
-UsersServerTable::UsersServerTable(QObject *parent)
-    : QSqlTableModel{parent}
+UsersTable::UsersTable(QObject *parent)
+    : SqlTableModel{parent}
 {
-    createTable();
-    setTable(db::users_server::TableName);
-    setEditStrategy(QSqlTableModel::OnManualSubmit);
-    select();
+    setTable(db::users::TableName);
+    createRoleNames();
 }
 
-QVariant UsersServerTable::data(const QModelIndex &index, int role) const
+void UsersTable::addUser(const User &user)
 {
-    if (role < Qt::UserRole)
-        return QSqlTableModel::data(index, role);
+    QSqlRecord userRecord = record();
+    user.toSqlRecord(&userRecord);
+    addUserRecord(userRecord);
 
-    QSqlRecord sqlRecord = record(index.row());
-    return sqlRecord.value(role - Qt::UserRole);
+    if (!submitAll()) {
+        qFatal("Cannot submit user:\n id: %d\nusername: %s\nreason: %s",
+               user.id(),
+               qPrintable(user.username()),
+               qPrintable(lastError().text())
+               );
+    }
 }
 
-QHash<int, QByteArray> UsersServerTable::roleNames() const
+void UsersTable::createRoleNames()
 {
     QHash<int, QByteArray> names;
-    names[FieldNums::Id       + Qt::UserRole] = FieldNames::Id;
-    names[FieldNums::Username + Qt::UserRole] = FieldNames::Username;
-    names[FieldNums::Password + Qt::UserRole] = FieldNames::Password;
-    return names;
+    names[FieldNums::Id         + Qt::UserRole] = qPrintable(FieldNames::Id);
+    names[FieldNums::FirstName  + Qt::UserRole] = qPrintable(FieldNames::FirstName);
+    names[FieldNums::LastName   + Qt::UserRole] = qPrintable(FieldNames::LastName);
+    names[FieldNums::Username   + Qt::UserRole] = qPrintable(FieldNames::Username);
+    names[FieldNums::Date       + Qt::UserRole] = qPrintable(FieldNames::Date);
+    setRoleNames(names);
 }
 
-bool UsersServerTable::hasUser(const QString &username, const QString &password)
+void UsersTable::addUserRecord(const QSqlRecord &userRecord)
 {
-    const QString execute = QString("SELECT COUNT(*) FROM %1 WHERE %2=:username AND %3=:password;")
-                            .arg(db::users_server::TableName)
-                            .arg(db::users::fieldnames::Username)
-                            .arg(db::users_server::fieldnames::Password);
-    QSqlQuery query;
-    query.prepare(execute);
-    query.bindValue(":username", username);
-    query.bindValue(":password", password);
-    query.exec();
-    query.next();
-    return query.value(0).toBool();
-}
-
-bool UsersServerTable::insertUser(const QString &username, const QString &password)
-{
-    QSqlRecord newRecord = record();
-    newRecord.setValue(FieldNames::Username, username);
-    newRecord.setValue(FieldNames::Password, password);
-
-
-    if (!insertRecord(rowCount(), newRecord))
-        return false;
-
-    if (!submitAll())
-        return false;
-
-    select();
-
-    return true;
-}
-
-QSqlRecord UsersServerTable::getUser(const QString &username) const
-{
-    const QString execute = QString("SELECT * FROM %1 WHERE %2=:username")
-                            .arg(db::users_server::TableName)
-                            .arg(db::users::fieldnames::Username);
-    QSqlQuery query;
-    query.prepare(execute);
-    query.bindValue(":username", username);
-    if (!query.exec()) {
-        qFatal("Cannot get user %s: %s", qPrintable(username), qPrintable(query.lastError().text()));
+    if (!insertRecord(rowCount(), userRecord)) {
+        qFatal("Cannot submit user:\n id: %d\nusername: %s\nreason: %s",
+               userRecord.value(FieldNames::Id).toInt(),
+               qPrintable(userRecord.value(FieldNames::Username).toString()),
+               qPrintable(lastError().text())
+               );
     }
-    query.next();
-    return query.record();
-}
-
-void UsersServerTable::createTable()
-{
-    if (QSqlDatabase::database().tables().contains(db::users::TableName))
-        return;
-
-//    const QString execute = QString("CREATE TABLE IF NOT EXISTS %1 (" // TableName: users
-//                                    " '%2' INTEGER PRIMARY KEY," // id
-//                                    " '%3' TEXT NOT NULL UNIQUE," // username
-//                                    " '%4' TEXT NOT NULL," // password
-//                                    " '%5' TEXT NOT NULL" // insert_datetime
-//                                    ")")
-//            .arg(db::users::TableName)
-//            .arg(FieldNames::Id)
-//            .arg(FieldNames::Username)
-//            .arg(FieldNames::Password)
-//            .arg(FieldNames::InsertDatetime);
-
-//    QSqlQuery query;
-//    if (!query.exec(execute)) {
-//        qFatal("Cannot create table '%s': %s",
-//               qPrintable(tableName()),
-//               qPrintable(query.lastError().text()));
-//    }
 }

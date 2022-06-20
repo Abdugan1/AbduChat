@@ -55,15 +55,16 @@ extern const char* MessageList;
 namespace headers {
 
 extern const char* Type;
-extern const char* Id;
-extern const char* Message;
 
 extern const char* Success;
 extern const char* Reason;
 
 extern const char* Username;
 
+extern const char* User;
 extern const char* Users;
+
+extern const char* Message;
 extern const char* Messages;
 
 extern const char* Date;
@@ -88,6 +89,7 @@ extern const char* Id;
 extern const char* FirstName;
 extern const char* LastName;
 extern const char* Username;
+extern const char* Date;
 
 } // headers
 
@@ -101,6 +103,7 @@ namespace headers {
 extern const char* Id;
 extern const char* Type;
 extern const char* Username;
+extern const char* Date;
 
 } // headers
 

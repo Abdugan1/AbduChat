@@ -73,6 +73,17 @@ QJsonObject Message::toJson() const
     return json;
 }
 
+void Message::toSqlRecord(QSqlRecord *record) const
+{
+    namespace FieldNames = db::messages::fieldnames;
+
+    record->setValue(FieldNames::Id, id());
+    record->setValue(FieldNames::FromUserId, from().id());
+    record->setValue(FieldNames::ChatId, chat().id());
+    record->setValue(FieldNames::Text, text());
+    record->setValue(FieldNames::Date, date());
+}
+
 Message Message::fromJson(const QJsonObject &json)
 {
     Message message;

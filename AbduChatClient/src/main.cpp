@@ -8,7 +8,7 @@
 #include <QTimer>
 #include <QDebug>
 
-#include <AbduChatLib/contactstable.h>
+#include <AbduChatLib/userstable.h>
 #include <AbduChatLib/messagestableclient.h>
 #include <AbduChatLib/connect_to_database.h>
 
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     connectToDatabase();
 
     qmlRegisterType<UsersTable>("AbduChatLib", 1, 0, "ContactsTable");
-    qmlRegisterType<MessagesTableClient>("AbduChatLib", 1, 0, "MessagesTable");
+    qmlRegisterType<MessagesTable>("AbduChatLib", 1, 0, "MessagesTable");
 
     qmlRegisterType<ChatClient>("AbduChatClient", 1, 0, "ChatClient");
 

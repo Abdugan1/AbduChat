@@ -1,22 +1,19 @@
 #ifndef SERVERLOGSTABLE_H
 #define SERVERLOGSTABLE_H
 
-#include <QSqlTableModel>
+#include "sqltablemodel.h"
 
-class ServerLogsTable : public QSqlTableModel
+class ServerLogsTable : public SqlTableModel
 {
     Q_OBJECT
 public:
     explicit ServerLogsTable(QObject *parent = nullptr);
 
-    QVariant data(const QModelIndex &index, int role) const;
-    QHash<int, QByteArray> roleNames() const;
-
 public slots:
     void insertLog(const QString& text, const QString& insertDatetime);
 
 private:
-    void createTable();
+    void createRoleNames();
 };
 
 #endif // SERVERLOGSTABLE_H

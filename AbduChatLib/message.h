@@ -30,6 +30,7 @@ public:
     void setDate(const QString &newDate);
 
     QJsonObject toJson() const;
+    void toSqlRecord(QSqlRecord* record) const;
     static Message fromJson(const QJsonObject& json);
     static Message fromSqlRecord(const QSqlRecord& record);
 

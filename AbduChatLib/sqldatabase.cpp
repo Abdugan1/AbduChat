@@ -1,17 +1,68 @@
 #include "sqldatabase.h"
 #include "database_names.h"
 
+#include "userstable.h"
+#include "chatstable.h"
+#include "messagestableclient.h"
+#include "usersservertable.h"
+#include "serverlogstable.h"
+
 #include <QSqlQuery>
 #include <QSqlError>
 
 #include <QDir>
 #include <QStandardPaths>
 
-SqlDatabase::SqlDatabase()
-    : QObject()
+SqlDatabase::SqlDatabase(QObject *parent)
+    : QObject(parent)
     , QSqlDatabase()
 {
     connectToDatabase();
+    createTables();
+    initTables();
+}
+
+UsersTable *SqlDatabase::usersTable() const
+{
+    return usersTable_;
+}
+
+ChatsTable *SqlDatabase::chatsTable() const
+{
+    return chatsTable_;
+}
+
+MessagesTable *SqlDatabase::messagesTable() const
+{
+    return messagesTable_;
+}
+
+UsersServerTable *SqlDatabase::userServerTable() const
+{
+    return userServerTable_;
+}
+
+void SqlDatabase::addUser(const User &user)
+{
+    usersTable_->addUser(user);
+}
+
+#ifdef ABDUCHAT_SERVER
+bool SqlDatabase::addUser(const User &user, const QString &password)
+{
+    usersTable_->addUser(user);
+    return userServerTable_->addUser(user, password);
+}
+#endif
+
+void SqlDatabase::addChat(const Chat &chat)
+{
+    chatsTable_->addChat(chat);
+}
+
+void SqlDatabase::addMessage(const Message &message)
+{
+    messagesTable_->addMessage(message);
 }
 
 void SqlDatabase::connectToDatabase()
@@ -49,6 +100,7 @@ void SqlDatabase::createTables()
 #endif
 
 #ifdef ABDUCHAT_SERVER
+    createServerLogsTable();
     createUsersServerTable();
 #endif
 }
@@ -65,9 +117,9 @@ void SqlDatabase::createUsersTable()
                                     ");");
 
     QSqlQuery query;
-    if (query.exec(execute)) {
+    if (!query.exec(execute)) {
         qFatal("Cannot create table %s: %s",
-               qPrintable(TableName), qPrintable(lastError().text()));
+               qPrintable(TableName), qPrintable(query.lastError().text()));
     }
 }
 
@@ -82,9 +134,9 @@ void SqlDatabase::createChatsTable()
                                     ");");
 
     QSqlQuery query;
-    if (query.exec(execute)) {
+    if (!query.exec(execute)) {
         qFatal("Cannot create table %s: %s",
-               qPrintable(TableName), qPrintable(lastError().text()));
+               qPrintable(TableName), qPrintable(query.lastError().text()));
     }
 }
 
@@ -92,7 +144,7 @@ void SqlDatabase::createChatParticipantsTable()
 {
     using namespace db::chat_participants;
     using namespace fieldnames;
-    const QString execute = QString("CREATE TABLE IF NOT EXITS " + TableName + "(" +
+    const QString execute = QString("CREATE TABLE IF NOT EXISTS " + TableName + "(" +
                                         Id + " INTEGER PRIMARY KEY," +
                                         ChatId + " INTEGER," +
                                         UserId + " INTEGER,"
@@ -101,9 +153,9 @@ void SqlDatabase::createChatParticipantsTable()
                                     ");");
 
     QSqlQuery query;
-    if (query.exec(execute)) {
+    if (!query.exec(execute)) {
         qFatal("Cannot create table %s: %s",
-               qPrintable(TableName), qPrintable(lastError().text()));
+               qPrintable(TableName), qPrintable(query.lastError().text()));
     }
 }
 
@@ -122,10 +174,25 @@ void SqlDatabase::createMessagesTable()
                                     ");"
                                     );
     QSqlQuery query;
-    if (query.exec(execute)) {
+    if (!query.exec(execute)) {
         qFatal("Cannot create table %s: %s",
-               qPrintable(TableName), qPrintable(lastError().text()));
+               qPrintable(TableName), qPrintable(query.lastError().text()));
     }
+}
+
+void SqlDatabase::initTables()
+{
+    usersTable_ = new UsersTable(this);
+    chatsTable_ = new ChatsTable(this);
+    messagesTable_ = new MessagesTable(this);
+
+    userServerTable_ = new UsersServerTable(this);
+    serverLogsTable_ = new ServerLogsTable(this);
+}
+
+ServerLogsTable *SqlDatabase::serverLogsTable() const
+{
+    return serverLogsTable_;
 }
 
 #ifdef ABDUCHAT_CLIENT
@@ -153,12 +220,29 @@ void SqlDatabase::createChatsView()
     QSqlQuery query;
     if (query.exec(execute)) {
         qFatal("Cannot create view %s: %s",
-               qPrintable(ViewName), qPrintable(lastError().text()));
+               qPrintable(ViewName), qPrintable(query.lastError().text()));
     }
 }
 #endif
 
 #ifdef ABDUCHAT_SERVER
+void SqlDatabase::createServerLogsTable()
+{
+    using namespace db::server_logs;
+    using namespace fieldnames;
+    const QString execute = QString("CREATE TABLE IF NOT EXISTS" + TableName + "(" +
+                                        Id + " INTEGER PRIMARY KEY," +
+                                        Text + " TEXT," +
+                                        Date + " TEXT"
+                                               ");"
+                                    );
+    QSqlQuery query;
+    if (query.exec(execute)) {
+        qFatal("Cannot create table %s: %s",
+               qPrintable(TableName), qPrintable(query.lastError().text()));
+    }
+}
+
 void SqlDatabase::createUsersServerTable()
 {
     using namespace db::users_server;
@@ -172,7 +256,7 @@ void SqlDatabase::createUsersServerTable()
     QSqlQuery query;
     if (query.exec(execute)) {
         qFatal("Cannot create table %s: %s",
-               qPrintable(TableName), qPrintable(lastError().text()));
+               qPrintable(TableName), qPrintable(query.lastError().text()));
     }
 }
 #endif

@@ -40,6 +40,16 @@ void Chat::setUsername(const QString &newUsername)
     username_ = newUsername;
 }
 
+const QString &Chat::date() const
+{
+    return date_;
+}
+
+void Chat::setDate(const QString &newDate)
+{
+    date_ = newDate;
+}
+
 QJsonObject Chat::toJson() const
 {
     QJsonObject json;
@@ -47,8 +57,19 @@ QJsonObject Chat::toJson() const
     json[chat::headers::Id]         = id();
     json[chat::headers::Type]       = type();
     json[chat::headers::Username]   = username();
+    json[chat::headers::Date]       = date();
 
     return json;
+}
+
+void Chat::toSqlRecord(QSqlRecord *record) const
+{
+    namespace FieldNames = db::chats::fieldnames;
+
+    record->setValue(FieldNames::Id, id());
+    record->setValue(FieldNames::Type, type());
+    record->setValue(FieldNames::Username, username());
+    record->setValue(FieldNames::Date, date());
 }
 
 Chat Chat::fromJson(const QJsonObject &json)
@@ -58,6 +79,7 @@ Chat Chat::fromJson(const QJsonObject &json)
     chat.setId(json.value(chat::headers::Id).toInt());
     chat.setType(json.value(chat::headers::Type).toString());
     chat.setUsername(json.value(chat::headers::Username).toString());
+    chat.setUsername(json.value(chat::headers::Date).toString());
 
     return chat;
 }
@@ -71,6 +93,7 @@ Chat Chat::fromSqlRecord(const QSqlRecord &record)
     chat.setId(record.value(FieldNames::Id).toInt());
     chat.setType(record.value(FieldNames::Type).toString());
     chat.setUsername(record.value(chat::headers::Username).toString());
+    chat.setDate(record.value(FieldNames::Date).toString());
 
     return chat;
 }

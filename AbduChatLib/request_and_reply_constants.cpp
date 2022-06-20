@@ -54,15 +54,16 @@ const char* MessageList = "message_list";
 namespace headers {
 
 const char* Type = "type";
-const char* Id = "id";
-const char* Message = "message";
 
 const char* Success = "success";
 const char* Reason = "reason";
 
 const char* Username = "username";
 
+const char* User = "user";
 const char* Users = "users";
+
+const char* Message = "message";
 const char* Messages = "messages";
 
 const char* Date = "date";
@@ -87,6 +88,7 @@ const char* Id = "id";
 const char* FirstName = "first_name";
 const char* LastName = "last_name";
 const char* Username = "username";
+const char* Date = "date";
 
 } // headers
 
@@ -100,6 +102,7 @@ namespace headers {
 const char* Id = "id";
 const char* Type = "type";
 const char* Username = "username";
+const char* Date = "date";
 
 } // headers
 

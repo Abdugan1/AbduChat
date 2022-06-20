@@ -1,24 +1,25 @@
 #ifndef USERSTABLE_H
 #define USERSTABLE_H
 
-#include <QSqlTableModel>
+#include "sqltablemodel.h"
 
-class UsersServerTable : public QSqlTableModel
+class User;
+
+class UsersTable : public SqlTableModel
 {
     Q_OBJECT
 public:
-    explicit UsersServerTable(QObject *parent = nullptr);
+    explicit UsersTable(QObject* parent = nullptr);
 
-    QVariant data(const QModelIndex &index, int role) const;
-    QHash<int, QByteArray> roleNames() const;
-
-    bool hasUser(const QString& username, const QString& password);
-    bool insertUser(const QString& username, const QString& password);
-
-    QSqlRecord getUser(const QString& username) const;
+protected:
+    void addUser(const User& user);
 
 private:
-    void createTable();
+    void createRoleNames();
+
+    void addUserRecord(const QSqlRecord& userRecord);
+
+    friend class SqlDatabase;
 };
 
 #endif // USERSTABLE_H

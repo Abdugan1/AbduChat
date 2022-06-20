@@ -4,16 +4,18 @@
 
 #include "console.h"
 #include "chatserver.h"
-#include <AbduChatLib/connect_to_database.h>
+#include <AbduChatLib/sqldatabase.h>
+#include <AbduChatLib/user.h>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-    connectToDatabase();
+    SqlDatabase database;
+    database.addUser(User(), "");
 
     QMutex serverLogsMutex;
 
-    ChatServer chatServer(&serverLogsMutex);
+    ChatServer chatServer(&database, &serverLogsMutex);
 
     auto threadPool = QThreadPool::globalInstance();
 

@@ -50,6 +50,21 @@ void User::setUsername(const QString &newUsername)
     username_ = newUsername;
 }
 
+const QString &User::date() const
+{
+    return date_;
+}
+
+void User::setDate(const QString &newDate)
+{
+    date_ = newDate;
+}
+
+bool User::isValid() const
+{
+    return id() != -1;
+}
+
 QJsonObject User::toJson() const
 {
     QJsonObject json;
@@ -58,8 +73,20 @@ QJsonObject User::toJson() const
     json[user::headers::FirstName]  = firstName();
     json[user::headers::LastName]   = lastName();
     json[user::headers::Username]   = username();
+    json[user::headers::Date]       = date();
 
     return json;
+}
+
+void User::toSqlRecord(QSqlRecord *record) const
+{
+    namespace FieldNames = db::users::fieldnames;
+
+    record->setValue(FieldNames::Id, id());
+    record->setValue(FieldNames::FirstName, firstName());
+    record->setValue(FieldNames::LastName, lastName());
+    record->setValue(FieldNames::Username, username());
+    record->setValue(FieldNames::Date, date());
 }
 
 User User::fromJson(const QJsonObject &json)
@@ -70,6 +97,7 @@ User User::fromJson(const QJsonObject &json)
     user.setFirstName(json.value(user::headers::FirstName).toString());
     user.setLastName(json.value(user::headers::LastName).toString());
     user.setUsername(json.value(user::headers::Username).toString());
+    user.setDate(json.value(user::headers::Date).toString());
 
     return user;
 }
@@ -84,6 +112,12 @@ User User::fromSqlRecord(const QSqlRecord &record)
     user.setFirstName(record.value(FieldNames::FirstName).toString());
     user.setLastName(record.value(FieldNames::LastName).toString());
     user.setUsername(record.value(FieldNames::Username).toString());
+    user.setUsername(record.value(FieldNames::Date).toString());
 
     return user;
+}
+
+bool operator==(const User& left, const User& right)
+{
+    return left.id_ == right.id_;
 }
