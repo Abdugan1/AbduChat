@@ -10,12 +10,15 @@ TARGET = abduchatlib
 SOURCES += \
     chat.cpp \
     chatstable.cpp \
+    chatsviewtable.cpp \
     database_names.cpp \
     message.cpp \
     messagestableclient.cpp \
     request_and_reply_constants.cpp \
     serverlogstable.cpp \
     sqldatabase.cpp \
+    sqldatabaseclient.cpp \
+    sqldatabaseserver.cpp \
     sqltablemodel.cpp \
     user.cpp \
     usersservertable.cpp \
@@ -30,6 +33,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     chat.h \
     chatstable.h \
+    chatsviewtable.h \
     connect_to_database.h \
     database_names.h \
     datastream.h \
@@ -38,6 +42,8 @@ HEADERS += \
     request_and_reply_constants.h \
     serverlogstable.h \
     sqldatabase.h \
+    sqldatabaseclient.h \
+    sqldatabaseserver.h \
     sqltablemodel.h \
     user.h \
     usersservertable.h \

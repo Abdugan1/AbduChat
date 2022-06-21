@@ -6,7 +6,7 @@
 class ServerWorker;
 class User;
 
-class SqlDatabase;
+class SqlDatabaseServer;
 class UsersServerTable;
 class ServerLogsTable;
 class MessagesTable;
@@ -18,7 +18,7 @@ class ChatServer : public QTcpServer
 {
     Q_OBJECT
 public:
-    explicit ChatServer(SqlDatabase* database, QMutex* serverLogsMutex, QObject* parent = nullptr);
+    explicit ChatServer(SqlDatabaseServer* database, QMutex* serverLogsMutex, QObject* parent = nullptr);
     ~ChatServer();
 
     ServerLogsTable *serverLogsTable() const;
@@ -65,7 +65,7 @@ private:
 private:
     QList<ServerWorker*> clients_;
 
-    SqlDatabase* database_ = nullptr;
+    SqlDatabaseServer* database_ = nullptr;
 
     UsersServerTable* usersServerTable_ = nullptr;
     ServerLogsTable*  serverLogsTable_  = nullptr;

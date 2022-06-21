@@ -37,23 +37,10 @@ MessagesTable *SqlDatabase::messagesTable() const
     return messagesTable_;
 }
 
-UsersServerTable *SqlDatabase::userServerTable() const
-{
-    return userServerTable_;
-}
-
 void SqlDatabase::addUser(const User &user)
 {
     usersTable_->addUser(user);
 }
-
-#ifdef ABDUCHAT_SERVER
-bool SqlDatabase::addUser(const User &user, const QString &password)
-{
-    usersTable_->addUser(user);
-    return userServerTable_->addUser(user, password);
-}
-#endif
 
 void SqlDatabase::addChat(const Chat &chat)
 {
@@ -185,14 +172,6 @@ void SqlDatabase::initTables()
     usersTable_ = new UsersTable(this);
     chatsTable_ = new ChatsTable(this);
     messagesTable_ = new MessagesTable(this);
-
-    userServerTable_ = new UsersServerTable(this);
-    serverLogsTable_ = new ServerLogsTable(this);
-}
-
-ServerLogsTable *SqlDatabase::serverLogsTable() const
-{
-    return serverLogsTable_;
 }
 
 #ifdef ABDUCHAT_CLIENT
@@ -224,43 +203,6 @@ void SqlDatabase::createChatsView()
     }
 }
 #endif
-
-#ifdef ABDUCHAT_SERVER
-void SqlDatabase::createServerLogsTable()
-{
-    using namespace db::server_logs;
-    using namespace fieldnames;
-    const QString execute = QString("CREATE TABLE IF NOT EXISTS" + TableName + "(" +
-                                        Id + " INTEGER PRIMARY KEY," +
-                                        Text + " TEXT," +
-                                        Date + " TEXT"
-                                               ");"
-                                    );
-    QSqlQuery query;
-    if (query.exec(execute)) {
-        qFatal("Cannot create table %s: %s",
-               qPrintable(TableName), qPrintable(query.lastError().text()));
-    }
-}
-
-void SqlDatabase::createUsersServerTable()
-{
-    using namespace db::users_server;
-    using namespace fieldnames;
-    const QString execute = QString("CREATE TABLE IF NOT EXISTS " + TableName + "(" +
-                                        Id + " INTEGER PRIMARY KEY" +
-                                        Password + " TEXT,"
-                                    "   FOREIGN KEY(" + Id + ") REFERENCES " + db::users::TableName + "(" + db::users::fieldnames::Id + ")"
-                                    ");"
-                                    );
-    QSqlQuery query;
-    if (query.exec(execute)) {
-        qFatal("Cannot create table %s: %s",
-               qPrintable(TableName), qPrintable(query.lastError().text()));
-    }
-}
-#endif
-
 
 
 

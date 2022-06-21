@@ -53,11 +53,10 @@ QSqlRecord UsersServerTable::getUser(const QString &username) const
 bool UsersServerTable::addUser(const User &user, const QString &password)
 {
     QSqlRecord userRecord = record();
-    user.toSqlRecord(&userRecord);
-
+    userRecord.setValue(FieldNames::Username, user.username());
     userRecord.setValue(FieldNames::Password, password);
 
-    if (addUserRecord(userRecord))
+    if (!addUserRecord(userRecord))
         return false;
 
     if (!submitAll())
@@ -77,12 +76,5 @@ void UsersServerTable::createRoleNames()
 
 bool UsersServerTable::addUserRecord(const QSqlRecord &userRecord)
 {
-    if (!insertRecord(rowCount(), userRecord)) {
-        qFatal("Cannot submit user:\n id: %d\nusername: %s\npassword: %s\nreason: %s",
-               userRecord.value(FieldNames::Id).toInt(),
-               qPrintable(userRecord.value(FieldNames::Username).toString()),
-               qPrintable(userRecord.value(FieldNames::Password).toString()),
-               qPrintable(lastError().text())
-               );
-    }
+    return insertRecord(rowCount(), userRecord);
 }

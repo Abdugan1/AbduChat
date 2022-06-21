@@ -41,7 +41,7 @@ namespace db {
     } // chat_participants
 
     namespace chats_view {
-    extern const QString ViewName;
+    const QString ViewName = "chats_view";
 
     namespace fieldnames {
         const QString ChatId = "chat_id";
@@ -80,7 +80,7 @@ namespace db {
 
     namespace users_server {
 
-        const QString TableName = "users";
+        const QString TableName = "users_server";
 
         namespace fieldnames {
 

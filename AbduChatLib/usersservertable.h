@@ -23,7 +23,7 @@ private:
 
     bool addUserRecord(const QSqlRecord& userRecord);
 
-    friend class SqlDatabase;
+    friend class SqlDatabaseServer;
 };
 
 #endif // USERSSERVERTABLE_H

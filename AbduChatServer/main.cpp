@@ -4,14 +4,13 @@
 
 #include "console.h"
 #include "chatserver.h"
-#include <AbduChatLib/sqldatabase.h>
+#include <AbduChatLib/sqldatabaseserver.h>
 #include <AbduChatLib/user.h>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-    SqlDatabase database;
-    database.addUser(User(), "");
+    SqlDatabaseServer database;
 
     QMutex serverLogsMutex;
 

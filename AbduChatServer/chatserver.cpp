@@ -12,7 +12,7 @@
 
 #include <AbduChatLib/request_and_reply_constants.h>
 #include <AbduChatLib/database_names.h>
-#include <AbduChatLib/sqldatabase.h>
+#include <AbduChatLib/sqldatabaseserver.h>
 #include <AbduChatLib/usersservertable.h>
 #include <AbduChatLib/serverlogstable.h>
 #include <AbduChatLib/messagestableclient.h>
@@ -20,19 +20,20 @@
 
 const int Port = 2002;
 
-ChatServer::ChatServer(SqlDatabase* database, QMutex *serverLogsMutex, QObject *parent)
+ChatServer::ChatServer(SqlDatabaseServer* database, QMutex *serverLogsMutex, QObject *parent)
     : QTcpServer{parent}
     , database_(database)
     , serverLogsMutex_(serverLogsMutex)
 {
-    usersServerTable_ = database_->userServerTable();
+    usersServerTable_ = database_->usersServerTable();
     serverLogsTable_  = database_->serverLogsTable();
     messagesTable_    = database_->messagesTable();
 }
 
 ChatServer::~ChatServer()
 {
-    stop();
+    if (isListening())
+        stop();
 }
 
 void ChatServer::start()
