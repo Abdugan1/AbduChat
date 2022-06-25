@@ -13,8 +13,6 @@ public:
 
     bool hasUser(const QString& username, const QString& password);
 
-    QSqlRecord getUser(const QString& username) const;
-
 protected:
     bool addUser(const User& user, const QString& password);
 

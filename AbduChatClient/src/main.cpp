@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlComponent>
+#include <QQmlContext>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QStandardPaths>
@@ -9,8 +10,10 @@
 #include <QDebug>
 
 #include <AbduChatLib/userstable.h>
-#include <AbduChatLib/messagestableclient.h>
-#include <AbduChatLib/connect_to_database.h>
+#include <AbduChatLib/chatstable.h>
+#include <AbduChatLib/chatsviewtable.h>
+#include <AbduChatLib/messagestable.h>
+#include <AbduChatLib/sqldatabaseclient.h>
 
 #include "chatclient.h"
 
@@ -20,29 +23,17 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
 
-    connectToDatabase();
+    SqlDatabaseClient database;
+    ChatClient chatClient(&database);
 
-    qmlRegisterType<UsersTable>("AbduChatLib", 1, 0, "ContactsTable");
-    qmlRegisterType<MessagesTable>("AbduChatLib", 1, 0, "MessagesTable");
-
-    qmlRegisterType<ChatClient>("AbduChatClient", 1, 0, "ChatClient");
+//    qmlRegisterType<User>("AbduChatLib", 1, 0, "User");
 
     QQmlApplicationEngine engine;
-    QQmlComponent qmlComponent(&engine, QUrl("qrc:/qml/main.qml"));
-
-    QObject* root = qmlComponent.create();
-
-    QObject* chatClient = root->findChild<QObject*>("chatClient");
-    QObject* contactsTable = root->findChild<QObject*>("contactsTable");
-    QObject* messagesTable = root->findChild<QObject*>("messagesTable");
-
-    QObject::connect(chatClient,    SIGNAL(contactsAvailable(QJsonArray)),
-                     contactsTable, SLOT(insertContacts(QJsonArray)));
-
-    QObject::connect(chatClient,    SIGNAL(messageReceived(Message)),
-                     messagesTable, SLOT(insertMessage(Message)));
-    QObject::connect(chatClient,    SIGNAL(messagesAvailable(QJsonArray)),
-                     messagesTable, SLOT(insertMessages(QJsonArray)));
+    engine.rootContext()->setContextProperty("chatClient", &chatClient);
+    engine.rootContext()->setContextProperty("usersTable", database.usersTable());
+    engine.rootContext()->setContextProperty("chatsTable", database.chatsTable());
+    engine.rootContext()->setContextProperty("chatsViewTable", database.chatsViewTable());
+    engine.load("qrc:/qml/main.qml");
 
     return app.exec();
 }

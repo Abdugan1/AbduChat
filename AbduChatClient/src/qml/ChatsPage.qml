@@ -1,8 +1,5 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-
-import AbduChatLib 1.0
 
 Page {
     id: root
@@ -12,15 +9,32 @@ Page {
     height: 760
 
     header: ToolBar {
-        id: header
-        bottomPadding: 12
-        topPadding: 12
-        Label {
-            text: qsTr("AbduChat")
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            font.pixelSize: 20
-            anchors.leftMargin: 42
+        height: 43
+        rightPadding: 0
+        leftPadding: 0
+        bottomPadding: 0
+        Item {
+            id: header
+            anchors.fill: parent
+            Label {
+                id: title
+                text: qsTr("AbduChat")
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: 32
+                font.pointSize: 18
+            }
+            Image {
+                id: searchButton
+                anchors.verticalCenter: parent.verticalCenter
+                source: "qrc:/images/search_24.png"
+                anchors.rightMargin: 16
+                anchors.right: parent.right
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: { stackView.push(usersPage) }
+                }
+            }
         }
     }
 
@@ -28,14 +42,23 @@ Page {
         id: listView
         anchors.fill: parent
 
-        model: contactsTable
+        model: chatsViewTable
+
+//        model: ListModel {
+//            ListElement {
+//                username: "nnegmetov"
+//            }
+//            ListElement {
+//                username: "ergalii"
+//            }
+//        }
 
         delegate: ChatDelegate {}
     }
 
-    ContactsTable {
-        id: contactsTable
-        objectName: "contactsTable"
-        myId: getId()
-    }
+//    ContactsTable {
+//        id: contactsTable
+//        objectName: "contactsTable"
+//        myId: getId()
+//    }
 }

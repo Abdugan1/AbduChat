@@ -17,9 +17,11 @@ public:
     const QString &type() const;
     void setType(const QString &newType);
 
-    /// Kind of title. Every chats title is like username
-    const QString &username() const;
-    void setUsername(const QString &newUsername);
+    int user1Id() const;
+    void setUser1Id(int newUser1Id);
+
+    int user2Id() const;
+    void setUser2Id(int newUser2Id);
 
     const QString &date() const;
     void setDate(const QString &newDate);
@@ -29,11 +31,11 @@ public:
     static Chat fromJson(const QJsonObject& json);
     static Chat fromSqlRecord(const QSqlRecord& record);
 
-
 private:
     int id_ = -1;
     QString type_;
-    QString username_;
+    int user1Id_ = -1;
+    int user2Id_ = -1;
     QString date_;
 };
 

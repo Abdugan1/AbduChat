@@ -112,7 +112,7 @@ User User::fromSqlRecord(const QSqlRecord &record)
     user.setFirstName(record.value(FieldNames::FirstName).toString());
     user.setLastName(record.value(FieldNames::LastName).toString());
     user.setUsername(record.value(FieldNames::Username).toString());
-    user.setUsername(record.value(FieldNames::Date).toString());
+    user.setDate(record.value(FieldNames::Date).toString());
 
     return user;
 }

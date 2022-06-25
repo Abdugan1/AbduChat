@@ -1,5 +1,5 @@
-#ifndef MESSAGESTABLECLIENT_H
-#define MESSAGESTABLECLIENT_H
+#ifndef MESSAGESTABLE_H
+#define MESSAGESTABLE_H
 
 #include "sqltablemodel.h"
 
@@ -22,4 +22,4 @@ private:
     friend class SqlDatabase;
 };
 
-#endif // MESSAGESTABLECLIENT_H
+#endif // MESSAGESTABLE_H

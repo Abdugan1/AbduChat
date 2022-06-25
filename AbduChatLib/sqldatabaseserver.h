@@ -17,6 +17,8 @@ public:
 
     bool addUser(const User& user, const QString& password);
 
+    QSqlRecord getUser(const QString& username) const;
+
 private:
     void createServerTables();
     void createUsersServerTable();

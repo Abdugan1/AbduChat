@@ -14,6 +14,9 @@ public:
 protected:
     void addChat(const Chat& chat);
 
+public slots:
+    bool hasChat(int user1Id, int user2Id) const;
+
 private:
     void createRoleNames();
 

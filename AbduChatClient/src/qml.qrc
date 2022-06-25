@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>qml/ContactPage.qml</file>
+        <file>qml/ChatsPage.qml</file>
         <file>qml/ConversationPage.qml</file>
         <file>qml/LogInPage.qml</file>
         <file>qml/main.qml</file>
@@ -9,5 +9,10 @@
         <file>qml/CustomButton.qml</file>
         <file>qml/PasswordField.qml</file>
         <file>qml/ChatDelegate.qml</file>
+        <file>qml/UsersPage.qml</file>
+        <file>qml/BackButton.qml</file>
+        <file>qml/UserSearchField.qml</file>
+        <file>qml/UsersDelegate.qml</file>
+        <file>qml/MessageField.qml</file>
     </qresource>
 </RCC>

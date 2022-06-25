@@ -3,11 +3,12 @@
 
 #include "userstable.h"
 #include "chatstable.h"
-#include "messagestableclient.h"
+#include "messagestable.h"
 #include "usersservertable.h"
 #include "serverlogstable.h"
 
 #include <QSqlQuery>
+#include <QSqlRecord>
 #include <QSqlError>
 
 #include <QDir>
@@ -79,7 +80,6 @@ void SqlDatabase::createTables()
 {
     createUsersTable();
     createChatsTable();
-    createChatParticipantsTable();
     createMessagesTable();
 
 #ifdef ABDUCHAT_CLIENT
@@ -100,7 +100,8 @@ void SqlDatabase::createUsersTable()
                                         Id + " INTEGER PRIMARY KEY," +
                                         FirstName + " TEXT," +
                                         LastName + " TEXT," +
-                                        Username + " TEXT"
+                                        Username + " TEXT," +
+                                        Date + " TEXT"
                                     ");");
 
     QSqlQuery query;
@@ -117,26 +118,10 @@ void SqlDatabase::createChatsTable()
     const QString execute = QString("CREATE TABLE IF NOT EXISTS " + TableName + "(" +
                                         Id + " INTEGER PRIMARY KEY," +
                                         Type + " TEXT," +
-                                        Username + " TEXT"
-                                    ");");
-
-    QSqlQuery query;
-    if (!query.exec(execute)) {
-        qFatal("Cannot create table %s: %s",
-               qPrintable(TableName), qPrintable(query.lastError().text()));
-    }
-}
-
-void SqlDatabase::createChatParticipantsTable()
-{
-    using namespace db::chat_participants;
-    using namespace fieldnames;
-    const QString execute = QString("CREATE TABLE IF NOT EXISTS " + TableName + "(" +
-                                        Id + " INTEGER PRIMARY KEY," +
-                                        ChatId + " INTEGER," +
-                                        UserId + " INTEGER,"
-                                    "   FOREIGN KEY(" + ChatId + ") REFERENCES " + db::chats::TableName + "(" + db::chats::fieldnames::Id + "),"
-                                    "   FOREIGN KEY(" + UserId + ") REFERENCES " + db::users::TableName + "(" + db::users::fieldnames::Id + ")"
+                                        User1Id + " INTEGER," +
+                                        User2Id + " INTEGER," +
+                                    "   FOREIGN KEY(" + User1Id + ") REFERENCES " + db::users::TableName + "(" + db::users::fieldnames::Id + "),"
+                                    "   FOREIGN KEY(" + User2Id + ") REFERENCES " + db::users::TableName + "(" + db::users::fieldnames::Id + ")"
                                     ");");
 
     QSqlQuery query;

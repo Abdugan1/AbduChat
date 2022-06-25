@@ -13,9 +13,10 @@
 #include <AbduChatLib/request_and_reply_constants.h>
 #include <AbduChatLib/database_names.h>
 #include <AbduChatLib/sqldatabaseserver.h>
+#include <AbduChatLib/userstable.h>
 #include <AbduChatLib/usersservertable.h>
 #include <AbduChatLib/serverlogstable.h>
-#include <AbduChatLib/messagestableclient.h>
+#include <AbduChatLib/messagestable.h>
 #include <AbduChatLib/message.h>
 
 const int Port = 2002;
@@ -25,6 +26,7 @@ ChatServer::ChatServer(SqlDatabaseServer* database, QMutex *serverLogsMutex, QOb
     , database_(database)
     , serverLogsMutex_(serverLogsMutex)
 {
+    usersTable_       = database_->usersTable();
     usersServerTable_ = database_->usersServerTable();
     serverLogsTable_  = database_->serverLogsTable();
     messagesTable_    = database_->messagesTable();
@@ -122,8 +124,10 @@ void ChatServer::parseJsonRequestFromAuthorized(ServerWorker *sender, const QJso
 
     if (requestType == request::types::SendMessage) {
         parseSendMessageRequest(sender, jsonRequest);
-    } else if (requestType == request::types::SynchronizeContacts) {
-        parseSynchronizeContactsRequest(sender, jsonRequest);
+    } else if (requestType == request::types::CreateChat) {
+        parseCreateChatRequest(sender, jsonRequest);
+    } else if (requestType == request::types::SynchronizeUsers) {
+        parseSynchronizeUsersRequest(sender, jsonRequest);
     } else if (requestType == request::types::SynchronizeMessages) {
         parseSynchronizeMessagesRequest(sender, jsonRequest);
     }
@@ -148,7 +152,7 @@ void ChatServer::parseLogInRequest(ServerWorker *sender, const QJsonObject jsonR
     if (!usersServerTable_->hasUser(username, password)) {
         sendLogInFailedReply(sender);
     } else {
-        User user = User::fromSqlRecord(usersServerTable_->getUser(username));
+        User user = User::fromSqlRecord(database_->getUser(username));
         sendLogInSucceedReply(sender, user);
         sender->setUser(user);
     }
@@ -226,25 +230,25 @@ void ChatServer::sendMessageReply(ServerWorker *recipient, const Message &messag
     recipient->sendJson(messageReply);
 }
 
-void ChatServer::parseSynchronizeContactsRequest(ServerWorker *sender, const QJsonObject &jsonRequest)
+void ChatServer::parseSynchronizeUsersRequest(ServerWorker *sender, const QJsonObject &jsonRequest)
 {
     const QString lastDate = jsonRequest[request::headers::Date].toString();
 
     if (lastDate == request::values::AllData) {
-        sendAllContactsReply(sender);
+        sendAllUsersReply(sender);
     } else {
         const QString insertDatetime = jsonRequest.value(request::headers::Date).toString();
-        sendNewerContactsAfterDatetimeReply(sender, insertDatetime);
+        sendNewerUsersAfterDatetimeReply(sender, insertDatetime);
     }
 }
 
-void ChatServer::sendAllContactsReply(ServerWorker *recipient)
+void ChatServer::sendAllUsersReply(ServerWorker *recipient)
 {
     QJsonArray users;
 
-    const int rowCount = usersServerTable_->rowCount();
+    const int rowCount = usersTable_->rowCount();
     for (int i = 0; i < rowCount; ++i) {
-        const QSqlRecord record = usersServerTable_->record(i);
+        const QSqlRecord record = usersTable_->record(i);
         QJsonObject user = User::fromSqlRecord(record).toJson();
         users.push_back(user);
     }
@@ -256,9 +260,10 @@ void ChatServer::sendAllContactsReply(ServerWorker *recipient)
     recipient->sendJson(contactsReply);
 }
 
-void ChatServer::sendNewerContactsAfterDatetimeReply(ServerWorker *recipient, const QString &insertDatetime)
+void ChatServer::sendNewerUsersAfterDatetimeReply(ServerWorker *recipient, const QString &insertDatetime)
 {
-    const QString execute = QString("SELECT * FROM users WHERE %1 > :date")
+    const QString execute = QString("SELECT * FROM %1 WHERE %2 > :date")
+                            .arg(db::users::TableName)
                             .arg(db::users::fieldnames::Date);
 
     QSqlQuery query;
@@ -266,7 +271,7 @@ void ChatServer::sendNewerContactsAfterDatetimeReply(ServerWorker *recipient, co
     query.bindValue(":date", insertDatetime);
 
     if (!query.exec()) {
-        qFatal("Cannot get last contacts from %s: %s",
+        qFatal("Cannot get last users from %s: %s",
                qPrintable(insertDatetime), qPrintable(query.lastError().text()));
     }
 
@@ -341,6 +346,25 @@ void ChatServer::sendNewerMessagesAfterDatetimeReply(ServerWorker *recipient, co
     messagesReply[reply::headers::Messages] = messages;
 
     recipient->sendJson(messagesReply);
+}
+
+void ChatServer::parseCreateChatRequest(ServerWorker *sender, const QJsonObject &jsonRequest)
+{
+    const QJsonObject chatJson = jsonRequest.value(request::headers::Chat).toObject();
+    Chat chat = Chat::fromJson(chatJson);
+    chat.setDate(QDateTime::currentDateTime().toString(Qt::ISODate));
+    database_->addChat(chat);
+
+    sendAddedChatReply(sender, chat);
+}
+
+void ChatServer::sendAddedChatReply(ServerWorker *recipient, const Chat &chat)
+{
+    QJsonObject chatReply;
+    chatReply[reply::headers::Type] = reply::types::ChatAdd;
+    chatReply[reply::headers::Chat] = chat.toJson();
+
+    recipient->sendJson(chatReply);
 }
 
 void ChatServer::broadcast(const QJsonObject &message, const ServerWorker *exclude)

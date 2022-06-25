@@ -2,6 +2,8 @@
 
 #include <AbduChatLib/request_and_reply_constants.h>
 #include <AbduChatLib/database_names.h>
+#include <AbduChatLib/sqldatabaseclient.h>
+#include <AbduChatLib/chatsviewtable.h>
 #include <AbduChatLib/message.h>
 #include <AbduChatLib/datastream.h>
 
@@ -65,9 +67,10 @@ int messagesTableRowCount()
     return query.value(0).toInt();
 }
 
-ChatClient::ChatClient(QObject *parent)
+ChatClient::ChatClient(SqlDatabaseClient *database, QObject *parent)
     : QObject{parent}
     , socket_(new QTcpSocket(this))
+    , database_(database)
 {
     connect(socket_, &QTcpSocket::connected, this, &ChatClient::connected);
     connect(socket_, &QTcpSocket::disconnected, this, &ChatClient::disconnected);
@@ -89,6 +92,11 @@ void ChatClient::setUser(const User &newUser)
 void ChatClient::resetUser()
 {
     setUser(User{}); // TODO: Adapt to use your actual default value
+}
+
+int ChatClient::myUserId() const
+{
+    return user().id();
 }
 
 void ChatClient::connectToHost()
@@ -136,9 +144,24 @@ void ChatClient::sendMessage(const Chat &chat, const QString &messageText)
     sendRequest(messageInfo);
 }
 
+void ChatClient::requestCreateChat(int user2Id)
+{
+    Chat chat;
+    chat.setType("private");
+    chat.setUser1Id(user().id()); // my id
+    chat.setUser2Id(user2Id);
+    qDebug() << "Chat Info " << QString::fromUtf8(QJsonDocument(chat.toJson()).toJson());
+
+    QJsonObject createChatInfo;
+    createChatInfo[request::headers::Type] = request::types::CreateChat;
+    createChatInfo[request::headers::Chat] = chat.toJson();
+
+    sendRequest(createChatInfo);
+}
+
 void ChatClient::synchronizeAll()
 {
-    synchronizeContacts();
+    synchronizeUsers();
     synchronizeMessages();
 }
 
@@ -170,8 +193,10 @@ void ChatClient::parseReply(const QJsonObject &jsonReply)
         parseLogInReply(jsonReply);
     } else if (messageType == reply::types::Message) {
         parseMessageReply(jsonReply);
+    } else if (messageType == reply::types::ChatAdd) {
+        parseChatAddReply(jsonReply);
     } else if (messageType == reply::types::UserList) {
-        parseSynchronizeContactsReply(jsonReply);
+        parseSynchronizeUsersReply(jsonReply);
     } else if (messageType == reply::types::MessageList) {
         parseSynchronizeMessagesReply(jsonReply);
     }
@@ -184,7 +209,7 @@ void ChatClient::parseLogInReply(const QJsonObject &jsonReply)
     if (!successLogIn) {
         emit loginError(jsonReply.value(reply::headers::Reason).toString());
     } else {
-        setUser(User::fromJson(jsonReply));
+        setUser(User::fromJson(jsonReply.value(reply::headers::User).toObject()));
         emit loggedIn();
     }
 }
@@ -196,11 +221,19 @@ void ChatClient::parseMessageReply(const QJsonObject &jsonReply)
     emit messageReceived(message);
 }
 
-void ChatClient::parseSynchronizeContactsReply(const QJsonObject &jsonReply)
+void ChatClient::parseChatAddReply(const QJsonObject &jsonReply)
 {
-    const QJsonArray contacts = jsonReply.value(reply::headers::Users).toArray();
-    if (!contacts.isEmpty()) {
-        emit contactsAvailable(contacts);
+    const QJsonObject chatJson = jsonReply.value(reply::headers::Chat).toObject();
+    const Chat chat = Chat::fromJson(chatJson);
+    database_->addChat(chat);
+    database_->chatsViewTable()->select();
+}
+
+void ChatClient::parseSynchronizeUsersReply(const QJsonObject &jsonReply)
+{
+    const QJsonArray users = jsonReply.value(reply::headers::Users).toArray();
+    if (!users.isEmpty()) {
+        database_->addUsers(users);
     }
 }
 
@@ -212,10 +245,10 @@ void ChatClient::parseSynchronizeMessagesReply(const QJsonObject &jsonReply)
     }
 }
 
-void ChatClient::synchronizeContacts()
+void ChatClient::synchronizeUsers()
 {
     QJsonObject synchronizeInfo;
-    synchronizeInfo[request::headers::Type] = request::types::SynchronizeContacts;
+    synchronizeInfo[request::headers::Type] = request::types::SynchronizeUsers;
     synchronizeInfo[request::headers::Date] = usersTableRowCount() > 0 ? lastDateFromUsersTable()
                                                                        : request::values::AllData;
     sendRequest(synchronizeInfo);

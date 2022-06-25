@@ -13,7 +13,7 @@ SOURCES += \
     chatsviewtable.cpp \
     database_names.cpp \
     message.cpp \
-    messagestableclient.cpp \
+    messagestable.cpp \
     request_and_reply_constants.cpp \
     serverlogstable.cpp \
     sqldatabase.cpp \
@@ -34,11 +34,10 @@ HEADERS += \
     chat.h \
     chatstable.h \
     chatsviewtable.h \
-    connect_to_database.h \
     database_names.h \
     datastream.h \
     message.h \
-    messagestableclient.h \
+    messagestable.h \
     request_and_reply_constants.h \
     serverlogstable.h \
     sqldatabase.h \

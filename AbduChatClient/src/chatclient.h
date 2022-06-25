@@ -9,15 +9,20 @@
 class Chat;
 class Message;
 
+class SqlDatabaseClient;
+
 class ChatClient : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int myUserId READ myUserId CONSTANT)
 public:
-    explicit ChatClient(QObject *parent = nullptr);
+    explicit ChatClient(SqlDatabaseClient* database, QObject *parent = nullptr);
 
     const User &user() const;
     void setUser(const User &newUser);
     void resetUser();
+
+    int myUserId() const;
 
 signals:
     void connected();
@@ -29,7 +34,6 @@ signals:
 
     void messageReceived(const Message& message);
 
-    void contactsAvailable(const QJsonArray& contacts);
     void messagesAvailable(const QJsonArray& messages);
 
 
@@ -42,19 +46,22 @@ public slots:
 
     void sendMessage(const Chat& chat, const QString& messageText);
 
+    void requestCreateChat(int user2Id);
+
     void synchronizeAll();
 
 private slots:
     void onReadyRead();
 
 private:
-    void parseReply(const QJsonObject& jsonObject);
-    void parseLogInReply(const QJsonObject& jsonObject);
-    void parseMessageReply(const QJsonObject& jsonObject);
-    void parseSynchronizeContactsReply(const QJsonObject& jsonReply);
+    void parseReply(const QJsonObject& jsonReply);
+    void parseLogInReply(const QJsonObject& jsonReply);
+    void parseMessageReply(const QJsonObject& jsonReply);
+    void parseChatAddReply(const QJsonObject& jsonReply);
+    void parseSynchronizeUsersReply(const QJsonObject& jsonReply);
     void parseSynchronizeMessagesReply(const QJsonObject& jsonReply);
 
-    void synchronizeContacts();
+    void synchronizeUsers();
     void synchronizeMessages();
 
     void sendRequest(const QJsonObject& jsonRequest);
@@ -62,6 +69,8 @@ private:
 private:
     QTcpSocket* socket_ = nullptr;
     User user_;
+
+    SqlDatabaseClient* database_ = nullptr;
 };
 
 #endif // CHATCLIENT_H

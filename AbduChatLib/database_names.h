@@ -45,7 +45,8 @@ namespace db {
         namespace fieldnames {
             extern const QString Id;
             extern const QString Type;
-            extern const QString Username;
+            extern const QString User1Id;
+            extern const QString User2Id;
             extern const QString Date;
         } // fieldnames
 
@@ -53,7 +54,8 @@ namespace db {
             enum FieldNums {
                 Id,
                 Type,
-                Username,
+                User1Id,
+                User2Id,
                 Date,
             };
         } // fieldnums
@@ -93,20 +95,26 @@ namespace db {
     namespace fieldnames {
         extern const QString ChatId;
         extern const QString ChatType;
-        extern const QString ChatUsername;
+        extern const QString User1Id;
+        extern const QString User2Id;
         extern const QString LastMessage;
         extern const QString FromUser;
         extern const QString Date;
+        extern const QString User1Username;
+        extern const QString User2Username;
     } // fieldnames
 
     namespace fieldnums {
         enum FieldNums {
             ChatId,
             ChatType,
-            ChatUsername,
+            User1Id,
+            User2Id,
             LastMessage,
             FromUser,
             Date,
+            User1Username,
+            User2Username,
         };
     } // fieldnums
 

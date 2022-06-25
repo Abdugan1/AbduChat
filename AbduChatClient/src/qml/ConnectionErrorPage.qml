@@ -9,6 +9,9 @@ Page {
 
     signal reconnectButtonClicked()
 
+    width: 440
+    height: 760
+
     ColumnLayout {
         anchors.fill: parent
 

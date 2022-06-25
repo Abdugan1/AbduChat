@@ -18,6 +18,7 @@ UsersTable::UsersTable(QObject *parent)
 {
     setTable(db::users::TableName);
     createRoleNames();
+    select();
 }
 
 void UsersTable::addUser(const User &user)

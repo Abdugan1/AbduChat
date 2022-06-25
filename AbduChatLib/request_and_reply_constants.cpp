@@ -7,9 +7,10 @@ namespace types {
 const char* Login = "login";
 const char* Register = "register";
 const char* SendMessage = "send_message";
+const char* CreateChat = "create_chat";
 
 // synchronize
-const char* SynchronizeContacts = "synchronize_contacts";
+const char* SynchronizeUsers = "synchronize_users";
 const char* SynchronizeMessages = "synchronize_messages";
 
 } // types
@@ -25,6 +26,8 @@ const char* Date = "sent_datetime";
 const char* RegisterInfo = "register_info";
 const char* Username = "username";
 const char* Password = "password";
+
+const char* Chat = "chat";
 
 } // headers
 
@@ -48,6 +51,7 @@ const char* NewUser = "new_user";
 const char* UserDisconnected = "user_disconnected";
 const char* UserList = "user_list";
 const char* MessageList = "message_list";
+const char* ChatAdd = "chat_add";
 
 } // types
 
@@ -62,6 +66,8 @@ const char* Username = "username";
 
 const char* User = "user";
 const char* Users = "users";
+
+const char* Chat = "chat";
 
 const char* Message = "message";
 const char* Messages = "messages";
@@ -101,7 +107,8 @@ namespace headers {
 
 const char* Id = "id";
 const char* Type = "type";
-const char* Username = "username";
+const char* User1Id = "user_1_id";
+const char* User2Id = "user_2_id";
 const char* Date = "date";
 
 } // headers

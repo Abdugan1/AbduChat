@@ -1,4 +1,4 @@
-#include "messagestableclient.h"
+#include "messagestable.h"
 #include "database_names.h"
 #include "request_and_reply_constants.h"
 #include "message.h"
@@ -18,6 +18,7 @@ MessagesTable::MessagesTable(QObject *parent)
     setTable(db::messages::TableName);
     setSort(FieldNums::Id, Qt::DescendingOrder);
     createRoleNames();
+    select();
 }
 
 void MessagesTable::addMessage(const Message &message)

@@ -35,21 +35,6 @@ bool UsersServerTable::hasUser(const QString &username, const QString &password)
     return query.value(0).toBool();
 }
 
-QSqlRecord UsersServerTable::getUser(const QString &username) const
-{
-    const QString execute = QString("SELECT * FROM %1 WHERE %2=:username")
-                            .arg(db::users_server::TableName)
-                            .arg(db::users::fieldnames::Username);
-    QSqlQuery query;
-    query.prepare(execute);
-    query.bindValue(":username", username);
-    if (!query.exec()) {
-        qFatal("Cannot get user %s: %s", qPrintable(username), qPrintable(query.lastError().text()));
-    }
-    query.next();
-    return query.record();
-}
-
 bool UsersServerTable::addUser(const User &user, const QString &password)
 {
     QSqlRecord userRecord = record();

@@ -2,18 +2,13 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Dialogs 1.3
 
-import AbduChatClient 1.0
-
 ApplicationWindow {
     id: window
 
-    property string username: chatClient.username
-    property int id: chatClient.id
-
-    function getUsername() {return username}
-    function getId() {return id}
-
-    function rollBackToBegin() {stackView.pop(null);}
+    function rollBackToBegin() { stackView.pop(null); }
+    function getChatClient() { return chatClient; }
+    function getMyUserId()   { return chatClient.myUserId; }
+    function getUsersTable() { return usersTable; }
 
     width: 440
     height: 760
@@ -23,30 +18,46 @@ ApplicationWindow {
         chatClient.connectToHost();
     }
 
-    ChatClient {
-        id: chatClient
-        objectName: "chatClient"
+    Connections {
+        target: chatClient
 
-        onLoggedIn: {
-            synchronizeAll();
-            stackView.push(contactPage)
-        }
-
-        onLoginError: {
-        }
-
-        onConnected: {
-            if (stackView.currentItem == connectionErrorPage)
-                stackView.replace(connectionErrorPage, logInPage)
-        }
-
-        onErrorOccurred: {
+        function onErrorOccurred() {
             connectionErrorPage.reconnectIndicator.running = false
             if (stackView.currentItem != connectionErrorPage)
                 stackView.replace(logInPage, connectionErrorPage)
             rollBackToBegin();
         }
+
+        function onLoggedIn() {
+            chatClient.synchronizeAll()
+            stackView.push(chatsPage)
+        }
     }
+
+//    ChatClient {
+//        id: chatClient
+//        objectName: "chatClient"
+
+//        onLoggedIn: {
+//            synchronizeAll();
+//            stackView.push(contactPage)
+//        }
+
+//        onLoginError: {
+//        }
+
+//        onConnected: {
+//            if (stackView.currentItem == connectionErrorPage)
+//                stackView.replace(connectionErrorPage, logInPage)
+//        }
+
+//        onErrorOccurred: {
+//            connectionErrorPage.reconnectIndicator.running = false
+//            if (stackView.currentItem != connectionErrorPage)
+//                stackView.replace(logInPage, connectionErrorPage)
+//            rollBackToBegin();
+//        }
+//    }
 
     LogInPage {
         id: logInPage
@@ -60,12 +71,16 @@ ApplicationWindow {
         }
     }
 
-    ContactPage {
-        id: contactPage
+    ChatsPage {
+        id: chatsPage
 
         onUserClicked: {
             stackView.push(conversationPage, {inConversationWith: username, inConversationWithId: id})
         }
+    }
+
+    UsersPage {
+        id: usersPage
     }
 
     ConversationPage {

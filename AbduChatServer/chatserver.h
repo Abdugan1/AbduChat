@@ -5,8 +5,10 @@
 
 class ServerWorker;
 class User;
+class Chat;
 
 class SqlDatabaseServer;
+class UsersTable;
 class UsersServerTable;
 class ServerLogsTable;
 class MessagesTable;
@@ -52,13 +54,16 @@ private:
     void parseSendMessageRequest(ServerWorker* sender, const QJsonObject& jsonRequest);
     void sendMessageReply(ServerWorker* recipient, const Message& message);
 
-    void parseSynchronizeContactsRequest(ServerWorker* sender, const QJsonObject& jsonRequest);
-    void sendAllContactsReply(ServerWorker* recipient);
-    void sendNewerContactsAfterDatetimeReply(ServerWorker* recipient, const QString& insertDatetime);
+    void parseSynchronizeUsersRequest(ServerWorker* sender, const QJsonObject& jsonRequest);
+    void sendAllUsersReply(ServerWorker* recipient);
+    void sendNewerUsersAfterDatetimeReply(ServerWorker* recipient, const QString& insertDatetime);
 
     void parseSynchronizeMessagesRequest(ServerWorker* sender, const QJsonObject& jsonRequest);
     void sendAllMessagesReply(ServerWorker* recipient);
     void sendNewerMessagesAfterDatetimeReply(ServerWorker* recipient, const QString& sentDatetime);
+
+    void parseCreateChatRequest(ServerWorker* sender, const QJsonObject& jsonRequest);
+    void sendAddedChatReply(ServerWorker* recipient, const Chat& chat);
 
     void broadcast(const QJsonObject& message, const ServerWorker* exclude);
 
@@ -67,6 +72,7 @@ private:
 
     SqlDatabaseServer* database_ = nullptr;
 
+    UsersTable*       usersTable_       = nullptr;
     UsersServerTable* usersServerTable_ = nullptr;
     ServerLogsTable*  serverLogsTable_  = nullptr;
     MessagesTable*    messagesTable_    = nullptr;

@@ -1,15 +1,39 @@
 #include "sqldatabaseclient.h"
 #include "database_names.h"
 #include "chatsviewtable.h"
+#include "user.h"
 
 #include <QSqlQuery>
+#include <QSqlRecord>
 #include <QSqlError>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QDebug>
 
 SqlDatabaseClient::SqlDatabaseClient(QObject *parent)
     : SqlDatabase{parent}
 {
     createClientTables();
     initClientTables();
+
+    const int rowCount = chatsViewTable_->rowCount();
+    for (int i = 0; i < rowCount; ++i) {
+        qDebug() << "user_1_id" << chatsViewTable_->record(i).value("user_1_id").toString();
+        qDebug() << "user_1_username" << chatsViewTable_->record(i).value("user_1_username").toString();
+    }
+}
+
+ChatsViewTable *SqlDatabaseClient::chatsViewTable() const
+{
+    return chatsViewTable_;
+}
+
+void SqlDatabaseClient::addUsers(const QJsonArray &users)
+{
+    for (const auto& userRef : users) {
+        const QJsonObject user = userRef.toObject();
+        addUser(User::fromJson(user));
+    }
 }
 
 void SqlDatabaseClient::createClientTables()
@@ -23,25 +47,30 @@ void SqlDatabaseClient::createChatsViewTable()
     using namespace chats_view;
     using namespace fieldnames;
     auto lastMessage = [](const QString& column)->QString {
-        return "(SELECT" + column + "FROM messages WHERE chat_id = chats.id ORDER BY messages.id DESC LIMIT 1)";
+        return "(SELECT " + column + " FROM " + db::messages::TableName + " WHERE chat_id = chats.id ORDER BY messages.id DESC LIMIT 1)";
     };
-    const QString execute = QString("CREATE VIEW " + ViewName + " AS " +
+    auto username = [](const QString& id)->QString {
+        return "(SELECT username FROM users WHERE users.id =" + id + ")";
+    };
+    const QString execute = QString("CREATE VIEW IF NOT EXISTS " + ViewName + " AS " +
                                     "SELECT DISTINCT " +
-                                        chats::fieldnames::Id + " AS " + ChatId + "," +
-                                        chats::fieldnames::Type + " AS " + ChatType + "," +
-                                        chats::fieldnames::Username + " AS " + ChatUsername + "," +
+                                        "chats." + chats::fieldnames::Id + " AS " + ChatId + "," +
+                                        "chats." + chats::fieldnames::Type + " AS " + ChatType + "," +
+                                        "chats." + chats::fieldnames::User1Id + " AS " + User1Id + "," +
+                                        "chats." + chats::fieldnames::User2Id + " AS " + User2Id + "," +
                                         lastMessage(messages::fieldnames::Text) + " AS " + LastMessage + "," +
                                         lastMessage(messages::fieldnames::FromUserId) + " AS " + FromUser + "," +
-                                        lastMessage(messages::fieldnames::Date) + " AS " + Date + " " +
-                                    "FROM " + chats::TableName +
-                                    "INNER JOIN " + messages::TableName + " ON " + messages::fieldnames::ChatId + " = " + chats::fieldnames::Id +
-                                    ");"
+                                        lastMessage(messages::fieldnames::Date) + " AS " + Date + "," +
+                                        username(chats::fieldnames::User1Id) + " AS " + User1Username + "," +
+                                        username(chats::fieldnames::User2Id) + " AS " + User2Username + " " +
+                                    "FROM " + chats::TableName + " " +
+                                    "LEFT JOIN " + messages::TableName + " ON messages." + messages::fieldnames::ChatId + " = chats." + chats::fieldnames::Id
                                     );
 
     QSqlQuery query;
-    if (query.exec(execute)) {
-        qFatal("Cannot create view %s: %s",
-               qPrintable(ViewName), qPrintable(query.lastError().text()));
+    if (!query.exec(execute)) {
+        qFatal("Cannot create view %s: %s\nexecuted: %s",
+               qPrintable(ViewName), qPrintable(query.lastError().text()), qPrintable(execute));
     }
 }
 

@@ -8,9 +8,10 @@ namespace types {
 extern const char* Login;
 extern const char* Register;
 extern const char* SendMessage;
+extern const char* CreateChat;
 
 // synchronize
-extern const char* SynchronizeContacts;
+extern const char* SynchronizeUsers;
 extern const char* SynchronizeMessages;
 
 } // types
@@ -26,6 +27,8 @@ extern const char* Date;
 extern const char* RegisterInfo;
 extern const char* Username;
 extern const char* Password;
+
+extern const char* Chat;
 
 } // headers
 
@@ -49,6 +52,7 @@ extern const char* NewUser;
 extern const char* UserDisconnected;
 extern const char* UserList;
 extern const char* MessageList;
+extern const char* ChatAdd;
 
 } // types
 
@@ -63,6 +67,8 @@ extern const char* Username;
 
 extern const char* User;
 extern const char* Users;
+
+extern const char* Chat;
 
 extern const char* Message;
 extern const char* Messages;
@@ -102,7 +108,8 @@ namespace headers {
 
 extern const char* Id;
 extern const char* Type;
-extern const char* Username;
+extern const char* User1Id;
+extern const char* User2Id;
 extern const char* Date;
 
 } // headers

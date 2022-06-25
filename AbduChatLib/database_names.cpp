@@ -21,7 +21,8 @@ namespace db {
         namespace fieldnames {
             const QString Id = "id";
             const QString Type = "type";
-            const QString Username = "username";
+            const QString User1Id = "user_1_id";
+            const QString User2Id = "user_2_id";
             const QString Date = "date";
         } // fieldnames
 
@@ -46,10 +47,13 @@ namespace db {
     namespace fieldnames {
         const QString ChatId = "chat_id";
         const QString ChatType = "chat_type";
-        const QString ChatUsername = "chat_username";
+        const QString User1Id = "user_1_id";
+        const QString User2Id = "user_2_id";
         const QString LastMessage = "last_message";
         const QString FromUser = "from_user";
         const QString Date = "date";
+        const QString User1Username = "user_1_username";
+        const QString User2Username = "user_2_username";
     } // fieldnames
 
     } // chats_view

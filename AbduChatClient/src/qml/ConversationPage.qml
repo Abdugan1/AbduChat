@@ -1,118 +1,74 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
 
-import AbduChatLib 1.0
+//import AbduChatLib 1.0
 
 Page {
     id: root
 
     property string inConversationWith
     property int inConversationWithId
-    property alias messageField: messageField
 
     signal sendButtonClicked()
 
-    header: ToolBar {
-        Button {
-            text: qsTr("Back")
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
+    width: 440
+    height: 760
+    visible: true
 
-            onClicked: { root.StackView.view.pop(); }
+    header: ToolBar {
+        height: 43
+        rightPadding: 0
+        leftPadding: 0
+        bottomPadding: 0
+        BackButton {
+             anchors.left: parent.left
+             anchors.verticalCenter: parent.verticalCenter
+             anchors.leftMargin: 16
         }
 
         Label {
             id: pageTitle
-            text: inConversationWith
+            text: "inConversationWith"
             anchors.centerIn: parent
             font.pixelSize: 20
         }
     }
 
-    MessagesTable {
-        id: messagesTable
-        objectName: "messagesTable"
+//    MessagesTable {
+//        id: messagesTable
+//        objectName: "messagesTable"
 
-        myId: getId()
-        recipientId: root.inConversationWithId
-    }
+//        myId: getId()
+//        recipientId: root.inConversationWithId
+//    }
 
-    ColumnLayout {
-        anchors.fill: parent
+//        ListView {
+//            id: listView
+//            anchors.left: parent.left
+//            anchors.right: parent.right
+//            anchors.top: parent.top
+//            anchors.bottom: messageField.top
+//            anchors.rightMargin: 0
+//            anchors.leftMargin: 0
+//            anchors.bottomMargin: 0
+//            anchors.topMargin: 0
+//            verticalLayoutDirection: ListView.BottomToTop
 
-        ListView {
-            id: listView
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.margins: pane.leftPadding + messageField.leftPadding
-            verticalLayoutDirection: ListView.BottomToTop
+//            model: messagesTable
+//        }
 
-            model: messagesTable
-
-            delegate: Column {
-                readonly property bool sentByMe: getId() === model.from_user_id
-
-                anchors.right: sentByMe ? listView.contentItem.right : undefined
-                spacing: 6
-
-                RowLayout {
-                    id: messageRow
-                    spacing: 6
-                    anchors.right: sentByMe ? parent.right : undefined
-
-                    Image {
-                        id: avatar
-                        source: !sentByMe ? "qrc:/images/avatar.png" : ""
-                        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                    }
-
-                    Rectangle {
-                        width: Math.min(messageText.implicitWidth + 24,
-                                        listView.width - (!sentByMe ? avatar.width + messageRow.spacing : 0))
-                        height: messageText.implicitHeight + 24
-                        color: sentByMe ? "lightgrey" : "steelblue"
-
-                        Label {
-                            id: messageText
-                            text: model.text
-                            color: sentByMe ? "black" : "white"
-                            anchors.fill: parent
-                            anchors.margins: 12
-                            wrapMode: Label.Wrap
-                        }
-                    }
-                }
-
-                Label {
-                    id: timestampText
-                    text: model.sent_datetime
-                    color: "lightgrey"
-                    anchors.right: sentByMe ? parent.right : undefined
-                }
+        MessageField {
+            id: messageField
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
+            onSendClicked: {
+                console.log("Send clicked");
             }
         }
-
-        Pane {
-            id: pane
-            Layout.fillWidth: true
-
-            RowLayout {
-                width: parent.width
-                spacing: 0
-
-                TextField {
-                    id: messageField
-                    Layout.fillWidth: true
-                }
-
-                Button {
-                    id: sendButton
-                    text: qsTr("Send")
-
-                    onClicked: { sendButtonClicked(); }
-                }
-            }
-        }
-    }
 }
+
+
+
+

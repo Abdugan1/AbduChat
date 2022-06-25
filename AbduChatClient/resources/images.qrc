@@ -11,5 +11,12 @@
         <file>images/hide_password.png</file>
         <file>images/avatar_32.png</file>
         <file>images/avatar_64.png</file>
+        <file>images/back_32.png</file>
+        <file>images/back_24.png</file>
+        <file>images/x_24.png</file>
+        <file>images/x_16.png</file>
+        <file>images/search_16.png</file>
+        <file>images/search_24.png</file>
+        <file>images/send_32.png</file>
     </qresource>
 </RCC>

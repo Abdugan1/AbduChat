@@ -17,9 +17,9 @@ class MessagesTable;
 class SqlDatabase : public QObject, public QSqlDatabase
 {
     Q_OBJECT
-    Q_PROPERTY(UsersTable *usersTable READ usersTable CONSTANT)
-    Q_PROPERTY(ChatsTable *chatsTable READ chatsTable CONSTANT)
-    Q_PROPERTY(MessagesTable *messagesTable READ messagesTable CONSTANT)
+//    Q_PROPERTY(UsersTable *usersTable READ usersTable CONSTANT)
+//    Q_PROPERTY(ChatsTable *chatsTable READ chatsTable CONSTANT)
+//    Q_PROPERTY(MessagesTable *messagesTable READ messagesTable CONSTANT)
 public:
     explicit SqlDatabase(QObject* parent = nullptr);
 
@@ -33,14 +33,12 @@ public:
 
     void addMessage(const Message& message);
 
-
 private:
     void connectToDatabase();
 
     void createTables();
     void createUsersTable();
     void createChatsTable();
-    void createChatParticipantsTable();
     void createMessagesTable();
 
     void initTables();

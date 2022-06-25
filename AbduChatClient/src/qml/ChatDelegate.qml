@@ -7,7 +7,8 @@ ItemDelegate {
     implicitWidth: 400
     implicitHeight: 70
 
-    width: parent.width
+    anchors.left: parent.left
+    anchors.right: parent.right
 
     onClicked: { userClicked(model.username, model.id) }
 
@@ -25,7 +26,15 @@ ItemDelegate {
 
     Text {
         id: usernameText
-        text: model.username
+        text: {
+            console.log("my_id: " + getMyUserId());
+            console.log("user_1_id: " + user_1_id);
+            console.log("user_2_id: " + user_2_id);
+            console.log("user_1_username: " + user_1_username);
+            console.log("user_2_username: " + user_2_username);
+            return getMyUserId() != user_1_id ? user_1_username : user_2_username;
+        }
+
         anchors.left: avatar.right
         anchors.top: parent.top
         font.pixelSize: 16
@@ -36,7 +45,7 @@ ItemDelegate {
 
     Text {
         id: lastMessage
-        text: "Here should be the last message"
+        text: model.last_message
         anchors.left: avatar.right
         anchors.top: usernameText.bottom
         anchors.leftMargin: 16
@@ -45,7 +54,7 @@ ItemDelegate {
 
     Text {
         id: sentTime
-        text: "9:41"
+        text: date
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.topMargin: 14
