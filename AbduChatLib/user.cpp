@@ -17,7 +17,15 @@ int User::id() const
 
 void User::setId(int newId)
 {
+    if (id_ == newId)
+        return;
     id_ = newId;
+    emit idChanged();
+}
+
+void User::resetId()
+{
+    setId(-1); // TODO: Adapt to use your actual default value
 }
 
 const QString &User::firstName() const
@@ -27,7 +35,15 @@ const QString &User::firstName() const
 
 void User::setFirstName(const QString &newFirstName)
 {
+    if (firstName_ == newFirstName)
+        return;
     firstName_ = newFirstName;
+    emit firstNameChanged();
+}
+
+void User::resetFirstName()
+{
+    setFirstName({}); // TODO: Adapt to use your actual default value
 }
 
 const QString &User::lastName() const
@@ -37,7 +53,15 @@ const QString &User::lastName() const
 
 void User::setLastName(const QString &newLastName)
 {
+    if (lastName_ == newLastName)
+        return;
     lastName_ = newLastName;
+    emit lastNameChanged();
+}
+
+void User::resetLastName()
+{
+    setLastName({}); // TODO: Adapt to use your actual default value
 }
 
 const QString &User::username() const
@@ -47,7 +71,15 @@ const QString &User::username() const
 
 void User::setUsername(const QString &newUsername)
 {
+    if (username_ == newUsername)
+        return;
     username_ = newUsername;
+    emit usernameChanged();
+}
+
+void User::resetUsername()
+{
+    setUsername({}); // TODO: Adapt to use your actual default value
 }
 
 const QString &User::date() const
@@ -57,7 +89,15 @@ const QString &User::date() const
 
 void User::setDate(const QString &newDate)
 {
+    if (date_ == newDate)
+        return;
     date_ = newDate;
+    emit dateChanged();
+}
+
+void User::resetDate()
+{
+    setDate({}); // TODO: Adapt to use your actual default value
 }
 
 bool User::isValid() const
@@ -89,30 +129,30 @@ void User::toSqlRecord(QSqlRecord *record) const
     record->setValue(FieldNames::Date, date());
 }
 
-User User::fromJson(const QJsonObject &json)
+UserPtr User::fromJson(const QJsonObject &json)
 {
-    User user;
+    UserPtr user(new User);
 
-    user.setId(json.value(user::headers::Id).toInt());
-    user.setFirstName(json.value(user::headers::FirstName).toString());
-    user.setLastName(json.value(user::headers::LastName).toString());
-    user.setUsername(json.value(user::headers::Username).toString());
-    user.setDate(json.value(user::headers::Date).toString());
+    user->setId(json.value(user::headers::Id).toInt());
+    user->setFirstName(json.value(user::headers::FirstName).toString());
+    user->setLastName(json.value(user::headers::LastName).toString());
+    user->setUsername(json.value(user::headers::Username).toString());
+    user->setDate(json.value(user::headers::Date).toString());
 
     return user;
 }
 
-User User::fromSqlRecord(const QSqlRecord &record)
+UserPtr User::fromSqlRecord(const QSqlRecord &record)
 {
-    User user;
+    UserPtr user(new User);
 
     namespace FieldNames = db::users::fieldnames;
 
-    user.setId(record.value(FieldNames::Id).toInt());
-    user.setFirstName(record.value(FieldNames::FirstName).toString());
-    user.setLastName(record.value(FieldNames::LastName).toString());
-    user.setUsername(record.value(FieldNames::Username).toString());
-    user.setDate(record.value(FieldNames::Date).toString());
+    user->setId(record.value(FieldNames::Id).toInt());
+    user->setFirstName(record.value(FieldNames::FirstName).toString());
+    user->setLastName(record.value(FieldNames::LastName).toString());
+    user->setUsername(record.value(FieldNames::Username).toString());
+    user->setDate(record.value(FieldNames::Date).toString());
 
     return user;
 }

@@ -17,15 +17,15 @@ ChatsTable::ChatsTable(QObject *parent)
     select();
 }
 
-void ChatsTable::addChat(const Chat &chat)
+void ChatsTable::addChat(const ChatPtr &chat)
 {
     QSqlRecord chatRecord = record();
-    chat.toSqlRecord(&chatRecord);
+    chat->toSqlRecord(&chatRecord);
     addChatRecord(chatRecord);
 
     if (!submitAll()) {
         qFatal("Cannot insert chat:\nid: %d\nreason: %s",
-               chat.id(),
+               chat->id(),
                qPrintable(lastError().text())
                );
     }

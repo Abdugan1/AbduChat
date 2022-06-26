@@ -14,5 +14,6 @@
         <file>qml/UserSearchField.qml</file>
         <file>qml/UsersDelegate.qml</file>
         <file>qml/MessageField.qml</file>
+        <file>qml/MessageDelegate.qml</file>
     </qresource>
 </RCC>

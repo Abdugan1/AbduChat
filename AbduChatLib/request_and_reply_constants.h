@@ -29,6 +29,7 @@ extern const char* Username;
 extern const char* Password;
 
 extern const char* Chat;
+extern const char* Message;
 
 } // headers
 

@@ -2,8 +2,10 @@
 #define USERSSERVERTABLE_H
 
 #include "sqltablemodel.h"
+#include <memory>
 
 class User;
+using UserPtr = std::shared_ptr<User>;
 
 class UsersServerTable : public SqlTableModel
 {
@@ -14,7 +16,7 @@ public:
     bool hasUser(const QString& username, const QString& password);
 
 protected:
-    bool addUser(const User& user, const QString& password);
+    bool addUser(const UserPtr& user, const QString& password);
 
 private:
     void createRoleNames();

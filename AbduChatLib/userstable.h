@@ -2,8 +2,10 @@
 #define USERSTABLE_H
 
 #include "sqltablemodel.h"
+#include <memory>
 
 class User;
+using UserPtr = std::shared_ptr<User>;
 
 class UsersTable : public SqlTableModel
 {
@@ -12,7 +14,7 @@ public:
     explicit UsersTable(QObject* parent = nullptr);
 
 protected:
-    void addUser(const User& user);
+    void addUser(const UserPtr& user);
 
 private:
     void createRoleNames();

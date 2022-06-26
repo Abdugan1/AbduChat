@@ -28,6 +28,7 @@ const char* Username = "username";
 const char* Password = "password";
 
 const char* Chat = "chat";
+const char* Message = "message";
 
 } // headers
 

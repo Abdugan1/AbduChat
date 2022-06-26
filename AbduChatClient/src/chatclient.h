@@ -8,21 +8,21 @@
 
 class Chat;
 class Message;
+using ChatPtr = std::shared_ptr<Chat>;
+using MessagePtr = std::shared_ptr<Message>;
 
 class SqlDatabaseClient;
 
 class ChatClient : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int myUserId READ myUserId CONSTANT)
+    Q_PROPERTY(User* user READ user NOTIFY userChanged)
 public:
     explicit ChatClient(SqlDatabaseClient* database, QObject *parent = nullptr);
 
-    const User &user() const;
-    void setUser(const User &newUser);
+    User* user() const;
+    void setUser(const UserPtr &newUser);
     void resetUser();
-
-    int myUserId() const;
 
 signals:
     void connected();
@@ -32,10 +32,11 @@ signals:
     void loggedIn();
     void loginError(const QString& reason);
 
-    void messageReceived(const Message& message);
+    void messageReceived(const MessagePtr& message);
 
     void messagesAvailable(const QJsonArray& messages);
 
+    void userChanged();
 
 public slots:
     void connectToHost();
@@ -44,7 +45,7 @@ public slots:
     void attempToLogIn(const QString& username, const QString& password);
     void attempToRegister(const User& userInfo, const QString& password);
 
-    void sendMessage(const Chat& chat, const QString& messageText);
+    void sendMessage(const QVariant& chat, const QString& messageText);
 
     void requestCreateChat(int user2Id);
 
@@ -68,7 +69,7 @@ private:
 
 private:
     QTcpSocket* socket_ = nullptr;
-    User user_;
+    UserPtr user_;
 
     SqlDatabaseClient* database_ = nullptr;
 };

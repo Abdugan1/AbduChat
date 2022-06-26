@@ -15,7 +15,7 @@ public:
     UsersServerTable *usersServerTable() const;
     ServerLogsTable *serverLogsTable() const;
 
-    bool addUser(const User& user, const QString& password);
+    bool addUser(const UserPtr& user, const QString& password);
 
     QSqlRecord getUser(const QString& username) const;
 

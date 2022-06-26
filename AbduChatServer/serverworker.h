@@ -20,8 +20,8 @@ public:
     QString peerAddress() const;
     QString peerName() const;
 
-    const User &user() const;
-    void setUser(const User &newUser);
+    const UserPtr &user() const;
+    void setUser(const UserPtr &newUser);
     void resetUser();
 
 signals:
@@ -41,7 +41,7 @@ private:
 
 private:
     QTcpSocket* serverSocket_ = nullptr;
-    User user_;
+    UserPtr user_;
 
 };
 

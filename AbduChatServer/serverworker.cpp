@@ -10,6 +10,7 @@
 ServerWorker::ServerWorker(QObject *parent)
     : QObject{parent}
     , serverSocket_{new QTcpSocket{this}}
+    , user_(new User)
 {
     connect(serverSocket_, &QTcpSocket::readyRead, this, &ServerWorker::receiveJson);
     connect(serverSocket_, &QTcpSocket::disconnected, this, &ServerWorker::disconnectedFromClient);
@@ -28,7 +29,7 @@ void ServerWorker::sendJson(const QJsonObject &jsonObject)
     DataStream socketStream(serverSocket_);
     socketStream << jsonData;
 
-    emit logMessage("Sending to \'" + user().username() + "\'-" + peerAddress() + " - " + QString::fromUtf8(jsonData));
+    emit logMessage("Sending to \'" + user()->username() + "\'-" + peerAddress() + " - " + QString::fromUtf8(jsonData));
 }
 
 QString ServerWorker::peerAddress() const
@@ -41,12 +42,12 @@ QString ServerWorker::peerName() const
     return serverSocket_->peerName();
 }
 
-const User &ServerWorker::user() const
+const UserPtr &ServerWorker::user() const
 {
     return user_;
 }
 
-void ServerWorker::setUser(const User &newUser)
+void ServerWorker::setUser(const UserPtr &newUser)
 {
     if (user_ == newUser)
         return;
@@ -56,7 +57,7 @@ void ServerWorker::setUser(const User &newUser)
 
 void ServerWorker::resetUser()
 {
-    setUser(User{}); // TODO: Adapt to use your actual default value
+    setUser({}); // TODO: Adapt to use your actual default value
 }
 
 void ServerWorker::disconnectFromClient()

@@ -4,6 +4,7 @@
 #include <AbduChatLib/database_names.h>
 #include <AbduChatLib/sqldatabaseclient.h>
 #include <AbduChatLib/chatsviewtable.h>
+#include <AbduChatLib/chat.h>
 #include <AbduChatLib/message.h>
 #include <AbduChatLib/datastream.h>
 
@@ -70,6 +71,7 @@ int messagesTableRowCount()
 ChatClient::ChatClient(SqlDatabaseClient *database, QObject *parent)
     : QObject{parent}
     , socket_(new QTcpSocket(this))
+    , user_(new User)
     , database_(database)
 {
     connect(socket_, &QTcpSocket::connected, this, &ChatClient::connected);
@@ -79,24 +81,22 @@ ChatClient::ChatClient(SqlDatabaseClient *database, QObject *parent)
     connect(socket_, &QTcpSocket::errorOccurred, this, [this]() {emit errorOccurred(socket_->errorString());});
 }
 
-const User &ChatClient::user() const
+User *ChatClient::user() const
 {
-    return user_;
+    return user_.get();
 }
 
-void ChatClient::setUser(const User &newUser)
+void ChatClient::setUser(const UserPtr &newUser)
 {
+    if (user_ == newUser)
+        return;
     user_ = newUser;
+    emit userChanged();
 }
 
 void ChatClient::resetUser()
 {
-    setUser(User{}); // TODO: Adapt to use your actual default value
-}
-
-int ChatClient::myUserId() const
-{
-    return user().id();
+    setUser({}); // TODO: Adapt to use your actual default value
 }
 
 void ChatClient::connectToHost()
@@ -131,16 +131,22 @@ void ChatClient::attempToRegister(const User &userInfo, const QString &password)
     sendRequest(registerInfo);
 }
 
-void ChatClient::sendMessage(const Chat &chat, const QString &messageText)
+void ChatClient::sendMessage(const QVariant &chat, const QString &messageText)
 {
+    ChatPtr chatType(qobject_cast<Chat*>(chat.value<QObject*>()));
+
     Message message;
     // 'id' and 'date' is get from server. So we dont need to specify it.
-    message.setFrom(user());
-    message.setChat(chat);
+    message.setFrom(user_);
+    message.setChat(chatType);
     message.setText(messageText);
 
-    QJsonObject messageInfo = message.toJson();
+    QJsonObject messageInfo;
+    messageInfo[request::headers::Type]    = request::types::SendMessage;
+    messageInfo[request::headers::Message] = message.toJson();
 
+//    qDebug() << "messageInfo";
+//    qDebug() << QString::fromUtf8(QJsonDocument(messageInfo).toJson());
     sendRequest(messageInfo);
 }
 
@@ -148,7 +154,7 @@ void ChatClient::requestCreateChat(int user2Id)
 {
     Chat chat;
     chat.setType("private");
-    chat.setUser1Id(user().id()); // my id
+    chat.setUser1Id(user()->id()); // my id
     chat.setUser2Id(user2Id);
     qDebug() << "Chat Info " << QString::fromUtf8(QJsonDocument(chat.toJson()).toJson());
 
@@ -216,7 +222,7 @@ void ChatClient::parseLogInReply(const QJsonObject &jsonReply)
 
 void ChatClient::parseMessageReply(const QJsonObject &jsonReply)
 {
-    Message message = Message::fromJson(jsonReply);
+    MessagePtr message = Message::fromJson(jsonReply);
 
     emit messageReceived(message);
 }
@@ -224,7 +230,7 @@ void ChatClient::parseMessageReply(const QJsonObject &jsonReply)
 void ChatClient::parseChatAddReply(const QJsonObject &jsonReply)
 {
     const QJsonObject chatJson = jsonReply.value(reply::headers::Chat).toObject();
-    const Chat chat = Chat::fromJson(chatJson);
+    const ChatPtr chat = Chat::fromJson(chatJson);
     database_->addChat(chat);
     database_->chatsViewTable()->select();
 }

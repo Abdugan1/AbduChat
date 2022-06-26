@@ -17,7 +17,15 @@ int Chat::id() const
 
 void Chat::setId(int newId)
 {
+    if (id_ == newId)
+        return;
     id_ = newId;
+    emit idChanged();
+}
+
+void Chat::resetId()
+{
+    setId(-1); // TODO: Adapt to use your actual default value
 }
 
 const QString &Chat::type() const
@@ -27,7 +35,15 @@ const QString &Chat::type() const
 
 void Chat::setType(const QString &newType)
 {
+    if (type_ == newType)
+        return;
     type_ = newType;
+    emit typeChanged();
+}
+
+void Chat::resetType()
+{
+    setType({}); // TODO: Adapt to use your actual default value
 }
 
 int Chat::user1Id() const
@@ -37,7 +53,15 @@ int Chat::user1Id() const
 
 void Chat::setUser1Id(int newUser1Id)
 {
+    if (user1Id_ == newUser1Id)
+        return;
     user1Id_ = newUser1Id;
+    emit user1IdChanged();
+}
+
+void Chat::resetUser1Id()
+{
+    setUser1Id({}); // TODO: Adapt to use your actual default value
 }
 
 int Chat::user2Id() const
@@ -47,7 +71,15 @@ int Chat::user2Id() const
 
 void Chat::setUser2Id(int newUser2Id)
 {
+    if (user2Id_ == newUser2Id)
+        return;
     user2Id_ = newUser2Id;
+    emit user2IdChanged();
+}
+
+void Chat::resetUser2Id()
+{
+    setUser2Id({}); // TODO: Adapt to use your actual default value
 }
 
 const QString &Chat::date() const
@@ -57,7 +89,15 @@ const QString &Chat::date() const
 
 void Chat::setDate(const QString &newDate)
 {
+    if (date_ == newDate)
+        return;
     date_ = newDate;
+    emit dateChanged();
+}
+
+void Chat::resetDate()
+{
+    setDate({}); // TODO: Adapt to use your actual default value
 }
 
 QJsonObject Chat::toJson() const
@@ -86,30 +126,30 @@ void Chat::toSqlRecord(QSqlRecord *record) const
     record->setValue(FieldNames::Date, date());
 }
 
-Chat Chat::fromJson(const QJsonObject &json)
+ChatPtr Chat::fromJson(const QJsonObject &json)
 {
-    Chat chat;
+    ChatPtr chat(new Chat);
 
-    chat.setId(json.value(chat::headers::Id).toInt());
-    chat.setType(json.value(chat::headers::Type).toString());
-    chat.setUser1Id(json.value(chat::headers::User1Id).toInt());
-    chat.setUser2Id(json.value(chat::headers::User2Id).toInt());
-    chat.setDate(json.value(chat::headers::Date).toString());
+    chat->setId(json.value(chat::headers::Id).toInt());
+    chat->setType(json.value(chat::headers::Type).toString());
+    chat->setUser1Id(json.value(chat::headers::User1Id).toInt());
+    chat->setUser2Id(json.value(chat::headers::User2Id).toInt());
+    chat->setDate(json.value(chat::headers::Date).toString());
 
     return chat;
 }
 
-Chat Chat::fromSqlRecord(const QSqlRecord &record)
+ChatPtr Chat::fromSqlRecord(const QSqlRecord &record)
 {
-    Chat chat;
+    ChatPtr chat(new Chat);
 
     namespace FieldNames = db::chats::fieldnames;
 
-    chat.setId(record.value(FieldNames::Id).toInt());
-    chat.setType(record.value(FieldNames::Type).toString());
-    chat.setUser1Id(record.value(chat::headers::User1Id).toInt());
-    chat.setUser2Id(record.value(chat::headers::User2Id).toInt());
-    chat.setDate(record.value(FieldNames::Date).toString());
+    chat->setId(record.value(FieldNames::Id).toInt());
+    chat->setType(record.value(FieldNames::Type).toString());
+    chat->setUser1Id(record.value(chat::headers::User1Id).toInt());
+    chat->setUser2Id(record.value(chat::headers::User2Id).toInt());
+    chat->setDate(record.value(FieldNames::Date).toString());
 
     return chat;
 }

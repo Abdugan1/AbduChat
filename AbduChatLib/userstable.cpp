@@ -21,16 +21,16 @@ UsersTable::UsersTable(QObject *parent)
     select();
 }
 
-void UsersTable::addUser(const User &user)
+void UsersTable::addUser(const UserPtr &user)
 {
     QSqlRecord userRecord = record();
-    user.toSqlRecord(&userRecord);
+    user->toSqlRecord(&userRecord);
     addUserRecord(userRecord);
 
     if (!submitAll()) {
         qFatal("Cannot submit user:\n id: %d\nusername: %s\nreason: %s",
-               user.id(),
-               qPrintable(user.username()),
+               user->id(),
+               qPrintable(user->username()),
                qPrintable(lastError().text())
                );
     }

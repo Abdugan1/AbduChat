@@ -25,7 +25,7 @@ ServerLogsTable *SqlDatabaseServer::serverLogsTable() const
     return serverLogsTable_;
 }
 
-bool SqlDatabaseServer::addUser(const User &user, const QString &password)
+bool SqlDatabaseServer::addUser(const UserPtr &user, const QString &password)
 {
     SqlDatabase::addUser(user);
     return usersServerTable_->addUser(user, password);

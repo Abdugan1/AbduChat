@@ -6,10 +6,10 @@ import QtQuick.Controls 2.15
 Page {
     id: root
 
-    property string inConversationWith
-    property int inConversationWithId
+    property var chat
+    property alias pageTitleText: pageTitle.text
 
-    signal sendButtonClicked()
+    signal sendButtonClicked(var chat, string messageText)
 
     width: 440
     height: 760
@@ -28,34 +28,36 @@ Page {
 
         Label {
             id: pageTitle
-            text: "inConversationWith"
             anchors.centerIn: parent
             font.pixelSize: 20
         }
     }
 
-//    MessagesTable {
-//        id: messagesTable
-//        objectName: "messagesTable"
-
-//        myId: getId()
-//        recipientId: root.inConversationWithId
-//    }
-
-//        ListView {
-//            id: listView
-//            anchors.left: parent.left
-//            anchors.right: parent.right
-//            anchors.top: parent.top
-//            anchors.bottom: messageField.top
-//            anchors.rightMargin: 0
-//            anchors.leftMargin: 0
-//            anchors.bottomMargin: 0
-//            anchors.topMargin: 0
-//            verticalLayoutDirection: ListView.BottomToTop
+        ListView {
+            id: listView
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: messageField.top
+            anchors.rightMargin: 8
+            anchors.leftMargin: 8
+            anchors.bottomMargin: 8
+            anchors.topMargin: 8
+            spacing: 8
+            verticalLayoutDirection: ListView.BottomToTop
 
 //            model: messagesTable
-//        }
+            model: ListModel {
+                ListElement {
+                    text: "Hale epta"
+                }
+                ListElement {
+                    text: "Hale epta #2 Loremdsakl"
+                }
+            }
+
+            delegate: MessageDelegate {}
+        }
 
         MessageField {
             id: messageField
@@ -64,7 +66,8 @@ Page {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
             onSendClicked: {
-                console.log("Send clicked");
+                sendButtonClicked(root.chat, text);
+                text = ""
             }
         }
 }

@@ -35,10 +35,10 @@ bool UsersServerTable::hasUser(const QString &username, const QString &password)
     return query.value(0).toBool();
 }
 
-bool UsersServerTable::addUser(const User &user, const QString &password)
+bool UsersServerTable::addUser(const UserPtr &user, const QString &password)
 {
     QSqlRecord userRecord = record();
-    userRecord.setValue(FieldNames::Username, user.username());
+    userRecord.setValue(FieldNames::Username, user->username());
     userRecord.setValue(FieldNames::Password, password);
 
     if (!addUserRecord(userRecord))

@@ -1,8 +1,23 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
+import AbduChatLib 1.0
+
 ItemDelegate {
     id: root
+
+    function getChatUsername() {
+        return getMyUser().id == model.user_1_id ? model.user_2_username
+                                                 : model.user_1_username
+    }
+
+    Chat {
+        id: chat
+        chatId: model.chat_id
+        type: model.chat_type
+        user1Id: model.user_1_id
+        user2Id: model.user_2_id
+    }
 
     implicitWidth: 400
     implicitHeight: 70
@@ -10,7 +25,7 @@ ItemDelegate {
     anchors.left: parent.left
     anchors.right: parent.right
 
-    onClicked: { userClicked(model.username, model.id) }
+    onClicked: { chatClicked(chat, usernameText.text) }
 
     Image {
         id: avatar
@@ -26,14 +41,7 @@ ItemDelegate {
 
     Text {
         id: usernameText
-        text: {
-            console.log("my_id: " + getMyUserId());
-            console.log("user_1_id: " + user_1_id);
-            console.log("user_2_id: " + user_2_id);
-            console.log("user_1_username: " + user_1_username);
-            console.log("user_2_username: " + user_2_username);
-            return getMyUserId() != user_1_id ? user_1_username : user_2_username;
-        }
+        text: getChatUsername()
 
         anchors.left: avatar.right
         anchors.top: parent.top
@@ -54,7 +62,7 @@ ItemDelegate {
 
     Text {
         id: sentTime
-        text: date
+        text: model.date
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.topMargin: 14

@@ -38,17 +38,17 @@ MessagesTable *SqlDatabase::messagesTable() const
     return messagesTable_;
 }
 
-void SqlDatabase::addUser(const User &user)
+void SqlDatabase::addUser(const UserPtr &user)
 {
     usersTable_->addUser(user);
 }
 
-void SqlDatabase::addChat(const Chat &chat)
+void SqlDatabase::addChat(const ChatPtr &chat)
 {
     chatsTable_->addChat(chat);
 }
 
-void SqlDatabase::addMessage(const Message &message)
+void SqlDatabase::addMessage(const MessagePtr &message)
 {
     messagesTable_->addMessage(message);
 }

@@ -6,9 +6,13 @@ ApplicationWindow {
     id: window
 
     function rollBackToBegin() { stackView.pop(null); }
+
     function getChatClient() { return chatClient; }
-    function getMyUserId()   { return chatClient.myUserId; }
-    function getUsersTable() { return usersTable; }
+    function getMyUser() { return chatClient.user; }
+
+    function getUsersTable()     { return usersTable; }
+    function getChatsViewTable() { return chatsViewTable; }
+    function getMessagesTable()  { return messagesTable; }
 
     width: 440
     height: 760
@@ -29,6 +33,9 @@ ApplicationWindow {
         }
 
         function onLoggedIn() {
+            console.log("my id: " + chatClient.user.id);
+            console.log("my username: " + chatClient.user.username);
+            console.log("my lastname: " + chatClient.user.lastName);
             chatClient.synchronizeAll()
             stackView.push(chatsPage)
         }
@@ -74,8 +81,12 @@ ApplicationWindow {
     ChatsPage {
         id: chatsPage
 
-        onUserClicked: {
-            stackView.push(conversationPage, {inConversationWith: username, inConversationWithId: id})
+        onChatClicked: {
+            console.log("chatId: " + chat.user1Id)
+//            getMessagesTable().currentChatId = chat.chatId
+            stackView.push(conversationPage,
+                           {chat: chat,
+                            pageTitleText: chat.chatUsername})
         }
     }
 
@@ -87,8 +98,7 @@ ApplicationWindow {
         id: conversationPage
 
         onSendButtonClicked: {
-            chatClient.sendMessage(inConversationWithId, messageField.text);
-            messageField.clear();
+            chatClient.sendMessage(chat, messageText);
         }
     }
 

@@ -4,11 +4,14 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlTableModel>
+#include <memory>
 
 class User;
 class Chat;
 class Message;
-
+using UserPtr = std::shared_ptr<User>;
+using ChatPtr = std::shared_ptr<Chat>;
+using MessagePtr = std::shared_ptr<Message>;
 
 class UsersTable;
 class ChatsTable;
@@ -27,11 +30,11 @@ public:
     ChatsTable *chatsTable() const;
     MessagesTable *messagesTable() const;
 
-    void addUser(const User& user);
+    void addUser(const UserPtr& user);
 
-    void addChat(const Chat& chat);
+    void addChat(const ChatPtr& chat);
 
-    void addMessage(const Message& message);
+    void addMessage(const MessagePtr& message);
 
 private:
     void connectToDatabase();

@@ -21,16 +21,16 @@ MessagesTable::MessagesTable(QObject *parent)
     select();
 }
 
-void MessagesTable::addMessage(const Message &message)
+void MessagesTable::addMessage(const MessagePtr &message)
 {
     QSqlRecord messageRecord = record();
-    message.toSqlRecord(&messageRecord);
+    message->toSqlRecord(&messageRecord);
     addMessageRecord(messageRecord);
 
     if (!submitAll()) {
         qFatal("Cannot submit add message:\nid: %d\n text: %s\nreason: %s",
-               message.id(),
-               qPrintable(message.text()),
+               message->id(),
+               qPrintable(message->text()),
                qPrintable(lastError().text())
                );
     }
@@ -56,4 +56,22 @@ void MessagesTable::addMessageRecord(const QSqlRecord &messageRecord)
                qPrintable(lastError().text())
                );
     }
+}
+
+int MessagesTable::currentChatId() const
+{
+    return currentChatId_;
+}
+
+void MessagesTable::setCurrentChatId(int newCurrentChatId)
+{
+    if (currentChatId_ == newCurrentChatId)
+        return;
+    currentChatId_ = newCurrentChatId;
+
+    const QString filterString(FieldNames::ChatId + " = " + currentChatId_);
+    setFilter(filterString);
+    select();
+
+    emit currentChatIdChanged();
 }

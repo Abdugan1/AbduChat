@@ -4,7 +4,8 @@ import QtQuick.Controls 2.15
 Page {
     id: root
 
-    signal userClicked(string username, int id)
+    signal chatClicked(var chat, string chatUsername)
+
     width: 440
     height: 760
 
@@ -42,23 +43,8 @@ Page {
         id: listView
         anchors.fill: parent
 
-        model: chatsViewTable
-
-//        model: ListModel {
-//            ListElement {
-//                username: "nnegmetov"
-//            }
-//            ListElement {
-//                username: "ergalii"
-//            }
-//        }
+        model: getChatsViewTable()
 
         delegate: ChatDelegate {}
     }
-
-//    ContactsTable {
-//        id: contactsTable
-//        objectName: "contactsTable"
-//        myId: getId()
-//    }
 }

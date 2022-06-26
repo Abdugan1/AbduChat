@@ -2,17 +2,21 @@
 #define CHATSERVER_H
 
 #include <QTcpServer>
+#include <memory>
 
 class ServerWorker;
 class User;
 class Chat;
+class Message;
+using UserPtr = std::shared_ptr<User>;
+using ChatPtr = std::shared_ptr<Chat>;
+using MessagePtr = std::shared_ptr<Message>;
 
 class SqlDatabaseServer;
 class UsersTable;
 class UsersServerTable;
 class ServerLogsTable;
 class MessagesTable;
-class Message;
 
 class QMutex;
 
@@ -44,7 +48,7 @@ private:
     void parseJsonRequestFromUnauthorized(ServerWorker* sender, const QJsonObject& jsonRequest);
 
     void parseLogInRequest(ServerWorker* sender, const QJsonObject jsonRequest);
-    void sendLogInSucceedReply(ServerWorker* recipient, const User& user);
+    void sendLogInSucceedReply(ServerWorker* recipient, const UserPtr& user);
     void sendLogInFailedReply(ServerWorker* recipient);
 
     void parseRegisterRequest(ServerWorker* sender, const QJsonObject& jsonRequest);
@@ -52,7 +56,7 @@ private:
     void sendRegisterFailedReply(ServerWorker* recipient);
 
     void parseSendMessageRequest(ServerWorker* sender, const QJsonObject& jsonRequest);
-    void sendMessageReply(ServerWorker* recipient, const Message& message);
+    void sendMessageReply(ServerWorker* recipient, const MessagePtr& message);
 
     void parseSynchronizeUsersRequest(ServerWorker* sender, const QJsonObject& jsonRequest);
     void sendAllUsersReply(ServerWorker* recipient);
@@ -63,7 +67,7 @@ private:
     void sendNewerMessagesAfterDatetimeReply(ServerWorker* recipient, const QString& sentDatetime);
 
     void parseCreateChatRequest(ServerWorker* sender, const QJsonObject& jsonRequest);
-    void sendAddedChatReply(ServerWorker* recipient, const Chat& chat);
+    void sendAddedChatReply(ServerWorker* recipient, const ChatPtr& chat);
 
     void broadcast(const QJsonObject& message, const ServerWorker* exclude);
 
