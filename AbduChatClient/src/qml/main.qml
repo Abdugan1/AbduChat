@@ -9,6 +9,17 @@ ApplicationWindow {
 
     function getChatClient() { return chatClient; }
     function getMyUser() { return chatClient.user; }
+    function getCurrentChat() { return messagesTable.currentChat; }
+    function setCurrentChat(newChat) {
+        console.log("setCurrentChat");
+        console.log("chat.id: " + newChat.chatId)
+        console.log("chat.user1Id: " + newChat.user1Id)
+        console.log("chat.user2Id: " + newChat.user2Id)
+        messagesTable.setCurrentChat(newChat);
+        console.log("chat.id: " + newChat.chatId)
+        console.log("chat.user1Id: " + newChat.user1Id)
+        console.log("chat.user2Id: " + newChat.user2Id)
+    }
 
     function getUsersTable()     { return usersTable; }
     function getChatsViewTable() { return chatsViewTable; }
@@ -82,11 +93,7 @@ ApplicationWindow {
         id: chatsPage
 
         onChatClicked: {
-            console.log("chatId: " + chat.user1Id)
-//            getMessagesTable().currentChatId = chat.chatId
-            stackView.push(conversationPage,
-                           {chat: chat,
-                            pageTitleText: chat.chatUsername})
+            stackView.push(conversationPage, {pageTitleText: chatUsername})
         }
     }
 
@@ -98,7 +105,8 @@ ApplicationWindow {
         id: conversationPage
 
         onSendButtonClicked: {
-            chatClient.sendMessage(chat, messageText);
+            console.log("send button clicked");
+            chatClient.sendMessage(getCurrentChat(), messageText);
         }
     }
 

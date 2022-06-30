@@ -2,6 +2,7 @@
 #include "database_names.h"
 #include "request_and_reply_constants.h"
 #include "user.h"
+#include "logger.h"
 
 #include <QSqlQuery>
 #include <QSqlRecord>
@@ -28,11 +29,9 @@ void UsersTable::addUser(const UserPtr &user)
     addUserRecord(userRecord);
 
     if (!submitAll()) {
-        qFatal("Cannot submit user:\n id: %d\nusername: %s\nreason: %s",
-               user->id(),
-               qPrintable(user->username()),
-               qPrintable(lastError().text())
-               );
+        Logger::fatal("UsersTable::addUser::Submit all failed. id: "
+                      + QString::number(user->id()) + " | reason: "
+                      + lastError().text());
     }
 }
 
@@ -50,10 +49,8 @@ void UsersTable::createRoleNames()
 void UsersTable::addUserRecord(const QSqlRecord &userRecord)
 {
     if (!insertRecord(rowCount(), userRecord)) {
-        qFatal("Cannot submit user:\n id: %d\nusername: %s\nreason: %s",
-               userRecord.value(FieldNames::Id).toInt(),
-               qPrintable(userRecord.value(FieldNames::Username).toString()),
-               qPrintable(lastError().text())
-               );
+        Logger::fatal("UsersTable::addUserRecord::Insert record failed. id: "
+                      + userRecord.value(FieldNames::Id).toString() + " | reason: "
+                      + lastError().text());
     }
 }

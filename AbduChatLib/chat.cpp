@@ -5,9 +5,15 @@
 #include <QJsonObject>
 #include <QSqlRecord>
 
-Chat::Chat()
+Chat::Chat(QObject *parent)
+    : QObject(parent)
 {
 
+}
+
+Chat::~Chat()
+{
+    qDebug() << "Chat::Destructor";
 }
 
 int Chat::id() const

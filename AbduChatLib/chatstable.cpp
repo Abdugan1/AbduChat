@@ -1,6 +1,7 @@
 #include "chatstable.h"
 #include "database_names.h"
 #include "chat.h"
+#include "logger.h"
 
 #include <QSqlQuery>
 #include <QSqlRecord>
@@ -24,10 +25,9 @@ void ChatsTable::addChat(const ChatPtr &chat)
     addChatRecord(chatRecord);
 
     if (!submitAll()) {
-        qFatal("Cannot insert chat:\nid: %d\nreason: %s",
-               chat->id(),
-               qPrintable(lastError().text())
-               );
+        Logger::fatal("ChatsTable::addChat::Submit all failed. id: "
+                      + QString::number(chat->id()) + " | reason: "
+                      + lastError().text());
     }
 }
 
@@ -41,7 +41,10 @@ bool ChatsTable::hasChat(int user1Id, int user2Id) const
     query.bindValue("user1Id", user1Id);
     query.bindValue("user2Id", user2Id);
     if (!query.exec()) {
-        qFatal("Cannot get count of chat: %s", qPrintable(query.lastError().text()));
+        Logger::fatal("ChatsTable::hasChat::Get count of chat failed. user_1_id: "
+                      + QString::number(user1Id) + " | user_2_id: "
+                      + QString::number(user2Id) + " | reason: "
+                      + query.lastError().text());
     }
     query.next();
     return query.value(0).toBool();
@@ -61,9 +64,9 @@ void ChatsTable::createRoleNames()
 void ChatsTable::addChatRecord(const QSqlRecord &chatRecord)
 {
     if (!insertRecord(rowCount(), chatRecord)) {
-        qFatal("Cannot insert chat:\nid: %d\nreason: %s",
-               chatRecord.value(FieldNames::Id).toInt(),
-               qPrintable(lastError().text())
-               );
+        Logger::fatal("ChatsTable::addChatRecord::Insert record failed. id: "
+                      + chatRecord.value(FieldNames::Id).toString() + " | reason: "
+                      + lastError().text()
+                      );
     }
 }

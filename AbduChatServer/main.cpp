@@ -4,6 +4,7 @@
 
 #include "console.h"
 #include "chatserver.h"
+#include <AbduChatLib/logger.h>
 #include <AbduChatLib/sqldatabaseserver.h>
 #include <AbduChatLib/user.h>
 
@@ -29,5 +30,6 @@ int main(int argc, char *argv[])
     QObject::connect(runnable, &Console::startServer, &chatServer, &ChatServer::start);
     QObject::connect(runnable, &Console::stopServer, &chatServer, &ChatServer::stop);
 
+    Logger::init();
     return app.exec();
 }

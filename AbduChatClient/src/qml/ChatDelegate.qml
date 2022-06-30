@@ -25,7 +25,10 @@ ItemDelegate {
     anchors.left: parent.left
     anchors.right: parent.right
 
-    onClicked: { chatClicked(chat, usernameText.text) }
+    onClicked: {
+        setCurrentChat(chat);
+        chatClicked(usernameText.text)
+    }
 
     Image {
         id: avatar

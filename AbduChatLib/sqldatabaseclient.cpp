@@ -1,7 +1,10 @@
 #include "sqldatabaseclient.h"
 #include "database_names.h"
 #include "chatsviewtable.h"
+#include "messagestable.h"
 #include "user.h"
+#include "message.h"
+#include "logger.h"
 
 #include <QSqlQuery>
 #include <QSqlRecord>
@@ -15,12 +18,8 @@ SqlDatabaseClient::SqlDatabaseClient(QObject *parent)
 {
     createClientTables();
     initClientTables();
-
-    const int rowCount = chatsViewTable_->rowCount();
-    for (int i = 0; i < rowCount; ++i) {
-        qDebug() << "user_1_id" << chatsViewTable_->record(i).value("user_1_id").toString();
-        qDebug() << "user_1_username" << chatsViewTable_->record(i).value("user_1_username").toString();
-    }
+    messagesTable()->setSort(db::messages::fieldnums::Id, Qt::DescendingOrder);
+    messagesTable()->select();
 }
 
 ChatsViewTable *SqlDatabaseClient::chatsViewTable() const
@@ -33,6 +32,14 @@ void SqlDatabaseClient::addUsers(const QJsonArray &users)
     for (const auto& userRef : users) {
         const QJsonObject user = userRef.toObject();
         addUser(User::fromJson(user));
+    }
+}
+
+void SqlDatabaseClient::addMessages(const QJsonArray &messages)
+{
+    for (const auto& messageRef : messages) {
+        const QJsonObject message = messageRef.toObject();
+        addMessage(Message::fromJson(message));
     }
 }
 
@@ -69,8 +76,8 @@ void SqlDatabaseClient::createChatsViewTable()
 
     QSqlQuery query;
     if (!query.exec(execute)) {
-        qFatal("Cannot create view %s: %s\nexecuted: %s",
-               qPrintable(ViewName), qPrintable(query.lastError().text()), qPrintable(execute));
+        Logger::fatal("SqlDatabaseClient::createChatsViewTable::Create table failed. reason: "
+                      + query.lastError().text());
     }
 }
 

@@ -3,6 +3,7 @@
 #include "userstable.h"
 #include "usersservertable.h"
 #include "serverlogstable.h"
+#include "logger.h"
 
 #include <QSqlQuery>
 #include <QSqlRecord>
@@ -40,7 +41,8 @@ QSqlRecord SqlDatabaseServer::getUser(const QString &username) const
     query.prepare(execute);
     query.bindValue(":username", username);
     if (!query.exec()) {
-        qFatal("Cannot get user %s: %s", qPrintable(username), qPrintable(query.lastError().text()));
+        Logger::fatal("SqlDatabaseServer::getUser::Get user failed. username: "
+                      + username + " | reason: " + query.lastError().text());
     }
     query.next();
     return query.record();
@@ -65,9 +67,8 @@ void SqlDatabaseServer::createUsersServerTable()
                                     );
     QSqlQuery query;
     if (!query.exec(execute)) {
-        qFatal("Cannot create table %s: %s\n"
-               "executed: %s",
-               qPrintable(TableName), qPrintable(query.lastError().text()), qPrintable(query.executedQuery()));
+        Logger::fatal("SqlDatabaseServer::createUsersServerTable::Create table failed. reason: "
+                      + query.lastError().text());
     }
 }
 
@@ -83,8 +84,8 @@ void SqlDatabaseServer::createServerLogsTable()
                                     );
     QSqlQuery query;
     if (!query.exec(execute)) {
-        qFatal("Cannot create table %s: %s",
-               qPrintable(TableName), qPrintable(query.lastError().text()));
+        Logger::fatal("SqlDatabaseServer::createServerLogsTable::Create table failed. reason: "
+                      + query.lastError().text());
     }
 }
 

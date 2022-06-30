@@ -7,6 +7,7 @@
 #include <AbduChatLib/chat.h>
 #include <AbduChatLib/message.h>
 #include <AbduChatLib/datastream.h>
+#include <AbduChatLib/logger.h>
 
 #include <QHostAddress>
 #include <QJsonDocument>
@@ -133,12 +134,12 @@ void ChatClient::attempToRegister(const User &userInfo, const QString &password)
 
 void ChatClient::sendMessage(const QVariant &chat, const QString &messageText)
 {
-    ChatPtr chatType(qobject_cast<Chat*>(chat.value<QObject*>()));
-
+    Logger::debug("ChatClient::sendMessage");
+    Logger::debug(QString("Chat is null?") + (qobject_cast<Chat*>(chat.value<QObject*>()) ? "no" : "yes"));
     Message message;
     // 'id' and 'date' is get from server. So we dont need to specify it.
     message.setFrom(user_);
-    message.setChat(chatType);
+    message.setChat(std::make_shared<Chat>((qobject_cast<Chat*>(chat.value<QObject*>()))));
     message.setText(messageText);
 
     QJsonObject messageInfo;
@@ -222,9 +223,9 @@ void ChatClient::parseLogInReply(const QJsonObject &jsonReply)
 
 void ChatClient::parseMessageReply(const QJsonObject &jsonReply)
 {
-    MessagePtr message = Message::fromJson(jsonReply);
+    MessagePtr message = Message::fromJson(jsonReply.value(reply::headers::Message).toObject());
 
-    emit messageReceived(message);
+    database_->addMessage(message);
 }
 
 void ChatClient::parseChatAddReply(const QJsonObject &jsonReply)
@@ -247,7 +248,7 @@ void ChatClient::parseSynchronizeMessagesReply(const QJsonObject &jsonReply)
 {
     const QJsonArray messages = jsonReply.value(reply::headers::Messages).toArray();
     if (!messages.isEmpty()) {
-        emit messagesAvailable(messages);
+        database_->addMessages(messages);
     }
 }
 

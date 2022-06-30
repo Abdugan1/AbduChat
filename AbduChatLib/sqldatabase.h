@@ -46,15 +46,6 @@ private:
 
     void initTables();
 
-#ifdef ABDUCHAT_CLIENT
-    void createChatsView();
-#endif
-
-#ifdef ABDUCHAT_SERVER
-    void createServerLogsTable();
-    void createUsersServerTable();
-#endif
-
 private:
     UsersTable* usersTable_ = nullptr;
     ChatsTable* chatsTable_ = nullptr;

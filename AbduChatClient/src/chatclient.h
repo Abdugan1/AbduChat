@@ -32,10 +32,6 @@ signals:
     void loggedIn();
     void loginError(const QString& reason);
 
-    void messageReceived(const MessagePtr& message);
-
-    void messagesAvailable(const QJsonArray& messages);
-
     void userChanged();
 
 public slots:

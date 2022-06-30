@@ -1,15 +1,14 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
-//import AbduChatLib 1.0
+import AbduChatLib 1.0
 
 Page {
     id: root
 
-    property var chat
     property alias pageTitleText: pageTitle.text
 
-    signal sendButtonClicked(var chat, string messageText)
+    signal sendButtonClicked(string messageText)
 
     width: 440
     height: 760
@@ -46,15 +45,15 @@ Page {
             spacing: 8
             verticalLayoutDirection: ListView.BottomToTop
 
-//            model: messagesTable
-            model: ListModel {
-                ListElement {
-                    text: "Hale epta"
-                }
-                ListElement {
-                    text: "Hale epta #2 Loremdsakl"
-                }
-            }
+            model: messagesTable
+//            model: ListModel {
+//                ListElement {
+//                    text: "Hale epta"
+//                }
+//                ListElement {
+//                    text: "Hale epta #2 Loremdsakl"
+//                }
+//            }
 
             delegate: MessageDelegate {}
         }
@@ -66,7 +65,7 @@ Page {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
             onSendClicked: {
-                sendButtonClicked(root.chat, text);
+                sendButtonClicked(text);
                 text = ""
             }
         }

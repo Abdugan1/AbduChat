@@ -4,7 +4,7 @@ import QtQuick.Controls 2.15
 Page {
     id: root
 
-    signal chatClicked(var chat, string chatUsername)
+    signal chatClicked(string chatUsername)
 
     width: 440
     height: 760

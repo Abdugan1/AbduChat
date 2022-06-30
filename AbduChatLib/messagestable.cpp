@@ -1,13 +1,17 @@
 #include "messagestable.h"
 #include "database_names.h"
 #include "request_and_reply_constants.h"
+#include "chat.h"
 #include "message.h"
+#include "logger.h"
 
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QJsonDocument>
+#include <QJSValue>
 
 namespace FieldNames = db::messages::fieldnames;
 namespace FieldNums = db::messages::fieldnums;
@@ -16,10 +20,47 @@ MessagesTable::MessagesTable(QObject *parent)
     : SqlTableModel{parent}
 {
     setTable(db::messages::TableName);
-    setSort(FieldNums::Id, Qt::DescendingOrder);
     createRoleNames();
     select();
 }
+
+Chat *MessagesTable::currentChat() const
+{
+    Logger::debug("MessagesTable::currentChat");
+    if (currentChat_) {
+        Logger::debug(QString::fromUtf8(QJsonDocument(currentChat_->toJson()).toJson()));
+    }
+    return currentChat_.get();
+}
+
+void MessagesTable::setCurrentChat(const QJSValue &newCurrentChat)
+{
+    Chat* chat = qobject_cast<Chat*>(newCurrentChat.toQObject());
+    qDebug() << "newChat is null?" << (chat == nullptr) << chat->toJson();
+    if (currentChat_.get() == chat)
+        return;
+    currentChat_ = std::shared_ptr<Chat>(chat);
+    qDebug() << "Current chat:" << currentChat_->toJson();
+    selectCurrentChatValues();
+//    emit currentChatChanged();
+}
+
+//void MessagesTable::setCurrentChat(const QVariant &newCurrentChat)
+//{
+////    if (currentChat_ == std::make_shared<Chat>(qobject_cast<Chat*>(newCurrentChat.value<QObject*>())))
+////        return;
+
+//    if (dynamic_cast<Chat*>(newCurrentChat.value<QObject*>())) {
+//        Logger::debug("MessagesTable::setCurrentChat::currentChat: no value: " + QString(newCurrentChat.typeName()));
+//    }
+
+//    Logger::debug("MessagesTable::setCurrentChat::currentChat: " + (currentChat_ == nullptr ? "null" : QString::fromUtf8(QJsonDocument(currentChat_->toJson()).toJson())));
+
+//    currentChat_ = std::make_shared<Chat>(qobject_cast<Chat*>(newCurrentChat.value<QObject*>()));
+//    selectCurrentChatValues();
+//    emit currentChatChanged();
+//}
+
 
 void MessagesTable::addMessage(const MessagePtr &message)
 {
@@ -28,11 +69,10 @@ void MessagesTable::addMessage(const MessagePtr &message)
     addMessageRecord(messageRecord);
 
     if (!submitAll()) {
-        qFatal("Cannot submit add message:\nid: %d\n text: %s\nreason: %s",
-               message->id(),
-               qPrintable(message->text()),
-               qPrintable(lastError().text())
-               );
+        Logger::fatal("MessagesTable::addMessage::Submit all failed. id: "
+                         + QString::number(message->id()) + " | reason: "
+                         + lastError().text()
+                      );
     }
 }
 
@@ -50,28 +90,16 @@ void MessagesTable::createRoleNames()
 void MessagesTable::addMessageRecord(const QSqlRecord &messageRecord)
 {
     if (!insertRecord(rowCount(), messageRecord)) {
-        qFatal("Cannot insert add message:\nid: %d\n text: %s\nreason: %s",
-               messageRecord.value(FieldNames::Id).toInt(),
-               qPrintable(messageRecord.value(FieldNames::Text).toString()),
-               qPrintable(lastError().text())
-               );
+        Logger::fatal("MessagesTable::addMessageRecord::Insert record failed. id: "
+                      + messageRecord.value(FieldNames::Id).toString() + " | reason: "
+                      + lastError().text()
+                      );
     }
 }
 
-int MessagesTable::currentChatId() const
+void MessagesTable::selectCurrentChatValues()
 {
-    return currentChatId_;
-}
-
-void MessagesTable::setCurrentChatId(int newCurrentChatId)
-{
-    if (currentChatId_ == newCurrentChatId)
-        return;
-    currentChatId_ = newCurrentChatId;
-
-    const QString filterString(FieldNames::ChatId + " = " + currentChatId_);
+    const QString filterString(FieldNames::ChatId + " = " + QString::number(currentChat_->id()));
     setFilter(filterString);
     select();
-
-    emit currentChatIdChanged();
 }

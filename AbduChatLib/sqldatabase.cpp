@@ -1,5 +1,6 @@
 #include "sqldatabase.h"
 #include "database_names.h"
+#include "logger.h"
 
 #include "userstable.h"
 #include "chatstable.h"
@@ -59,20 +60,23 @@ void SqlDatabase::connectToDatabase()
     if (!database.isValid()) {
         database = QSqlDatabase::addDatabase("QSQLITE");
         if (!database.isValid())
-            qFatal("Cannot add database: %s", qPrintable(database.lastError().text()));
+            Logger::fatal("SqlDatabase::connectToDatabase::Database is not valid. reason: "
+                          + database.lastError().text());
     }
 
     const QDir writeDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     if (!writeDir.mkpath("."))
-        qFatal("Failed to create writable directory at %s", qPrintable(writeDir.absolutePath()));
+        Logger::fatal("SqlDatabase::connectToDatabase::Make writable directory failed. path: "
+                      + writeDir.absolutePath());
 
     // Ensure that we have a writable location on all devices.
     const QString fileName = writeDir.absolutePath() + "/AbduChat.sqlite3";
     // When using the SQLite driver, open() will create the SQLite database if it doesn't exist.
     database.setDatabaseName(fileName);
     if (!database.open()) {
-        qFatal("Cannot open database: %s", qPrintable(database.lastError().text()));
         QFile::remove(fileName);
+        Logger::fatal("SqlDatabase::connectToDatabase::Open database failed. reason: "
+                      + database.lastError().text());
     }
 }
 
@@ -81,15 +85,6 @@ void SqlDatabase::createTables()
     createUsersTable();
     createChatsTable();
     createMessagesTable();
-
-#ifdef ABDUCHAT_CLIENT
-    createChatsView();
-#endif
-
-#ifdef ABDUCHAT_SERVER
-    createServerLogsTable();
-    createUsersServerTable();
-#endif
 }
 
 void SqlDatabase::createUsersTable()
@@ -106,8 +101,8 @@ void SqlDatabase::createUsersTable()
 
     QSqlQuery query;
     if (!query.exec(execute)) {
-        qFatal("Cannot create table %s: %s",
-               qPrintable(TableName), qPrintable(query.lastError().text()));
+        Logger::fatal("SqlDatabase::createUsersTable::Create table failed. reason: "
+                      + query.lastError().text());
     }
 }
 
@@ -126,8 +121,8 @@ void SqlDatabase::createChatsTable()
 
     QSqlQuery query;
     if (!query.exec(execute)) {
-        qFatal("Cannot create table %s: %s",
-               qPrintable(TableName), qPrintable(query.lastError().text()));
+        Logger::fatal("SqlDatabase::createChatsTable::Create table failed. reason: "
+                      + query.lastError().text());
     }
 }
 
@@ -147,8 +142,8 @@ void SqlDatabase::createMessagesTable()
                                     );
     QSqlQuery query;
     if (!query.exec(execute)) {
-        qFatal("Cannot create table %s: %s",
-               qPrintable(TableName), qPrintable(query.lastError().text()));
+        Logger::fatal("SqlDatabase::createMessagesTable::Create table failed. reason: "
+                      + query.lastError().text());
     }
 }
 
@@ -158,44 +153,3 @@ void SqlDatabase::initTables()
     chatsTable_ = new ChatsTable(this);
     messagesTable_ = new MessagesTable(this);
 }
-
-#ifdef ABDUCHAT_CLIENT
-void SqlDatabase::createChatsView()
-{
-    using namespace db;
-    using namespace chats_view;
-    using namespace fieldnames;
-    auto lastMessage = [](const QString& column)->QString {
-        return "(SELECT" + column + "FROM messages WHERE chat_id = chats.id ORDER BY messages.id DESC LIMIT 1)";
-    };
-    const QString execute = QString("CREATE VIEW " + ViewName + " AS " +
-                                    "SELECT DISTINCT " +
-                                        chats::fieldnames::Id + " AS " + ChatId + "," +
-                                        chats::fieldnames::Type + " AS " + ChatType + "," +
-                                        chats::fieldnames::Username + " AS " + ChatUsername + "," +
-                                        lastMessage(messages::fieldnames::Text) + " AS " + LastMessage + "," +
-                                        lastMessage(messages::fieldnames::FromUserId) + " AS " + FromUser + "," +
-                                        lastMessage(messages::fieldnames::Date) + " AS " + Date + " " +
-                                    "FROM " + chats::TableName +
-                                    "INNER JOIN " + messages::TableName + " ON " + messages::fieldnames::ChatId + " = " + chats::fieldnames::Id +
-                                    ");"
-                                    );
-
-    QSqlQuery query;
-    if (query.exec(execute)) {
-        qFatal("Cannot create view %s: %s",
-               qPrintable(ViewName), qPrintable(query.lastError().text()));
-    }
-}
-#endif
-
-
-
-
-
-
-
-
-
-
-

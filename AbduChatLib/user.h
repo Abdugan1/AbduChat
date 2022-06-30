@@ -20,7 +20,7 @@ class User : public QObject
     Q_PROPERTY(QString username READ username WRITE setUsername RESET resetUsername NOTIFY usernameChanged)
     Q_PROPERTY(QString date READ date WRITE setDate RESET resetDate NOTIFY dateChanged)
 public:
-    explicit User();
+    explicit User(QObject* parent = nullptr);
 
     int id() const;
     void setId(int newId);

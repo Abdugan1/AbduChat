@@ -1,5 +1,6 @@
 #include "serverlogstable.h"
 #include "database_names.h"
+#include "logger.h"
 
 #include <QSqlQuery>
 #include <QSqlRecord>
@@ -22,17 +23,13 @@ void ServerLogsTable::insertLog(const QString &text, const QString &insertDateti
     newRecord.setValue(FieldNames::Date, insertDatetime);
 
     if (!insertRecord(rowCount(), newRecord)) {
-        qFatal("Cannot insert '%s' to %s: %s",
-               qPrintable(text),
-               qPrintable(tableName()),
-               qPrintable(lastError().text()));
+        Logger::fatal("ServerLogsTable::insertLog::Insert record failed. text: "
+                      + text + " | reason: " + lastError().text());
     }
 
     if (!submitAll()) {
-        qFatal("Cannot submit '%s' to %s: %s",
-               qPrintable(text),
-               qPrintable(tableName()),
-               qPrintable(lastError().text()));
+        Logger::fatal("ServerLogsTable::insertLog::Submit all failed. text: "
+                      + text + " | reason: " + lastError().text());
     }
     select();
 }

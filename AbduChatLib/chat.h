@@ -20,7 +20,8 @@ class Chat : public QObject
     Q_PROPERTY(int user2Id READ user2Id WRITE setUser2Id RESET resetUser2Id NOTIFY user2IdChanged)
     Q_PROPERTY(QString date READ date WRITE setDate RESET resetDate NOTIFY dateChanged)
 public:
-    explicit Chat();
+    explicit Chat(QObject* parent = nullptr);
+    ~Chat();
 
     int id() const;
     void setId(int newId);

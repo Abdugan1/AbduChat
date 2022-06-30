@@ -24,7 +24,7 @@ class Message : public QObject
     Q_PROPERTY(QString text READ text WRITE setText RESET resetText NOTIFY textChanged)
     Q_PROPERTY(QString date READ date WRITE setDate RESET resetDate NOTIFY dateChanged)
 public:
-    explicit Message();
+    explicit Message(QObject* parent = nullptr);
 
     int id() const;
     void setId(int newId);
@@ -60,7 +60,8 @@ signals:
 
 private:
     int id_ = -1;
-    UserPtr from_;
+    UserPtr from_
+    ;
     ChatPtr chat_;
     QString text_;
     QString date_;

@@ -15,10 +15,12 @@
 #include <AbduChatLib/sqldatabaseserver.h>
 #include <AbduChatLib/userstable.h>
 #include <AbduChatLib/usersservertable.h>
+#include <AbduChatLib/chatstable.h>
 #include <AbduChatLib/serverlogstable.h>
 #include <AbduChatLib/messagestable.h>
 #include <AbduChatLib/chat.h>
 #include <AbduChatLib/message.h>
+#include <AbduChatLib/logger.h>
 
 const int Port = 2002;
 
@@ -216,7 +218,7 @@ void ChatServer::sendRegisterFailedReply(ServerWorker *recipient)
 void ChatServer::parseSendMessageRequest(ServerWorker *sender, const QJsonObject &jsonRequest)
 {
     const QJsonObject messageJson = jsonRequest.value(request::headers::Message).toObject();
-    qFatal(qPrintable(QString::fromUtf8(QJsonDocument(messageJson).toJson())));
+    Logger::info("before: " + QString::fromUtf8(QJsonDocument(messageJson).toJson()));
     MessagePtr message = Message::fromJson(messageJson);
     message->setDate(QDateTime::currentDateTime().toString(Qt::ISODate));
     database_->addMessage(message);
@@ -224,6 +226,8 @@ void ChatServer::parseSendMessageRequest(ServerWorker *sender, const QJsonObject
     // last inserted message id.
     message->setId(messagesTable_->record(messagesTable_->rowCount() - 1)
                   .value(db::messages::fieldnames::Id).toInt());
+
+    Logger::info("after: " + QString::fromUtf8(QJsonDocument(message->toJson()).toJson()));
 
     sendMessageReply(sender, message);
 }
@@ -233,6 +237,8 @@ void ChatServer::sendMessageReply(ServerWorker *recipient, const MessagePtr &mes
     QJsonObject messageReply;
     messageReply[reply::headers::Type]    = reply::types::Message;
     messageReply[reply::headers::Message] = message->toJson();
+
+    Logger::info("final: " + QString::fromUtf8(QJsonDocument(messageReply).toJson()));
 
     recipient->sendJson(messageReply);
 }
@@ -361,6 +367,10 @@ void ChatServer::parseCreateChatRequest(ServerWorker *sender, const QJsonObject 
     ChatPtr chat = Chat::fromJson(chatJson);
     chat->setDate(QDateTime::currentDateTime().toString(Qt::ISODate));
     database_->addChat(chat);
+
+    // last inserted chat id.
+    chat->setId(database_->chatsTable()->record(database_->chatsTable()->rowCount() - 1)
+                .value(db::chats::fieldnames::Id).toInt());
 
     sendAddedChatReply(sender, chat);
 }

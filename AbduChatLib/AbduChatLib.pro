@@ -1,5 +1,5 @@
 QT -= gui
-QT += sql
+QT += sql core qml
 TEMPLATE = lib
 TARGET = abduchatlib
 
@@ -12,6 +12,7 @@ SOURCES += \
     chatstable.cpp \
     chatsviewtable.cpp \
     database_names.cpp \
+    logger.cpp \
     message.cpp \
     messagestable.cpp \
     request_and_reply_constants.cpp \
@@ -36,6 +37,7 @@ HEADERS += \
     chatsviewtable.h \
     database_names.h \
     datastream.h \
+    logger.h \
     message.h \
     messagestable.h \
     request_and_reply_constants.h \

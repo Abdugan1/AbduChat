@@ -13,6 +13,7 @@ public:
     ChatsViewTable *chatsViewTable() const;
 
     void addUsers(const QJsonArray& users);
+    void addMessages(const QJsonArray& messages);
 
 private:
     void createClientTables();

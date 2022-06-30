@@ -5,7 +5,8 @@
 #include <QJsonObject>
 #include <QSqlRecord>
 
-User::User()
+User::User(QObject *parent)
+    : QObject(parent)
 {
 
 }
@@ -122,7 +123,9 @@ void User::toSqlRecord(QSqlRecord *record) const
 {
     namespace FieldNames = db::users::fieldnames;
 
-    record->setValue(FieldNames::Id, id());
+    if (id() != -1)
+        record->setValue(FieldNames::Id, id());
+
     record->setValue(FieldNames::FirstName, firstName());
     record->setValue(FieldNames::LastName, lastName());
     record->setValue(FieldNames::Username, username());

@@ -7,7 +7,8 @@
 #include <QJsonObject>
 #include <QSqlRecord>
 
-Message::Message()
+Message::Message(QObject *parent)
+    : QObject(parent)
 {
 
 }
@@ -119,7 +120,9 @@ void Message::toSqlRecord(QSqlRecord *record) const
 {
     namespace FieldNames = db::messages::fieldnames;
 
-    record->setValue(FieldNames::Id, id());
+    if (id() != -1)
+        record->setValue(FieldNames::Id, id());
+
     record->setValue(FieldNames::FromUserId, from()->id());
     record->setValue(FieldNames::ChatId, chat()->id());
     record->setValue(FieldNames::Text, text());
