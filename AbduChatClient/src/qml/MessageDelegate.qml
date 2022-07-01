@@ -16,6 +16,8 @@ Rectangle {
     function getMaxWidht() { return listView.width - margin; }
 
     function getContentHeight() {
+        console.log("\nmy_id: " + getMyUser().id)
+        console.log("from_user: " + model.from_user_id)
         return textLabel.implicitHeight  + textLabel.anchors.margins * 2;
     }
 
@@ -25,7 +27,6 @@ Rectangle {
 //    height: 50
     color: "#202123"
     radius: 20
-    state: "sentByMe"
 
     Label {
         id: textLabel
@@ -50,17 +51,17 @@ Rectangle {
     states: [
         State {
             name: "sentByMe"
-            when: !root.sentByMe
+            when: root.sentByMe
 
             PropertyChanges {
                 target: dateText
-                color: "#7e7f81"
+                color: "#8CCAF5"
             }
 
             PropertyChanges {
                 target: root
-                color: "#202123"
-                anchors.right: parent
+                color: "#3879B3"
+                anchors.right: parent.right
             }
 
             PropertyChanges {
@@ -75,8 +76,4 @@ Rectangle {
 
 
 
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
+

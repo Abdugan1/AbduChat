@@ -2,10 +2,7 @@
 #define CHATSTABLE_H
 
 #include "sqltablemodel.h"
-#include <memory>
-
-class Chat;
-using ChatPtr = std::shared_ptr<Chat>;
+#include "chat.h"
 
 class ChatsTable : public SqlTableModel
 {

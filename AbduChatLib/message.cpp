@@ -31,12 +31,12 @@ void Message::resetId()
     setId(-1); // TODO: Adapt to use your actual default value
 }
 
-const UserPtr &Message::from() const
+User *Message::from() const
 {
     return from_;
 }
 
-void Message::setFrom(const UserPtr &newFrom)
+void Message::setFrom(User *newFrom)
 {
     if (from_ == newFrom)
         return;
@@ -49,12 +49,12 @@ void Message::resetFrom()
     setFrom({}); // TODO: Adapt to use your actual default value
 }
 
-const ChatPtr &Message::chat() const
+Chat *Message::chat() const
 {
     return chat_;
 }
 
-void Message::setChat(const ChatPtr &newChat)
+void Message::setChat(Chat *newChat)
 {
     if (chat_ == newChat)
         return;
@@ -129,9 +129,9 @@ void Message::toSqlRecord(QSqlRecord *record) const
     record->setValue(FieldNames::Date, date());
 }
 
-MessagePtr Message::fromJson(const QJsonObject &json)
+Message* Message::fromJson(const QJsonObject &json)
 {
-    MessagePtr message(new Message);
+    Message* message(new Message);
 
     message->setId(json.value(message::headers::Id).toInt());
     message->setFrom(User::fromJson(json.value(message::headers::From).toObject()));
@@ -142,9 +142,9 @@ MessagePtr Message::fromJson(const QJsonObject &json)
     return message;
 }
 
-MessagePtr Message::fromSqlRecord(const QSqlRecord &record)
+Message* Message::fromSqlRecord(const QSqlRecord &record)
 {
-    MessagePtr message(new Message);
+    Message* message(new Message);
 
     namespace FieldNames = db::messages::fieldnames;
 

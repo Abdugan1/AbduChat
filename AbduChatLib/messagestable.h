@@ -2,12 +2,7 @@
 #define MESSAGESTABLE_H
 
 #include "sqltablemodel.h"
-#include <memory>
-
-class Chat;
-class Message;
-using ChatPtr = std::shared_ptr<Chat>;
-using MessagePtr = std::shared_ptr<Message>;
+#include "message.h"
 
 class QJSValue;
 
@@ -35,7 +30,7 @@ private:
     void selectCurrentChatValues();
 
 private:
-    ChatPtr currentChat_ = nullptr;
+    Chat* currentChat_ = nullptr;
     int currentChatId_ = -1;
 
 

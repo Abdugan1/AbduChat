@@ -55,7 +55,9 @@ Page {
 //                }
 //            }
 
-            delegate: MessageDelegate {}
+            delegate: MessageDelegate {
+
+            }
         }
 
         MessageField {

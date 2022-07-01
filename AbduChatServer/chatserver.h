@@ -2,16 +2,12 @@
 #define CHATSERVER_H
 
 #include <QTcpServer>
-#include <memory>
+
+#include <AbduChatLib/user.h>
+#include <AbduChatLib/chat.h>
+#include <AbduChatLib/messagestable.h>
 
 class ServerWorker;
-class User;
-class Chat;
-class Message;
-using UserPtr = std::shared_ptr<User>;
-using ChatPtr = std::shared_ptr<Chat>;
-using MessagePtr = std::shared_ptr<Message>;
-
 class SqlDatabaseServer;
 class UsersTable;
 class UsersServerTable;

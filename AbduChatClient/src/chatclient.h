@@ -5,13 +5,12 @@
 #include <QTcpSocket>
 
 #include <AbduChatLib/user.h>
-
-class Chat;
-class Message;
-using ChatPtr = std::shared_ptr<Chat>;
-using MessagePtr = std::shared_ptr<Message>;
+#include <AbduChatLib/chat.h>
+#include <AbduChatLib/message.h>
 
 class SqlDatabaseClient;
+
+class QJSValue;
 
 class ChatClient : public QObject
 {
@@ -21,7 +20,7 @@ public:
     explicit ChatClient(SqlDatabaseClient* database, QObject *parent = nullptr);
 
     User* user() const;
-    void setUser(const UserPtr &newUser);
+    void setUser(const UserPtr& newUser);
     void resetUser();
 
 signals:
@@ -41,7 +40,7 @@ public slots:
     void attempToLogIn(const QString& username, const QString& password);
     void attempToRegister(const User& userInfo, const QString& password);
 
-    void sendMessage(const QVariant& chat, const QString& messageText);
+    void sendMessage(const QJSValue& chat, const QString& messageText);
 
     void requestCreateChat(int user2Id);
 
@@ -65,7 +64,7 @@ private:
 
 private:
     QTcpSocket* socket_ = nullptr;
-    UserPtr user_;
+    User* user_;
 
     SqlDatabaseClient* database_ = nullptr;
 };

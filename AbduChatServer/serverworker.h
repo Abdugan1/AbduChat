@@ -1,9 +1,9 @@
 #ifndef SERVERWORKER_H
 #define SERVERWORKER_H
 
-#include <AbduChatLib/user.h>
-
 #include <QObject>
+
+#include <AbduChatLib/user.h>
 
 class QTcpSocket;
 
@@ -20,8 +20,8 @@ public:
     QString peerAddress() const;
     QString peerName() const;
 
-    const UserPtr &user() const;
-    void setUser(const UserPtr &newUser);
+    User* user() const;
+    void setUser(const UserPtr& newUser);
     void resetUser();
 
 signals:
@@ -41,7 +41,7 @@ private:
 
 private:
     QTcpSocket* serverSocket_ = nullptr;
-    UserPtr user_;
+    User* user_;
 
 };
 

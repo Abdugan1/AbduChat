@@ -106,6 +106,20 @@ bool User::isValid() const
     return id() != -1;
 }
 
+bool User::isEqual(const UserPtr &user)
+{
+    return (this->id_ == user->id_);
+}
+
+void User::copyValues(const UserPtr &from)
+{
+    this->id_         = from->id_;
+    this->firstName_  = from->firstName_;
+    this->lastName_   = from->lastName_;
+    this->username_   = from->username_;
+    this->date_       = from->date_;
+}
+
 QJsonObject User::toJson() const
 {
     QJsonObject json;
@@ -132,9 +146,9 @@ void User::toSqlRecord(QSqlRecord *record) const
     record->setValue(FieldNames::Date, date());
 }
 
-UserPtr User::fromJson(const QJsonObject &json)
+User* User::fromJson(const QJsonObject &json)
 {
-    UserPtr user(new User);
+    User* user(new User);
 
     user->setId(json.value(user::headers::Id).toInt());
     user->setFirstName(json.value(user::headers::FirstName).toString());
@@ -145,9 +159,9 @@ UserPtr User::fromJson(const QJsonObject &json)
     return user;
 }
 
-UserPtr User::fromSqlRecord(const QSqlRecord &record)
+User *User::fromSqlRecord(const QSqlRecord &record)
 {
-    UserPtr user(new User);
+    User* user(new User);
 
     namespace FieldNames = db::users::fieldnames;
 
@@ -160,7 +174,12 @@ UserPtr User::fromSqlRecord(const QSqlRecord &record)
     return user;
 }
 
-bool operator==(const User& left, const User& right)
-{
-    return left.id_ == right.id_;
-}
+//bool operator==(const User& left, const User& right)
+//{
+//    return left.id_ == right.id_;
+//}
+
+//bool operator==(const UserPtr& left, const UserPtr& right)
+//{
+//    return (*left == *right);
+//}

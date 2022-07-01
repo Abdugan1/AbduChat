@@ -2,10 +2,7 @@
 #define USERSTABLE_H
 
 #include "sqltablemodel.h"
-#include <memory>
-
-class User;
-using UserPtr = std::shared_ptr<User>;
+#include "user.h"
 
 class UsersTable : public SqlTableModel
 {

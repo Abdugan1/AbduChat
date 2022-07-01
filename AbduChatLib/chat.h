@@ -3,13 +3,13 @@
 
 #include <QObject>
 #include <QString>
-#include <memory>
+#include <QSharedPointer>
 
 class QJsonObject;
 class QSqlRecord;
 
 class Chat;
-using ChatPtr = std::shared_ptr<Chat>;
+using ChatPtr = QSharedPointer<Chat>;
 
 class Chat : public QObject
 {
@@ -43,10 +43,15 @@ public:
     void setDate(const QString &newDate);
     void resetDate();
 
+    bool isEqual(const Chat* chat) const;
+    void copyValues(const Chat* chat);
+
     QJsonObject toJson() const;
     void toSqlRecord(QSqlRecord* record) const;
-    static ChatPtr fromJson(const QJsonObject& json);
-    static ChatPtr fromSqlRecord(const QSqlRecord& record);
+    static Chat* fromJson(const QJsonObject& json);
+    static Chat* fromSqlRecord(const QSqlRecord& record);
+
+    friend bool operator==(const Chat& left, const Chat& right) = delete;
 
 signals:
     void idChanged();

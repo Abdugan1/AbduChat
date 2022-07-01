@@ -106,6 +106,20 @@ void Chat::resetDate()
     setDate({}); // TODO: Adapt to use your actual default value
 }
 
+bool Chat::isEqual(const Chat *chat) const
+{
+    return (this->id_ == chat->id_);
+}
+
+void Chat::copyValues(const Chat *chat)
+{
+    this->id_       = chat->id_;
+    this->type_     = chat->type_;
+    this->user1Id_  = chat->user1Id_;
+    this->user2Id_  = chat->user2Id_;
+    this->date_     = chat->date_;
+}
+
 QJsonObject Chat::toJson() const
 {
     QJsonObject json;
@@ -132,9 +146,9 @@ void Chat::toSqlRecord(QSqlRecord *record) const
     record->setValue(FieldNames::Date, date());
 }
 
-ChatPtr Chat::fromJson(const QJsonObject &json)
+Chat* Chat::fromJson(const QJsonObject &json)
 {
-    ChatPtr chat(new Chat);
+    Chat* chat(new Chat);
 
     chat->setId(json.value(chat::headers::Id).toInt());
     chat->setType(json.value(chat::headers::Type).toString());
@@ -145,9 +159,9 @@ ChatPtr Chat::fromJson(const QJsonObject &json)
     return chat;
 }
 
-ChatPtr Chat::fromSqlRecord(const QSqlRecord &record)
+Chat* Chat::fromSqlRecord(const QSqlRecord &record)
 {
-    ChatPtr chat(new Chat);
+    Chat* chat(new Chat);
 
     namespace FieldNames = db::chats::fieldnames;
 

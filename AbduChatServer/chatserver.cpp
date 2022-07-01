@@ -18,8 +18,6 @@
 #include <AbduChatLib/chatstable.h>
 #include <AbduChatLib/serverlogstable.h>
 #include <AbduChatLib/messagestable.h>
-#include <AbduChatLib/chat.h>
-#include <AbduChatLib/message.h>
 #include <AbduChatLib/logger.h>
 
 const int Port = 2002;
@@ -155,7 +153,7 @@ void ChatServer::parseLogInRequest(ServerWorker *sender, const QJsonObject jsonR
     if (!usersServerTable_->hasUser(username, password)) {
         sendLogInFailedReply(sender);
     } else {
-        UserPtr user = User::fromSqlRecord(database_->getUser(username));
+        UserPtr user(User::fromSqlRecord(database_->getUser(username)));
         sendLogInSucceedReply(sender, user);
         sender->setUser(user);
     }
@@ -186,14 +184,15 @@ void ChatServer::parseRegisterRequest(ServerWorker *sender, const QJsonObject &j
 #if 0
     const QJsonObject userJson = jsonRequest.value(request::headers::RegisterInfo).toObject();
 #endif
-    const UserPtr user = User::fromJson(jsonRequest);
-    const QString password = jsonRequest.value(request::headers::Password).toString();
+    Logger::warning("ChatServer::parseRegisterRequest::Not implemented yet.");
+//    const UserPtr user = User::fromJson(jsonRequest);
+//    const QString password = jsonRequest.value(request::headers::Password).toString();
 
-    if (database_->addUser(user, password)) {
-        sendRegisterSucceedReply(sender);
-    } else {
-        sendRegisterFailedReply(sender);
-    }
+//    if (database_->addUser(user, password)) {
+//        sendRegisterSucceedReply(sender);
+//    } else {
+//        sendRegisterFailedReply(sender);
+//    }
 }
 
 void ChatServer::sendRegisterSucceedReply(ServerWorker *recipient)
@@ -219,7 +218,7 @@ void ChatServer::parseSendMessageRequest(ServerWorker *sender, const QJsonObject
 {
     const QJsonObject messageJson = jsonRequest.value(request::headers::Message).toObject();
     Logger::info("before: " + QString::fromUtf8(QJsonDocument(messageJson).toJson()));
-    MessagePtr message = Message::fromJson(messageJson);
+    MessagePtr message(Message::fromJson(messageJson));
     message->setDate(QDateTime::currentDateTime().toString(Qt::ISODate));
     database_->addMessage(message);
 
@@ -364,7 +363,7 @@ void ChatServer::sendNewerMessagesAfterDatetimeReply(ServerWorker *recipient, co
 void ChatServer::parseCreateChatRequest(ServerWorker *sender, const QJsonObject &jsonRequest)
 {
     const QJsonObject chatJson = jsonRequest.value(request::headers::Chat).toObject();
-    ChatPtr chat = Chat::fromJson(chatJson);
+    ChatPtr chat(Chat::fromJson(chatJson));
     chat->setDate(QDateTime::currentDateTime().toString(Qt::ISODate));
     database_->addChat(chat);
 

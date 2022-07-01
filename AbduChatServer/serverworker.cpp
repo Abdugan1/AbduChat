@@ -6,11 +6,12 @@
 #include <QJsonObject>
 
 #include <AbduChatLib/datastream.h>
+#include <AbduChatLib/user.h>
 
 ServerWorker::ServerWorker(QObject *parent)
     : QObject{parent}
     , serverSocket_{new QTcpSocket{this}}
-    , user_(new User)
+    , user_(new User(this))
 {
     connect(serverSocket_, &QTcpSocket::readyRead, this, &ServerWorker::receiveJson);
     connect(serverSocket_, &QTcpSocket::disconnected, this, &ServerWorker::disconnectedFromClient);
@@ -42,16 +43,16 @@ QString ServerWorker::peerName() const
     return serverSocket_->peerName();
 }
 
-const UserPtr &ServerWorker::user() const
+User* ServerWorker::user() const
 {
     return user_;
 }
 
 void ServerWorker::setUser(const UserPtr &newUser)
 {
-    if (user_ == newUser)
+    if (user_->isEqual(newUser))
         return;
-    user_ = newUser;
+    user_->copyValues(newUser);
     emit userChanged();
 }
 

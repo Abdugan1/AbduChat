@@ -4,14 +4,10 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlTableModel>
-#include <memory>
 
-class User;
-class Chat;
-class Message;
-using UserPtr = std::shared_ptr<User>;
-using ChatPtr = std::shared_ptr<Chat>;
-using MessagePtr = std::shared_ptr<Message>;
+#include "user.h"
+#include "chat.h"
+#include "message.h"
 
 class UsersTable;
 class ChatsTable;

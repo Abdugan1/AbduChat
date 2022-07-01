@@ -3,14 +3,12 @@
 
 #include <QObject>
 #include <QString>
-#include <memory>
+#include <QSharedPointer>
 
 class User;
 class Chat;
 class Message;
-using UserPtr = std::shared_ptr<User>;
-using ChatPtr = std::shared_ptr<Chat>;
-using MessagePtr = std::shared_ptr<Message>;
+using MessagePtr = QSharedPointer<Message>;
 
 class QJsonObject;
 class QSqlRecord;
@@ -19,8 +17,8 @@ class Message : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int id READ id WRITE setId RESET resetId NOTIFY idChanged)
-    Q_PROPERTY(UserPtr from READ from WRITE setFrom RESET resetFrom NOTIFY fromChanged)
-    Q_PROPERTY(ChatPtr chat READ chat WRITE setChat RESET resetChat NOTIFY chatChanged)
+    Q_PROPERTY(User* from READ from WRITE setFrom RESET resetFrom NOTIFY fromChanged)
+    Q_PROPERTY(Chat* chat READ chat WRITE setChat RESET resetChat NOTIFY chatChanged)
     Q_PROPERTY(QString text READ text WRITE setText RESET resetText NOTIFY textChanged)
     Q_PROPERTY(QString date READ date WRITE setDate RESET resetDate NOTIFY dateChanged)
 public:
@@ -30,12 +28,12 @@ public:
     void setId(int newId);
     void resetId();
 
-    const UserPtr &from() const;
-    void setFrom(const UserPtr &newFrom);
+    User *from() const;
+    void setFrom(User* newFrom);
     void resetFrom();
 
-    const ChatPtr &chat() const;
-    void setChat(const ChatPtr &newChat);
+    Chat *chat() const;
+    void setChat(Chat* newChat);
     void resetChat();
 
     const QString &text() const;
@@ -48,8 +46,8 @@ public:
 
     QJsonObject toJson() const;
     void toSqlRecord(QSqlRecord* record) const;
-    static MessagePtr fromJson(const QJsonObject& json);
-    static MessagePtr fromSqlRecord(const QSqlRecord& record);
+    static Message* fromJson(const QJsonObject& json);
+    static Message* fromSqlRecord(const QSqlRecord& record);
 
 signals:
     void idChanged();
@@ -60,9 +58,8 @@ signals:
 
 private:
     int id_ = -1;
-    UserPtr from_
-    ;
-    ChatPtr chat_;
+    User* from_;
+    Chat* chat_;
     QString text_;
     QString date_;
 };

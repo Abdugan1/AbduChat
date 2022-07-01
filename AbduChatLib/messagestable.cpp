@@ -18,6 +18,7 @@ namespace FieldNums = db::messages::fieldnums;
 
 MessagesTable::MessagesTable(QObject *parent)
     : SqlTableModel{parent}
+    , currentChat_(new Chat(this))
 {
     setTable(db::messages::TableName);
     createRoleNames();
@@ -26,23 +27,19 @@ MessagesTable::MessagesTable(QObject *parent)
 
 Chat *MessagesTable::currentChat() const
 {
-    Logger::debug("MessagesTable::currentChat");
-    if (currentChat_) {
-        Logger::debug(QString::fromUtf8(QJsonDocument(currentChat_->toJson()).toJson()));
-    }
-    return currentChat_.get();
+    return currentChat_;
 }
 
 void MessagesTable::setCurrentChat(const QJSValue &newCurrentChat)
 {
     Chat* chat = qobject_cast<Chat*>(newCurrentChat.toQObject());
-    qDebug() << "newChat is null?" << (chat == nullptr) << chat->toJson();
-    if (currentChat_.get() == chat)
+    Q_ASSERT(qobject_cast<Chat*>(newCurrentChat.toQObject()));
+    if (currentChat_->isEqual(chat))
         return;
-    currentChat_ = std::shared_ptr<Chat>(chat);
+    currentChat_->copyValues(chat);
     qDebug() << "Current chat:" << currentChat_->toJson();
     selectCurrentChatValues();
-//    emit currentChatChanged();
+    emit currentChatChanged();
 }
 
 //void MessagesTable::setCurrentChat(const QVariant &newCurrentChat)

@@ -31,7 +31,7 @@ void SqlDatabaseClient::addUsers(const QJsonArray &users)
 {
     for (const auto& userRef : users) {
         const QJsonObject user = userRef.toObject();
-        addUser(User::fromJson(user));
+        addUser(UserPtr(User::fromJson(user)));
     }
 }
 
@@ -39,7 +39,7 @@ void SqlDatabaseClient::addMessages(const QJsonArray &messages)
 {
     for (const auto& messageRef : messages) {
         const QJsonObject message = messageRef.toObject();
-        addMessage(Message::fromJson(message));
+        addMessage(MessagePtr(Message::fromJson(message)));
     }
 }
 

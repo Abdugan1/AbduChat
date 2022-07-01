@@ -1,0 +1,71 @@
+#include "chatstable.h"
+#include "database_names.h"
+#include "logger.h"
+
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QSqlError>
+
+namespace FieldNames = db::chats::fieldnames;
+namespace FieldNums = db::chats::fieldnums;
+
+ChatsTable::ChatsTable(QObject *parent)
+    : SqlTableModel{parent}
+{
+    setTable(db::chats::TableName);
+    createRoleNames();
+    select();
+}
+
+void ChatsTable::addChat(const ChatPtr &chat)
+{
+    QSqlRecord chatRecord = record();
+    chat->toSqlRecord(&chatRecord);
+    addChatRecord(chatRecord);
+
+    if (!submitAll()) {
+        Logger::fatal("ChatsTable::addChat::Submit all failed. id: "
+                      + QString::number(chat->id()) + " | reason: "
+                      + lastError().text());
+    }
+}
+
+bool ChatsTable::hasChat(int user1Id, int user2Id) const
+{
+    const QString execute = QString("SELECT COUNT(*) FROM " + db::chats::TableName +
+                                    "WHERE " + FieldNames::User1Id + "=:user1Id AND " + FieldNames::User2Id + "=:user2Id"
+                                    );
+    QSqlQuery query;
+    query.prepare(execute);
+    query.bindValue("user1Id", user1Id);
+    query.bindValue("user2Id", user2Id);
+    if (!query.exec()) {
+        Logger::fatal("ChatsTable::hasChat::Get count of chat failed. user_1_id: "
+                      + QString::number(user1Id) + " | user_2_id: "
+                      + QString::number(user2Id) + " | reason: "
+                      + query.lastError().text());
+    }
+    query.next();
+    return query.value(0).toBool();
+}
+
+void ChatsTable::createRoleNames()
+{
+    QHash<int, QByteArray> roleNames;
+    roleNames[FieldNums::Id       + Qt::UserRole] = qPrintable(FieldNames::Id);
+    roleNames[FieldNums::Type     + Qt::UserRole] = qPrintable(FieldNames::Type);
+    roleNames[FieldNums::User1Id  + Qt::UserRole] = qPrintable(FieldNames::User1Id);
+    roleNames[FieldNums::User2Id  + Qt::UserRole] = qPrintable(FieldNames::User2Id);
+    roleNames[FieldNums::Date     + Qt::UserRole] = qPrintable(FieldNames::Date);
+    setRoleNames(roleNames);
+}
+
+void ChatsTable::addChatRecord(const QSqlRecord &chatRecord)
+{
+    if (!insertRecord(rowCount(), chatRecord)) {
+        Logger::fatal("ChatsTable::addChatRecord::Insert record failed. id: "
+                      + chatRecord.value(FieldNames::Id).toString() + " | reason: "
+                      + lastError().text()
+                      );
+    }
+}
