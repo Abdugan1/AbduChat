@@ -1,72 +1,67 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
 
 Page {
     id: root
-
-    property alias reconnectIndicator: reconnectIndicator
 
     signal reconnectButtonClicked()
 
     width: 440
     height: 760
 
-    ColumnLayout {
-        anchors.fill: parent
+    AnimatedImage {
+        id: image
+        anchors.top: parent.top
+        source: "qrc:/images/no_connection.gif"
+        anchors.topMargin: 100
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
 
-        Item {
-            // spacer item
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
+    Label {
+        id: title
+        text: qsTr("Whoops!")
+        anchors.top: image.bottom
+        font.bold: false
+        font.pointSize: 24
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: 10
+    }
 
-        Image {
-            id: image
-            Layout.alignment: Qt.AlignHCenter
+    Label {
+        id: reason
+        width: 300
+        text: qsTr("No internet connection or can't reach the server. Try again.")
+        anchors.top: title.bottom
+        horizontalAlignment: Text.AlignHCenter
+        wrapMode: Text.Wrap
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: 10
+    }
 
-            source: "qrc:/images/connection_error.png"
-        }
+    CustomButton {
+        id: customButton
+        y: 572
+        text: qsTr("TRY AGAIN")
+        anchors.bottom: parent.bottom
+        borderWidth: 0
+        anchors.bottomMargin: 120
+        borderRadius: 25
+        anchors.horizontalCenter: parent.horizontalCenter
+        textColor: "#ffffff"
+        backgroundColor: "#000000"
+        width: 300
+        height: 50
 
-        Label {
-            Layout.alignment: Qt.AlignHCenter
-            text: qsTr("<b>Connection Error</b>")
-        }
-
-        Label {
-            Layout.alignment: Qt.AlignHCenter
-            horizontalAlignment: Text.AlignHCenter
-            text: qsTr("No Internet connection or\ncan't reach the server")
-        }
-
-        Item {
-            // spacer item
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            BusyIndicator {
-                id: reconnectIndicator
-
-                anchors.centerIn: parent
-                running: false
-            }
-        }
-
-        Button {
-            id: reconnectButton
-            Layout.alignment: Qt.AlignHCenter
-            text: qsTr("TRY AGAIN")
-
-            onClicked: {
-                reconnectIndicator.running = true
-                reconnectButtonClicked()
-            }
-        }
-
-        Item {
-            // spacer item
-            Layout.fillWidth: true
-            height: 100
+        onClicked: {
+            root.reconnectButtonClicked();
         }
     }
+
+
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.75}D{i:4}
+}
+##^##*/

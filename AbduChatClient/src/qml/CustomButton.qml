@@ -8,7 +8,7 @@ Button {
     property color borderColor: "black"
     property int borderWidth: 1
     property real borderRadius: 0.0
-    property color hoverColor: "grey"
+    property color hoverColor: "#7ee6a1"
 
     property color textColor: "black"
     states: [
@@ -17,7 +17,7 @@ Button {
             when: hovered
             PropertyChanges {
                 target: root
-                backgroundColor: "#7ee6a1"
+                backgroundColor: hoverColor
             }
         }
     ]

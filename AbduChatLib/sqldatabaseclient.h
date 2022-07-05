@@ -15,6 +15,8 @@ public:
     void addUsers(const QJsonArray& users);
     void addMessages(const QJsonArray& messages);
 
+    void addMessage(const MessagePtr& message);
+
 private:
     void createClientTables();
     void createChatsViewTable();

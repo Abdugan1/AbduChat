@@ -10,12 +10,11 @@ TextField {
 
     implicitHeight: 43
     implicitWidth: 300
-    rightPadding: 32
+    rightPadding: clearButton.width + 2 * clearButton.anchors.rightMargin
 
-//    background: Rectangle {
-//        border.color: "black"
-//    }
-    background: {}
+    background: Rectangle{ color: "#00ffffff"}
+
+    onTextChanged: usersTable.filterValue = root.text.trim()
 
     Image {
         id: clearButton
@@ -23,7 +22,7 @@ TextField {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         source: "qrc:/images/x_16.png"
-        anchors.rightMargin: 8
+        anchors.rightMargin: 16
 
         MouseArea {
             anchors.fill: parent

@@ -7,8 +7,30 @@ ItemDelegate {
     id: root
 
     function getChatUsername() {
-        return getMyUser().id == model.user_1_id ? model.user_2_username
-                                                 : model.user_1_username
+        return chatClient.user.id === model.user_1_id ? model.user_2_username
+                                                      : model.user_1_username
+    }
+
+    function calculateElapsedDays(date, today) {
+        return Math.floor((today - date) / (24 * 60 * 60 * 1000))
+    }
+
+    function getDate(dateString) {
+        var date = Date.fromLocaleString(Qt.locale(), dateString, dateFormat);
+        var today = new Date();
+
+        if (date.getFullYear() !== today.getFullYear()) {
+            return date.toLocaleString(Qt.locale(), "dd.MM.yy");
+        }
+        if ((date.getDate() === today.getDate()) && (date.getMonth() === today.getMonth())) {
+            return date.toLocaleString(Qt.locale(), "hh:mm");
+        }
+        if (calculateElapsedDays(date, today) <= 7) {
+            return date.toLocaleString(Qt.locale(), "ddd");
+        }
+        if (date.getFullYear() === today.getFullYear()) {
+            return date.toLocaleString(Qt.locale(), "dd MMM");
+        }
     }
 
     Chat {
@@ -26,7 +48,7 @@ ItemDelegate {
     anchors.right: parent.right
 
     onClicked: {
-        setCurrentChat(chat);
+        messagesTable.setCurrentChat(chat);
         chatClicked(usernameText.text)
     }
 
@@ -65,7 +87,7 @@ ItemDelegate {
 
     Text {
         id: sentTime
-        text: model.date
+        text: getDate(model.date)
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.topMargin: 14

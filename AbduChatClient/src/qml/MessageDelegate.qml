@@ -6,7 +6,8 @@ Rectangle {
 
     readonly property int margin: 100
 
-    property bool sentByMe: getMyUser().id == model.from_user_id
+
+    property bool sentByMe: chatClient.user.id === model.from_user_id
 
     function getContentWidth() {
         return textLabel.implicitWidth + textLabel.anchors.leftMargin + textLabel.anchors.rightMargin
@@ -15,16 +16,17 @@ Rectangle {
 
     function getMaxWidht() { return listView.width - margin; }
 
-    function getContentHeight() {
-        console.log("\nmy_id: " + getMyUser().id)
-        console.log("from_user: " + model.from_user_id)
-        return textLabel.implicitHeight  + textLabel.anchors.margins * 2;
+    function getContentHeight() { return textLabel.implicitHeight  + textLabel.anchors.margins * 2; }
+
+    function getDate(dateString) {
+        var date = Date.fromLocaleString(Qt.locale(), dateString, dateFormat);
+        return date.toLocaleString(Qt.locale(), "hh:mm");
     }
 
     width: Math.min(getContentWidth(), getMaxWidht())
     height: getContentHeight()
 //    width: 300
-//    height: 50
+//    height: 70
     color: "#202123"
     radius: 20
 
@@ -34,14 +36,14 @@ Rectangle {
         font.pointSize: 14
         text: model.text
         anchors.fill: parent
-        anchors.margins: 14
+        anchors.margins: 15
         wrapMode: Text.Wrap
     }
 
     Text {
         id: dateText
         color: "#7e7f81"
-        text: "9:41"
+        text: getDate(model.date)
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         font.pointSize: 12
@@ -71,6 +73,8 @@ Rectangle {
         }
     ]
 }
+
+
 
 
 

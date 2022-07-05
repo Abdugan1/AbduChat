@@ -43,7 +43,7 @@ Page {
         id: listView
         anchors.fill: parent
 
-        model: getChatsViewTable()
+        model: chatsViewTable
 
         delegate: ChatDelegate {}
     }

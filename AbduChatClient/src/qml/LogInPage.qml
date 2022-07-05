@@ -17,19 +17,6 @@ Page {
         reconnectButton.visible = visible;
     }
 
-    ValidatedField {
-        id: usernameField
-        width: 300
-        height: 54
-        anchors.top: authorizationLabel.bottom
-        anchors.topMargin: 17
-        placeholderText: qsTr("Username")
-        anchors.horizontalCenter: parent.horizontalCenter
-        iconSource: "qrc:/images/user.png"
-        borderRadius: 40
-        borderWidth: 2
-    }
-
     Image {
         id: appLogo
         width: 200
@@ -52,6 +39,32 @@ Page {
         anchors.topMargin: 30
     }
 
+    ValidatedField {
+        id: usernameField
+        width: 300
+        height: 54
+        anchors.top: authorizationLabel.bottom
+        anchors.topMargin: 17
+        placeholderText: qsTr("Username")
+        anchors.horizontalCenter: parent.horizontalCenter
+        iconSource: "qrc:/images/user.png"
+        borderRadius: 40
+        borderWidth: 2
+    }
+
+    PasswordField {
+        id: passwordField
+        x: 70
+        height: 54
+        anchors.top: usernameField.bottom
+        state: "showPasswordState"
+        anchors.topMargin: 10
+        placeholderText: "Password"
+        iconSource: "qrc:/images/padlock.png"
+        borderWidth: 2
+        borderRadius: 40
+    }
+
     CustomButton {
         id: loginButton
         y: 528
@@ -66,19 +79,6 @@ Page {
         anchors.horizontalCenter: parent.horizontalCenter
 
         onClicked: { root.loginButtonClicked() }
-    }
-
-    PasswordField {
-        id: passwordField
-        x: 70
-        height: 54
-        anchors.top: usernameField.bottom
-        state: "showPasswordState"
-        anchors.topMargin: 10
-        placeholderText: "Password"
-        iconSource: "qrc:/images/padlock.png"
-        borderWidth: 2
-        borderRadius: 40
     }
 
     Label {

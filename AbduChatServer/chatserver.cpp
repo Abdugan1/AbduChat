@@ -86,10 +86,9 @@ void ChatServer::onUserDisconnected(ServerWorker *client)
         disconnectedMessage[reply::headers::Type] = reply::types::UserDisconnected;
         disconnectedMessage[reply::headers::User]   = client->user()->toJson();
         broadcast(disconnectedMessage, nullptr);
-
-        logMessage(QString("%1 disconnected.\nIP: %2\nName: %3")
-                   .arg(client->user()->username(), client->peerAddress(), client->peerName()));
     }
+    logMessage(QString("%1 disconnected.\nIP: %2\nName: %3")
+               .arg(client->user()->username(), client->peerAddress(), client->peerName()));
 }
 
 void ChatServer::incomingConnection(qintptr handle)

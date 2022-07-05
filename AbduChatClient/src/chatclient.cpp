@@ -100,7 +100,8 @@ void ChatClient::setUser(const UserPtr &newUser)
 
 void ChatClient::resetUser()
 {
-    setUser({}); // TODO: Adapt to use your actual default value
+    UserPtr emptyUser(new User);
+    setUser(emptyUser);
 }
 
 void ChatClient::connectToHost()

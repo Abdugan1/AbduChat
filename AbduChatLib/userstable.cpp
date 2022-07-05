@@ -54,3 +54,31 @@ void UsersTable::addUserRecord(const QSqlRecord &userRecord)
                       + lastError().text());
     }
 }
+
+const QString &UsersTable::filterValue() const
+{
+    return filterValue_;
+}
+
+void UsersTable::setFilterValue(const QString &newFilterValue)
+{
+    if (filterValue_ == newFilterValue)
+        return;
+    if (newFilterValue.isEmpty())
+        return resetFilterValue(); // void!
+
+    filterValue_ = newFilterValue;
+
+    const QString filterString = QString("first_name LIKE '%%1%' OR username LIKE '%%1%'").arg(filterValue_);
+    qDebug() << filterString;
+    qDebug() << "CPP:rowCount:" << rowCount();
+    setFilter(filterString);
+    select();
+
+    emit filterValueChanged();
+}
+
+void UsersTable::resetFilterValue()
+{
+    setFilterValue(" "); // forbidden symbol
+}

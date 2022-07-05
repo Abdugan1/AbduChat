@@ -42,23 +42,6 @@ void MessagesTable::setCurrentChat(const QJSValue &newCurrentChat)
     emit currentChatChanged();
 }
 
-//void MessagesTable::setCurrentChat(const QVariant &newCurrentChat)
-//{
-////    if (currentChat_ == std::make_shared<Chat>(qobject_cast<Chat*>(newCurrentChat.value<QObject*>())))
-////        return;
-
-//    if (dynamic_cast<Chat*>(newCurrentChat.value<QObject*>())) {
-//        Logger::debug("MessagesTable::setCurrentChat::currentChat: no value: " + QString(newCurrentChat.typeName()));
-//    }
-
-//    Logger::debug("MessagesTable::setCurrentChat::currentChat: " + (currentChat_ == nullptr ? "null" : QString::fromUtf8(QJsonDocument(currentChat_->toJson()).toJson())));
-
-//    currentChat_ = std::make_shared<Chat>(qobject_cast<Chat*>(newCurrentChat.value<QObject*>()));
-//    selectCurrentChatValues();
-//    emit currentChatChanged();
-//}
-
-
 void MessagesTable::addMessage(const MessagePtr &message)
 {
     QSqlRecord messageRecord = record();

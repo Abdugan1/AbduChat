@@ -7,8 +7,16 @@
 class UsersTable : public SqlTableModel
 {
     Q_OBJECT
+    Q_PROPERTY(QString filterValue READ filterValue WRITE setFilterValue RESET resetFilterValue NOTIFY filterValueChanged)
 public:
     explicit UsersTable(QObject* parent = nullptr);
+
+    const QString &filterValue() const;
+    void setFilterValue(const QString &newFilterValue);
+    void resetFilterValue();
+
+signals:
+    void filterValueChanged();
 
 protected:
     void addUser(const UserPtr& user);
@@ -17,6 +25,9 @@ private:
     void createRoleNames();
 
     void addUserRecord(const QSqlRecord& userRecord);
+
+private:
+    QString filterValue_;
 
     friend class SqlDatabase;
 };

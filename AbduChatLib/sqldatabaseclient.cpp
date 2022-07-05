@@ -1,5 +1,6 @@
 #include "sqldatabaseclient.h"
 #include "database_names.h"
+#include "userstable.h"
 #include "chatsviewtable.h"
 #include "messagestable.h"
 #include "user.h"
@@ -18,8 +19,11 @@ SqlDatabaseClient::SqlDatabaseClient(QObject *parent)
 {
     createClientTables();
     initClientTables();
+
     messagesTable()->setSort(db::messages::fieldnums::Id, Qt::DescendingOrder);
     messagesTable()->select();
+
+    usersTable()->resetFilterValue();
 }
 
 ChatsViewTable *SqlDatabaseClient::chatsViewTable() const
@@ -41,6 +45,12 @@ void SqlDatabaseClient::addMessages(const QJsonArray &messages)
         const QJsonObject message = messageRef.toObject();
         addMessage(MessagePtr(Message::fromJson(message)));
     }
+}
+
+void SqlDatabaseClient::addMessage(const MessagePtr &message)
+{
+    SqlDatabase::addMessage(message);
+    chatsViewTable_->select();
 }
 
 void SqlDatabaseClient::createClientTables()

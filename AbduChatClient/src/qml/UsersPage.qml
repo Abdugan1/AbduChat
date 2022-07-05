@@ -22,8 +22,7 @@ Page {
                 id: searchField
                 anchors.left: backButton.right
                 anchors.right: parent.right
-                anchors.rightMargin: 16
-                anchors.leftMargin: 32
+                anchors.leftMargin: 16
             }
         }
     }
@@ -40,14 +39,51 @@ Page {
 //                username: "nnegmetov"
 //            }
 //        }
-        model: getUsersTable();
+        onCountChanged: {
+            noResultsImage.playing = (count === 0)
+        }
+
+        model: usersTable;
 
         delegate: UsersDelegate {
-            onUserClicked: {
-                getChatClient().requestCreateChat(id);
+            onUserClicked: { chatClient.requestCreateChat(id); }
+        }
+
+        Item {
+            id: noResults
+            visible: listView.count === 0 && searchField.text !== ""
+            anchors.top: parent.top
+            anchors.topMargin: 150
+            anchors.horizontalCenter: parent.horizontalCenter
+            AnimatedImage {
+                id: noResultsImage
+                width: 200
+                height: 200
+                source: "qrc:/images/no_results.gif"
+                anchors.horizontalCenter: parent.horizontalCenter
+                speed: 1.5
+
+                onFrameChanged: {
+                    if (currentFrame === frameCount - 2)
+                        playing = false
+                }
+            }
+            Label {
+                id: noResultsLabel
+                text: qsTr("No results")
+                anchors.top: noResultsImage.bottom
+                anchors.topMargin: -20
+                font.pointSize: 18
+                anchors.horizontalCenter: parent.horizontalCenter
             }
         }
     }
 }
 
 
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.66}
+}
+##^##*/
