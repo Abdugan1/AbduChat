@@ -6,7 +6,7 @@ ItemDelegate {
 
     readonly property int userId: model.id
 
-    signal userClicked(int id)
+    signal userClicked(int userId)
 
     implicitWidth: 400
     implicitHeight: 70
@@ -14,7 +14,7 @@ ItemDelegate {
     anchors.left: parent.left
     anchors.right: parent.right
 
-    onClicked: { userClicked(userId) }
+    onClicked: { userClicked(root.userId) }
 
     Image {
         id: avatar

@@ -4,6 +4,8 @@ import QtQuick.Controls 2.15
 Page {
     id: root
 
+    signal userClicked(int userId);
+
     width: 440
     height: 760
 
@@ -45,9 +47,7 @@ Page {
 
         model: usersTable;
 
-        delegate: UsersDelegate {
-            onUserClicked: { chatClient.requestCreateChat(id); }
-        }
+        delegate: UsersDelegate { onUserClicked: { root.userClicked(userId) } }
 
         Item {
             id: noResults

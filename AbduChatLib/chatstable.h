@@ -10,11 +10,16 @@ class ChatsTable : public SqlTableModel
 public:
     explicit ChatsTable(QObject *parent = nullptr);
 
-protected:
-    void addChat(const ChatPtr& chat);
+    Q_INVOKABLE bool hasChat(int user1Id, int user2Id) const;
+
+    Chat* getChat(int chatId) const;
+    Chat* getChat(int user1Id, int user2Id) const;
 
 public slots:
-    bool hasChat(int user1Id, int user2Id) const;
+    void setFilterByUserId(int id);
+
+protected:
+    void addChat(const ChatPtr& chat);
 
 private:
     void createRoleNames();

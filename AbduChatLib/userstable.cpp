@@ -70,8 +70,6 @@ void UsersTable::setFilterValue(const QString &newFilterValue)
     filterValue_ = newFilterValue;
 
     const QString filterString = QString("first_name LIKE '%%1%' OR username LIKE '%%1%'").arg(filterValue_);
-    qDebug() << filterString;
-    qDebug() << "CPP:rowCount:" << rowCount();
     setFilter(filterString);
     select();
 
@@ -81,4 +79,19 @@ void UsersTable::setFilterValue(const QString &newFilterValue)
 void UsersTable::resetFilterValue()
 {
     setFilterValue(" "); // forbidden symbol
+}
+
+QString UsersTable::getUsername(int userId) const
+{
+    const QString execute = "SELECT username FROM users WHERE id = :userId";
+    QSqlQuery query;
+    query.prepare(execute);
+    query.bindValue(":userId", userId);
+    if (!query.exec()) {
+        Logger::fatal("UsersTable::getUsername::Get username failed. usersId: "
+                      + QString::number(userId) + " | reason: "
+                      + query.lastError().text());
+    }
+    query.next();
+    return query.value(0).toString();
 }

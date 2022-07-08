@@ -46,11 +46,20 @@ ApplicationWindow {
     ChatsPage {
         id: chatsPage
 
-        onChatClicked: { stackView.push(conversationPage, {pageTitleText: chatUsername}) }
+        onChatClicked: { stackView.push(conversationPage) }
     }
 
     UsersPage {
         id: usersPage
+
+        onUserClicked: {
+            if (!chatsTable.hasChat(chatClient.user.id, userId)) {
+                chatClient.requestCreateChat(userId);
+            } else {
+                database.setCurrentChat(chatClient.user.id, userId);
+                stackView.replace(stackView.currentItem, conversationPage);
+            }
+        }
     }
 
     ConversationPage {
@@ -62,10 +71,7 @@ ApplicationWindow {
     ConnectionErrorPage {
         id: connectionErrorPage
 
-        onReconnectButtonClicked: {
-            console.log("reconnecting");
-            chatClient.connectToHost()
-        }
+        onReconnectButtonClicked: { chatClient.connectToHost() }
     }
 
     StackView {

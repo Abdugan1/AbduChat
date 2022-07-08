@@ -1,6 +1,7 @@
 #include "sqldatabaseclient.h"
 #include "database_names.h"
 #include "userstable.h"
+#include "chatstable.h"
 #include "chatsviewtable.h"
 #include "messagestable.h"
 #include "user.h"
@@ -51,6 +52,18 @@ void SqlDatabaseClient::addMessage(const MessagePtr &message)
 {
     SqlDatabase::addMessage(message);
     chatsViewTable_->select();
+}
+
+void SqlDatabaseClient::setCurrentChat(int chatId)
+{
+    ChatPtr chat(chatsTable()->getChat(chatId));
+    messagesTable()->setCurrentChat(chat);
+}
+
+void SqlDatabaseClient::setCurrentChat(int user1Id, int user2Id)
+{
+    ChatPtr chat(chatsTable()->getChat(user1Id, user2Id));
+    messagesTable()->setCurrentChat(chat);
 }
 
 void SqlDatabaseClient::createClientTables()

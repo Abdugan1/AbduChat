@@ -17,6 +17,9 @@ public:
 
     void addMessage(const MessagePtr& message);
 
+    Q_INVOKABLE void setCurrentChat(int chatId);
+    Q_INVOKABLE void setCurrentChat(int user1Id, int user2Id);
+
 private:
     void createClientTables();
     void createChatsViewTable();

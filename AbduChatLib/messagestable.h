@@ -2,6 +2,7 @@
 #define MESSAGESTABLE_H
 
 #include "sqltablemodel.h"
+#include "chat.h"
 #include "message.h"
 
 class QJSValue;
@@ -14,13 +15,14 @@ public:
     explicit MessagesTable(QObject* parent = nullptr);
 
     Chat *currentChat() const;
-    Q_INVOKABLE void setCurrentChat(const QJSValue& newCurrentChat);
 
 signals:
     void currentChatChanged();
 
 private:
     void addMessage(const MessagePtr& message);
+
+    void setCurrentChat(const ChatPtr& newCurrentChat);
 
 private:
     void createRoleNames();
@@ -35,6 +37,7 @@ private:
 
 
     friend class SqlDatabase;
+    friend class SqlDatabaseClient;
 };
 
 #endif // MESSAGESTABLE_H

@@ -15,6 +15,8 @@ public:
     void setFilterValue(const QString &newFilterValue);
     void resetFilterValue();
 
+    Q_INVOKABLE QString getUsername(int userId) const;
+
 signals:
     void filterValueChanged();
 

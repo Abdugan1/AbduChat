@@ -1,7 +1,6 @@
 #include "messagestable.h"
 #include "database_names.h"
 #include "request_and_reply_constants.h"
-#include "chat.h"
 #include "message.h"
 #include "logger.h"
 
@@ -30,18 +29,6 @@ Chat *MessagesTable::currentChat() const
     return currentChat_;
 }
 
-void MessagesTable::setCurrentChat(const QJSValue &newCurrentChat)
-{
-    Chat* chat = qobject_cast<Chat*>(newCurrentChat.toQObject());
-    Q_ASSERT(qobject_cast<Chat*>(newCurrentChat.toQObject()));
-    if (currentChat_->isEqual(chat))
-        return;
-    currentChat_->copyValues(chat);
-    qDebug() << "Current chat:" << currentChat_->toJson();
-    selectCurrentChatValues();
-    emit currentChatChanged();
-}
-
 void MessagesTable::addMessage(const MessagePtr &message)
 {
     QSqlRecord messageRecord = record();
@@ -54,6 +41,16 @@ void MessagesTable::addMessage(const MessagePtr &message)
                          + lastError().text()
                       );
     }
+}
+
+void MessagesTable::setCurrentChat(const ChatPtr &newCurrentChat)
+{
+    if (currentChat_->isEqual(newCurrentChat.get()))
+        return;
+    currentChat_->copyValues(newCurrentChat.get());
+    qDebug() << "Current chat:" << currentChat_->toJson();
+    selectCurrentChatValues();
+    emit currentChatChanged();
 }
 
 void MessagesTable::createRoleNames()

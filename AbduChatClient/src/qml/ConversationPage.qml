@@ -6,9 +6,15 @@ import AbduChatLib 1.0
 Page {
     id: root
 
-    property alias pageTitleText: pageTitle.text
-
     signal sendButtonClicked(string messageText)
+
+    function getChatUsername() {
+        if (chatClient.user.id === -1)
+            return ""
+        return chatClient.user.id === messagesTable.currentChat.user1Id
+                ? usersTable.getUsername(messagesTable.currentChat.user2Id)
+                : usersTable.getUsername(messagesTable.currentChat.user1Id)
+    }
 
     width: 440
     height: 760
@@ -27,6 +33,7 @@ Page {
 
         Label {
             id: pageTitle
+            text: getChatUsername()
             anchors.centerIn: parent
             font.pixelSize: 20
         }

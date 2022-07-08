@@ -32,11 +32,11 @@ int main(int argc, char *argv[])
     qmlRegisterType<User>("AbduChatLib", 1, 0, "User");
     qmlRegisterType<Chat>("AbduChatLib", 1, 0, "Chat");
     qmlRegisterType<Message>("AbduChatLib", 1, 0, "Message");
-//    qmlRegisterType<Message>("AbduChatClient", 1, 0, "ChatClient");
 
     QQmlApplicationEngine engine;
     engine.setObjectOwnership(chatClient.user(), QQmlEngine::CppOwnership);
     engine.rootContext()->setContextProperty("chatClient", &chatClient);
+    engine.rootContext()->setContextProperty("database", &database);
     engine.rootContext()->setContextProperty("usersTable", database.usersTable());
     engine.rootContext()->setContextProperty("chatsTable", database.chatsTable());
     engine.rootContext()->setContextProperty("chatsViewTable", database.chatsViewTable());

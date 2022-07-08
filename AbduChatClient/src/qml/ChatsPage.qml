@@ -4,7 +4,7 @@ import QtQuick.Controls 2.15
 Page {
     id: root
 
-    signal chatClicked(string chatUsername)
+    signal chatClicked()
 
     width: 440
     height: 760
@@ -45,6 +45,11 @@ Page {
 
         model: chatsViewTable
 
-        delegate: ChatDelegate {}
+        delegate: ChatDelegate {
+            onClicked: {
+                database.setCurrentChat(chatId);
+                chatClicked()
+            }
+        }
     }
 }

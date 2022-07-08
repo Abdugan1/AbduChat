@@ -6,6 +6,12 @@ import AbduChatLib 1.0
 ItemDelegate {
     id: root
 
+    readonly property int chatId: model.chat_id
+
+    function getChat() {
+        return chat;
+    }
+
     function getChatUsername() {
         return chatClient.user.id === model.user_1_id ? model.user_2_username
                                                       : model.user_1_username
@@ -33,24 +39,11 @@ ItemDelegate {
         }
     }
 
-    Chat {
-        id: chat
-        chatId: model.chat_id
-        type: model.chat_type
-        user1Id: model.user_1_id
-        user2Id: model.user_2_id
-    }
-
     implicitWidth: 400
     implicitHeight: 70
 
     anchors.left: parent.left
     anchors.right: parent.right
-
-    onClicked: {
-        messagesTable.setCurrentChat(chat);
-        chatClicked(usernameText.text)
-    }
 
     Image {
         id: avatar
