@@ -6,21 +6,25 @@ TextArea {
 
     signal sendClicked()
 
+    selectByMouse: true
+    placeholderText: qsTr("Message")
     wrapMode: Text.Wrap
+    font.pointSize: 16
+
+    topPadding: 12
     leftPadding: 12
     bottomPadding: 12
-    topPadding: 12
-    font.pointSize: 16
-    placeholderText: qsTr("Message")
-    selectByMouse: true
     rightPadding: 48
+
+    background: Rectangle { id: backgroundRect }
 
     Image {
         id: sendButton
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
         source: "qrc:/images/send_32.png"
+
+        anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
+        anchors.right: parent.right
         anchors.rightMargin: 8
 
         MouseArea {

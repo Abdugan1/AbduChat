@@ -6,7 +6,6 @@ Rectangle {
 
     readonly property int margin: 100
 
-
     property bool sentByMe: chatClient.user.id === model.from_user_id
 
     function getContentWidth() {
@@ -23,31 +22,33 @@ Rectangle {
         return date.toLocaleString(Qt.locale(), "hh:mm");
     }
 
+    implicitWidth: 440
+    implicitHeight: 760
     width: Math.min(getContentWidth(), getMaxWidht())
     height: getContentHeight()
-//    width: 300
-//    height: 70
     color: "#202123"
     radius: 20
 
     Label {
         id: textLabel
+        text: model.text
         color: "#fafafb"
         font.pointSize: 14
-        text: model.text
+        wrapMode: Text.Wrap
+
         anchors.fill: parent
         anchors.margins: 15
-        wrapMode: Text.Wrap
     }
 
     Text {
         id: dateText
-        color: "#7e7f81"
         text: getDate(model.date)
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        color: "#7e7f81"
         font.pointSize: 12
+
+        anchors.bottom: parent.bottom
         anchors.bottomMargin: 4
+        anchors.right: parent.right
         anchors.rightMargin: 20
     }
     states: [

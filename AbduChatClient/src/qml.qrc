@@ -15,5 +15,7 @@
         <file>qml/UsersDelegate.qml</file>
         <file>qml/MessageField.qml</file>
         <file>qml/MessageDelegate.qml</file>
+        <file>qml/SignUpPage.qml</file>
+        <file>js/validation.js</file>
     </qresource>
 </RCC>

@@ -1,46 +1,25 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
 
 import "qrc:/js/validation.js" as Validation
 
 Page {
     id: root
 
-    property string username: usernameField.text
-    property string password: passwordField.text
-
     readonly property int fieldSpacing: 0
-
-    signal loginButtonClicked();
 
     implicitWidth: 440
     implicitHeight: 760
 
-    function setReconnectButtionVisible(visible) {
-        reconnectButton.visible = visible;
-    }
-
-    Image {
-        id: appLogo
-        width: 200
-        height: 200
-        source: "qrc:/images/app_logo_256.png"
-        fillMode: Image.PreserveAspectFit
-
-        anchors.top: parent.top
-        anchors.topMargin: 61
-        anchors.horizontalCenter: parent.horizontalCenter
-    }
-
     Label {
-        id: authorizationLabel
-        text: qsTr("LOGIN")
+        id: signUpLabel
+        text: qsTr("Sign Up")
         font.pointSize: 24
 
-        anchors.top: appLogo.bottom
-        anchors.topMargin: 30
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: 100
+        anchors.left: usernameField.left
+        anchors.leftMargin: 0
     }
 
     ValidatedField {
@@ -48,9 +27,7 @@ Page {
         iconSource: "qrc:/images/user.png"
         placeholderText: qsTr("Username")
 
-        errorMessage: qsTr("Invalid username")
         validator: RegularExpressionValidator {
-            // length: 4-20
             regularExpression: Validation.UsernameRegex
         }
 
@@ -69,9 +46,8 @@ Page {
             }
         }
 
-
-        anchors.top: authorizationLabel.bottom
-        anchors.topMargin: 17
+        anchors.top: signUpLabel.bottom
+        anchors.topMargin: 10
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
@@ -80,7 +56,6 @@ Page {
         iconSource: "qrc:/images/padlock.png"
         placeholderText: qsTr("Password")
 
-        errorMessage: qsTr("Invalid password")
         validator: RegularExpressionValidator {
             regularExpression: Validation.PasswordRegex
         }
@@ -104,44 +79,89 @@ Page {
         anchors.top: usernameField.bottom
         anchors.topMargin: root.fieldSpacing
         anchors.horizontalCenter: parent.horizontalCenter
+    }
 
-        Popup {
-            id: passwordPopup
+    PasswordField {
+        id: confirmPasswordField
+        iconSource: "qrc:/images/padlock.png"
+        placeholderText: qsTr("Confirm password")
 
-            contentItem: Text {
-                text: qsTr("8 characters")
-            }
+        errorMessage: qsTr("Passwords do not match")
+
+        textField.onActiveFocusChanged: {
+            hasError = passwordField.textField.text != confirmPasswordField.textField.text
         }
+
+        anchors.top: passwordField.bottom
+        anchors.topMargin: root.fieldSpacing
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+
+    ValidatedField {
+        id: firstNameField
+        iconSource: "qrc:/images/user.png"
+        placeholderText: qsTr("First name")
+
+        validator: RegularExpressionValidator {
+            regularExpression: Validation.NameRegex
+        }
+        errorMessage: qsTr("Invalid name")
+
+        textField.onActiveFocusChanged: {
+            hasError = !textField.activeFocus && !textField.acceptableInput
+        }
+
+        anchors.top: confirmPasswordField.bottom
+        anchors.topMargin: 40
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+
+    ValidatedField {
+        id: lastNameField
+        borderWidth: root.fieldBorderWidth
+        iconSource: "qrc:/images/user.png"
+        placeholderText: qsTr("Last name")
+
+        validator: RegularExpressionValidator {
+            regularExpression: Validation.NameRegex
+        }
+        errorMessage: qsTr("Invalid name")
+
+        textField.onActiveFocusChanged: {
+            hasError = !textField.activeFocus && !textField.acceptableInput
+        }
+
+        anchors.top: firstNameField.bottom
+        anchors.topMargin: root.fieldSpacing
+        anchors.horizontalCenter: parent.horizontalCenter
     }
 
     CustomButton {
-        id: loginButton
-        width: root.fieldWidth
-        height: root.fieldHeight
-        borderRadius: root.fieldRadius
-        borderWidth: 0
-        text: qsTr("LOGIN")
+        id: signUpButton
+        text: qsTr("SIGN UP")
 
-        onClicked: { root.loginButtonClicked() }
-
-        anchors.top: passwordField.bottom
+        anchors.top: lastNameField.bottom
         anchors.topMargin: 50
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
     Label {
-        id: label
-        text: qsTr("Don't have an account yet? <a href=\":\">Sign up</a>")
-        onLinkActivated: { stackView.replace(stackView.currentItem, signUpPage) }
+        id: goToLoginPageLabel
+        text: qsTr("Already have an account? <a href=\":\">Login</a>")
+        onLinkActivated: { stackView.replace(stackView.currentItem, logInPage) }
 
-        anchors.top: loginButton.bottom
+        anchors.top: signUpButton.bottom
         anchors.topMargin: 20
         anchors.horizontalCenter: parent.horizontalCenter
     }
 }
 
+
+
+
+
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.5}
+    D{i:0;formeditorZoom:0.75}
 }
 ##^##*/

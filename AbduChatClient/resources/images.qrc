@@ -15,5 +15,6 @@
         <file>images/user.png</file>
         <file>images/x_16.png</file>
         <file>images/no_results.gif</file>
+        <file>images/chat_background.png</file>
     </qresource>
 </RCC>

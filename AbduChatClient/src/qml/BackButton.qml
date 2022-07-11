@@ -8,14 +8,16 @@ Item {
 
     Image {
         id: image
-        anchors.fill: parent
         source: "qrc:/images/back_24.png"
+
+        anchors.fill: parent
     }
 
     MouseArea {
         id: mouseArea
-        anchors.fill: parent
         onClicked: { stackView.pop() }
+
+        anchors.fill: parent
     }
 }
 

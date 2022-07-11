@@ -6,31 +6,37 @@ Page {
 
     signal chatClicked()
 
-    width: 440
-    height: 760
+    implicitWidth: 440
+    implicitHeight: 760
 
     header: ToolBar {
         height: 43
         rightPadding: 0
         leftPadding: 0
         bottomPadding: 0
+
         Item {
             id: header
             anchors.fill: parent
+
             Label {
                 id: title
                 text: qsTr("AbduChat")
-                anchors.verticalCenter: parent.verticalCenter
+                font.pointSize: 18
+
                 anchors.left: parent.left
                 anchors.leftMargin: 32
-                font.pointSize: 18
+                anchors.verticalCenter: parent.verticalCenter
             }
+
             Image {
                 id: searchButton
-                anchors.verticalCenter: parent.verticalCenter
                 source: "qrc:/images/search_24.png"
-                anchors.rightMargin: 16
+
                 anchors.right: parent.right
+                anchors.rightMargin: 16
+                anchors.verticalCenter: parent.verticalCenter
+
                 MouseArea {
                     anchors.fill: parent
                     onClicked: { stackView.push(usersPage) }
@@ -48,8 +54,14 @@ Page {
         delegate: ChatDelegate {
             onClicked: {
                 database.setCurrentChat(chatId);
-                chatClicked()
+                root.chatClicked()
             }
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.66}
+}
+##^##*/

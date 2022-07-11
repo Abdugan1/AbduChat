@@ -8,9 +8,7 @@ ItemDelegate {
 
     readonly property int chatId: model.chat_id
 
-    function getChat() {
-        return chat;
-    }
+    function getChat() { return chat; }
 
     function getChatUsername() {
         return chatClient.user.id === model.user_1_id ? model.user_2_username
@@ -47,43 +45,44 @@ ItemDelegate {
 
     Image {
         id: avatar
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
         source: "qrc:/images/avatar_64.png"
-        anchors.leftMargin: 10
-        sourceSize.height: 64
-        sourceSize.width: 64
         width: 64
         height: 64
+
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+        anchors.verticalCenter: parent.verticalCenter
     }
 
     Text {
         id: usernameText
         text: getChatUsername()
-
-        anchors.left: avatar.right
-        anchors.top: parent.top
         font.pixelSize: 16
         font.bold: true
+
+        anchors.top: parent.top
         anchors.topMargin: 12
+        anchors.left: avatar.right
         anchors.leftMargin: 16
     }
 
     Text {
         id: lastMessage
         text: model.last_message
-        anchors.left: avatar.right
+
         anchors.top: usernameText.bottom
-        anchors.leftMargin: 16
         anchors.topMargin: 3
+        anchors.left: avatar.right
+        anchors.leftMargin: 16
     }
 
     Text {
         id: sentTime
         text: getDate(model.date)
-        anchors.right: parent.right
+
         anchors.top: parent.top
         anchors.topMargin: 14
+        anchors.right: parent.right
         anchors.rightMargin: 11
     }
 }

@@ -18,31 +18,25 @@ ItemDelegate {
 
     Image {
         id: avatar
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
         source: "qrc:/images/avatar_64.png"
         sourceSize.height: 48
         sourceSize.width: 48
+
+        anchors.left: parent.left
         anchors.leftMargin: 10
+        anchors.verticalCenter: parent.verticalCenter
     }
 
     Text {
         id: usernameText
         text: model.username
-        anchors.left: avatar.right
-        anchors.top: parent.top
         font.pixelSize: 16
         font.bold: true
-        anchors.topMargin: 16
-        anchors.leftMargin: 16
-    }
 
-    Text {
-        id: text1
-        x: 313
-        y: 20
-        text: root.userId
-        font.pixelSize: 12
+        anchors.top: parent.top
+        anchors.topMargin: 16
+        anchors.left: avatar.right
+        anchors.leftMargin: 16
     }
 }
 

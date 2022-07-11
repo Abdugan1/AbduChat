@@ -16,8 +16,8 @@ Page {
                 : usersTable.getUsername(messagesTable.currentChat.user1Id)
     }
 
-    width: 440
-    height: 760
+    implicitWidth: 440
+    implicitHeight: 760
     visible: true
 
     header: ToolBar {
@@ -25,58 +25,61 @@ Page {
         rightPadding: 0
         leftPadding: 0
         bottomPadding: 0
+
         BackButton {
              anchors.left: parent.left
-             anchors.verticalCenter: parent.verticalCenter
              anchors.leftMargin: 16
+             anchors.verticalCenter: parent.verticalCenter
         }
 
         Label {
             id: pageTitle
             text: getChatUsername()
-            anchors.centerIn: parent
             font.pixelSize: 20
+
+            anchors.centerIn: parent
         }
+    }
+
+    Image {
+        id: backgroundImage
+        source: "qrc:/images/chat_background.png"
+        fillMode: Image.PreserveAspectCrop
+
+        anchors.fill: parent
     }
 
         ListView {
             id: listView
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.bottom: messageField.top
-            anchors.rightMargin: 8
-            anchors.leftMargin: 8
-            anchors.bottomMargin: 8
-            anchors.topMargin: 8
             spacing: 8
             verticalLayoutDirection: ListView.BottomToTop
 
+            anchors.top: parent.top
+            anchors.topMargin: 8
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            anchors.bottom: messageField.top
+            anchors.bottomMargin: 8
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+
             model: messagesTable
-//            model: ListModel {
-//                ListElement {
-//                    text: "Hale epta"
-//                }
-//                ListElement {
-//                    text: "Hale epta #2 Loremdsakl"
-//                }
-//            }
 
-            delegate: MessageDelegate {
-
-            }
+            delegate: MessageDelegate {}
         }
 
         MessageField {
             id: messageField
+
+            onSendClicked: {
+                root.sendButtonClicked(text);
+                text = ""
+            }
+
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
-            onSendClicked: {
-                sendButtonClicked(text);
-                text = ""
-            }
         }
 }
 

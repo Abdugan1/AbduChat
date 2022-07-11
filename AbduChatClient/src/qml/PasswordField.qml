@@ -2,54 +2,35 @@ import QtQuick 2.0
 
 ValidatedField {
     id: root
-    width: 300
-    height: 50
-    state: "showPasswordState"
 
-    rightPadding: 45
+    echoMode: toggleVisibleButton.showPassword ? TextInput.Normal
+                                               : TextInput.Password
 
-    states: [
-        State {
-            name: "showPasswordState"
-            when: toggleVisiblePasswordImage.showPassword
-            PropertyChanges {
-                target: toggleVisiblePasswordImage
-                source: "qrc:/images/hide_password.png"
-            }
-            PropertyChanges {
-                target: root
-                echoMode: TextInput.Normal
-            }
-        },
-        State {
-            name: "hidePasswordState"
-            when: !toggleVisiblePasswordImage.showPassword
-            PropertyChanges {
-                target: toggleVisiblePasswordImage
-                source: "qrc:/images/show_password.png"
-            }
-            PropertyChanges {
-                target: root
-                echoMode: TextInput.Password
-            }
-        }
-    ]
+    textField.rightPadding: 45
 
     Image {
-        id: toggleVisiblePasswordImage
+        id: toggleVisibleButton
 
         property bool showPassword: false
 
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
+        source: showPassword ? "qrc:/images/hide_password.png"
+                             : "qrc:/images/show_password.png"
+
         sourceSize.height: 22
+
+        anchors.right: parent.right
         anchors.rightMargin: 14
+        anchors.verticalCenter: textField.verticalCenter
 
         MouseArea {
             anchors.fill: parent
-            onClicked: {
-                toggleVisiblePasswordImage.showPassword = !toggleVisiblePasswordImage.showPassword;
-            }
+            onClicked: { toggleVisibleButton.showPassword = !toggleVisibleButton.showPassword; }
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/

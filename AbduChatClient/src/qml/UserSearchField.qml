@@ -3,13 +3,13 @@ import QtQuick.Controls 2.15
 
 TextField {
     id: root
-    font.pointSize: 14
-
-    placeholderText: qsTr("Search")
-    selectByMouse: true
 
     implicitHeight: 43
     implicitWidth: 300
+    selectByMouse: true
+    placeholderText: qsTr("Search")
+    font.pointSize: 14
+
     rightPadding: clearButton.width + 2 * clearButton.anchors.rightMargin
 
     background: Rectangle{ color: "#00ffffff"}
@@ -18,11 +18,12 @@ TextField {
 
     Image {
         id: clearButton
-        visible: root.text != ""
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
         source: "qrc:/images/x_16.png"
+        visible: root.text != ""
+
+        anchors.right: parent.right
         anchors.rightMargin: 16
+        anchors.verticalCenter: parent.verticalCenter
 
         MouseArea {
             anchors.fill: parent

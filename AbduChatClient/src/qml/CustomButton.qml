@@ -4,13 +4,17 @@ import QtQuick.Controls 2.15
 Button {
     id: root
 
-    property color backgroundColor: "white"
+    property color backgroundColor: "black"
     property color borderColor: "black"
-    property int borderWidth: 1
-    property real borderRadius: 0.0
+    property int borderWidth: 0
+    property real borderRadius: 10.0
     property color hoverColor: "#7ee6a1"
 
-    property color textColor: "black"
+    property color textColor: "white"
+
+    implicitWidth: 350
+    implicitHeight: 54
+
     states: [
         State {
             name: "hoveredState"
@@ -22,23 +26,20 @@ Button {
         }
     ]
 
-    implicitWidth: 40
-    implicitHeight: 40
-
     background: Rectangle {
         id: backgroundRectangle
 
-        color: backgroundColor
-        border.color: borderColor
-        border.width: borderWidth
-        radius: borderRadius
+        color: root.backgroundColor
+        border.color: root.borderColor
+        border.width: root.borderWidth
+        radius: root.borderRadius
     }
 
     contentItem: Item {
         Text {
             id: buttonText
             text: root.text
-            color: textColor
+            color: root.textColor
             anchors.centerIn: parent
         }
     }

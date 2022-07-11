@@ -39,8 +39,12 @@ ApplicationWindow {
         id: logInPage
 
         onLoginButtonClicked: { chatClient.attempToLogIn(username, password); }
+    }
 
-        onRegisterButtonClicked: { chatClient.attempToRegister(username, password); }
+    SignUpPage {
+        id: signUpPage
+
+//        onRegisterButtonClicked: { chatClient.attempToRegister(username, password); }
     }
 
     ChatsPage {
