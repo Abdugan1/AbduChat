@@ -1,0 +1,35 @@
+/* =============================================== */
+/* LineEdit                                        */
+/* =============================================== */
+QLineEdit {
+    background-color: white;
+    border: 1px solid black;
+    color: black;
+    border-radius: 3px;
+    min-height: 40px;
+}
+
+
+/* =============================================== */
+/* Button                                          */
+/* =============================================== */
+QPushButton {
+    background-color: black;
+    border: 1px solid black;
+    color: white;
+    border-radius: 3px;
+    min-height: 40px;
+}
+
+QPushButton:hover{
+    background-color: rgb(55, 55, 55);
+    border-color: rgb(3, 3, 3);
+}
+
+QPushButton:pressed
+{
+    background-color: white;
+    border: 1px solid black;
+    color: black;
+    border-width: 1px;
+}

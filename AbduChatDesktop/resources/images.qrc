@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/avatar_32.png</file>
+        <file>images/avatar_64.png</file>
+        <file>images/back_24.png</file>
+        <file>images/hide_password.png</file>
+        <file>images/no_connection.gif</file>
+        <file>images/search_24.png</file>
+        <file>images/send_32.png</file>
+        <file>images/show_password.png</file>
+        <file>images/x_16.png</file>
+        <file>images/no_results.gif</file>
+        <file>images/chat_background.png</file>
+        <file>images/app_logo_128.png</file>
+        <file>images/app_logo_256.png</file>
+        <file>images/app_logo_32.png</file>
+        <file>images/app_logo_64.png</file>
+        <file>images/welcome_background.gif</file>
+        <file>images/padlock_16.png</file>
+        <file>images/padlock_24.png</file>
+        <file>images/padlock_32.png</file>
+        <file>images/padlock_64.png</file>
+        <file>images/user_16.png</file>
+        <file>images/user_24.png</file>
+        <file>images/user_32.png</file>
+        <file>images/user_64.png</file>
+    </qresource>
+</RCC>

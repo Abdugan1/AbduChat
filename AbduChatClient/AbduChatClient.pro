@@ -1,6 +1,7 @@
-QT += quick sql
-TEMPLATE = app
-TARGET = AbduChatClient
+QT -= gui
+QT += core network sql qml
+TEMPLATE = lib
+TARGET = abduchatclient
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -10,22 +11,10 @@ INCLUDEPATH += ../
 LIBS += -L../AbduChatLib -labduchatlib
 
 HEADERS += \
-    src/chatclient.h
+    chatclient.h
 
 SOURCES += \
-        src/chatclient.cpp \
-        src/main.cpp
-
-RESOURCES += src/qml.qrc \
-    resources/images.qrc
-
-QMLDESIGNER_RC_PATHS="qrc:/images=../../resources/images"
-
-# Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
-
-# Additional import path used to resolve QML modules just for Qt Quick Designer
-QML_DESIGNER_IMPORT_PATH =
+        chatclient.cpp \
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -18,7 +18,7 @@
 #include <AbduChatLib/messagestable.h>
 #include <AbduChatLib/sqldatabaseclient.h>
 
-#include "chatclient.h"
+#include <AbduChatClient/chatclient.h>
 
 int main(int argc, char *argv[])
 {
