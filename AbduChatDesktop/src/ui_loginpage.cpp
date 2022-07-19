@@ -1,12 +1,15 @@
 #include "ui_loginpage.h"
-#include "validatedlineedit.h"
+#include "lineedit.h"
+#include "pushbutton.h"
+#include "label.h"
+#include "constants.h"
 
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
 #include <QFrame>
 #include <QBoxLayout>
 #include <QMovie>
+#include <QStateMachine>
+#include <QState>
+#include <QRegularExpressionValidator>
 
 QSpacerItem* createHSpacer()
 {
@@ -27,8 +30,6 @@ namespace ui {
 
 void LoginPage::setupUi(QWidget *loginPage)
 {
-    const QSizePolicy MaximumMaximum = QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-
     if (loginPage->objectName().isEmpty())
         loginPage->setObjectName("LoginPage");
 
@@ -36,11 +37,11 @@ void LoginPage::setupUi(QWidget *loginPage)
     // Left frame
     appLogoLabel = new QLabel;
     appLogoLabel->setPixmap(QPixmap(":/images/app_logo_32.png"));
-    appLogoLabel->setSizePolicy(MaximumMaximum);
+    appLogoLabel->setSizePolicy(constants::ui::MaximumMaximum);
 
     appNameLabel = new QLabel;
     appNameLabel->setText("AbduChat");
-    appNameLabel->setSizePolicy(MaximumMaximum);
+    appNameLabel->setSizePolicy(constants::ui::MaximumMaximum);
 
     appInfoLayout = new QHBoxLayout;
     appInfoLayout->addWidget(appLogoLabel);
@@ -68,15 +69,38 @@ void LoginPage::setupUi(QWidget *loginPage)
     loginLabel = new QLabel(QObject::tr("Login"));
     setPointSize(loginLabel, 18);
 
-    usernameEdit = new ValidatedLineEdit;
-    usernameEdit->setIcon(QPixmap(":/images/user_24.png"));
+    usernameEdit = new LineEdit;
+    qDebug() << "username is valid?" << constants::regexes::UsernameRegex.isValid();
+    usernameEdit->setValidator(new QRegularExpressionValidator(constants::regexes::UsernameRegex));
+    usernameEdit->setLeftPixmap(QPixmap(":/images/user_24.png"));
     usernameEdit->setPlaceholderText(QObject::tr("Username"));
 
-    passwordEdit = new ValidatedLineEdit;
-    passwordEdit->setIcon(QPixmap(":/images/padlock_24.png"));
+    passwordEdit = new LineEdit;
+    qDebug() << "password is valid?" << constants::regexes::PasswordRegex.isValid();
+    passwordEdit->setValidator(new QRegularExpressionValidator(constants::regexes::PasswordRegex));
+    passwordEdit->setLeftPixmap(QPixmap(":/images/padlock_24.png"));
+    passwordEdit->setRightPixmap(QPixmap(":/images/show_password_24.png"));
+    passwordEdit->setRightPixmapClickable(true);
     passwordEdit->setPlaceholderText(QObject::tr("Password"));
 
-    loginButton = new QPushButton(QObject::tr("LOGIN"));
+    QStateMachine *stateMachine = new QStateMachine(loginPage);
+    QState* hiddenPasswordState = new QState;
+    QState* shownPasswordState = new QState;
+
+    hiddenPasswordState->assignProperty(passwordEdit, "echoMode", QLineEdit::Password);
+    hiddenPasswordState->assignProperty(passwordEdit->rightPixmap(), "pixmap", QPixmap(":/images/show_password_24.png"));
+    hiddenPasswordState->addTransition(passwordEdit->rightPixmap(), &Label::pressed, shownPasswordState);
+
+    shownPasswordState->assignProperty(passwordEdit, "echoMode", QLineEdit::Normal);
+    shownPasswordState->assignProperty(passwordEdit->rightPixmap(), "pixmap", QPixmap(":/images/hide_password_24.png"));
+    shownPasswordState->addTransition(passwordEdit->rightPixmap(), &Label::pressed, hiddenPasswordState);
+
+    stateMachine->addState(hiddenPasswordState);
+    stateMachine->addState(shownPasswordState);
+    stateMachine->setInitialState(hiddenPasswordState);
+    stateMachine->start();
+
+    loginButton = new PushButton(QObject::tr("LOGIN"));
 
     editLayout = new QVBoxLayout;
     editLayout->setSpacing(10);
@@ -105,7 +129,9 @@ void LoginPage::setupUi(QWidget *loginPage)
     mainLayout->addWidget(leftSide);
     mainLayout->addWidget(rightSide);
 
-    loginPage->resize(1050, 640);
+    loginPage->resize(constants::widget::InitPageWidth,
+                      constants::widget::InitPageHeight);
+
     loginPage->setLayout(mainLayout);
 }
 

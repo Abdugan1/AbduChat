@@ -3,8 +3,7 @@
 #include <QFile>
 #include <QDebug>
 
-#include "loginpage.h"
-#include "loginpageform.h"
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,7 +17,7 @@ int main(int argc, char *argv[])
 
     app.setFont(QFont("Montserrat"));
 
-    LoginPage window;
+    MainWindow window;
     window.show();
 
     return app.exec();

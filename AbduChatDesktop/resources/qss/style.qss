@@ -1,7 +1,7 @@
 /* =============================================== */
 /* LineEdit                                        */
 /* =============================================== */
-QLineEdit {
+QLineEdit#lineEdit {
     background-color: white;
     border: 1px solid black;
     color: black;
@@ -9,11 +9,14 @@ QLineEdit {
     min-height: 40px;
 }
 
+QLineEdit#searchEdit {
+    min-height: 20px;
+}
 
 /* =============================================== */
 /* Button                                          */
 /* =============================================== */
-QPushButton {
+QPushButton#button {
     background-color: black;
     border: 1px solid black;
     color: white;
@@ -21,12 +24,12 @@ QPushButton {
     min-height: 40px;
 }
 
-QPushButton:hover{
+QPushButton#button:hover{
     background-color: rgb(55, 55, 55);
     border-color: rgb(3, 3, 3);
 }
 
-QPushButton:pressed
+QPushButton#button:pressed
 {
     background-color: white;
     border: 1px solid black;

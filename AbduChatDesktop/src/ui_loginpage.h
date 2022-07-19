@@ -4,12 +4,12 @@
 class QWidget;
 class QLabel;
 class QLineEdit;
-class QPushButton;
+class PushButton;
 class QFrame;
 class QHBoxLayout;
 class QVBoxLayout;
 
-class ValidatedLineEdit;
+class LineEdit;
 
 namespace ui {
 
@@ -27,9 +27,9 @@ public:
     QVBoxLayout* rightSideLayout = nullptr;
     QVBoxLayout* editLayout = nullptr;
     QLabel* loginLabel = nullptr;
-    ValidatedLineEdit* usernameEdit = nullptr;
-    ValidatedLineEdit* passwordEdit = nullptr;
-    QPushButton* loginButton = nullptr;
+    LineEdit* usernameEdit = nullptr;
+    LineEdit* passwordEdit = nullptr;
+    PushButton* loginButton = nullptr;
     QLabel* goToSignUpPageLabel = nullptr;
 
     QHBoxLayout* mainLayout = nullptr;

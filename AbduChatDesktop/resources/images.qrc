@@ -3,11 +3,9 @@
         <file>images/avatar_32.png</file>
         <file>images/avatar_64.png</file>
         <file>images/back_24.png</file>
-        <file>images/hide_password.png</file>
         <file>images/no_connection.gif</file>
         <file>images/search_24.png</file>
         <file>images/send_32.png</file>
-        <file>images/show_password.png</file>
         <file>images/x_16.png</file>
         <file>images/no_results.gif</file>
         <file>images/chat_background.png</file>
@@ -24,5 +22,13 @@
         <file>images/user_24.png</file>
         <file>images/user_32.png</file>
         <file>images/user_64.png</file>
+        <file>images/hide_password_16.png</file>
+        <file>images/hide_password_24.png</file>
+        <file>images/hide_password_32.png</file>
+        <file>images/hide_password_64.png</file>
+        <file>images/show_password_16.png</file>
+        <file>images/show_password_24.png</file>
+        <file>images/show_password_32.png</file>
+        <file>images/show_password_64.png</file>
     </qresource>
 </RCC>

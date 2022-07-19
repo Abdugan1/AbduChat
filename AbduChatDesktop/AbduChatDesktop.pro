@@ -9,27 +9,38 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
+    src/chatlistdockwidget.h \
+    src/constants.h \
+    src/label.h \
+    src/lineedit.h \
     src/loginpage.h \
-    src/loginpageform.h \
+    src/mainpage.h \
     src/mainwindow.h \
+    src/pushbutton.h \
+    src/ui_chatlistdockwidget.h \
     src/ui_loginpage.h \
-    src/validatedlineedit.h
+    src/ui_mainpage.h
 
 SOURCES += \
+        src/chatlistdockwidget.cpp \
+        src/constants.cpp \
+        src/label.cpp \
+        src/lineedit.cpp \
         src/loginpage.cpp \
-        src/loginpageform.cpp \
         src/main.cpp \
+        src/mainpage.cpp \
         src/mainwindow.cpp \
+        src/pushbutton.cpp \
+        src/ui_chatlistdockwidget.cpp \
         src/ui_loginpage.cpp \
-        src/validatedlineedit.cpp
+        src/ui_mainpage.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-FORMS += \
-    src/loginpageform.ui
+FORMS +=
 
 RESOURCES += \
     resources/fonts.qrc \
