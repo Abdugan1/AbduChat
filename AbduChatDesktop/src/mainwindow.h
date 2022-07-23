@@ -5,6 +5,7 @@
 
 class LoginPage;
 class MainPage;
+class QStackedWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -18,6 +19,8 @@ private:
 private:
     LoginPage* loginPage_ = nullptr;
     MainPage* mainPage_ = nullptr;
+
+    QStackedWidget* stackedWidget_ = nullptr;
 };
 
 #endif // MAINWINDOW_H

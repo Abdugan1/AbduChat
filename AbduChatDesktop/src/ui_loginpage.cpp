@@ -26,14 +26,8 @@ void setPointSize(QWidget* w, int pointSize)
     w->setFont(QFont(w->font().family(), pointSize));
 }
 
-namespace ui {
-
-void LoginPage::setupUi(QWidget *loginPage)
+void UiLoginPage::setupUi(QWidget *loginPage)
 {
-    if (loginPage->objectName().isEmpty())
-        loginPage->setObjectName("LoginPage");
-
-
     // Left frame
     appLogoLabel = new QLabel;
     appLogoLabel->setPixmap(QPixmap(":/images/app_logo_32.png"));
@@ -134,5 +128,3 @@ void LoginPage::setupUi(QWidget *loginPage)
 
     loginPage->setLayout(mainLayout);
 }
-
-} // namespace ui

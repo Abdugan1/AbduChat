@@ -11,9 +11,7 @@ class QVBoxLayout;
 
 class LineEdit;
 
-namespace ui {
-
-class LoginPage
+class UiLoginPage
 {
 public:
     QLabel* leftSide = nullptr;
@@ -36,7 +34,5 @@ public:
 
     void setupUi(QWidget* loginPage);
 };
-
-} // namespace ui
 
 #endif // UI_LOGINPAGE_H

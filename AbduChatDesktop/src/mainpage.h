@@ -1,24 +1,17 @@
 #ifndef MAINPAGE_H
 #define MAINPAGE_H
 
-#include <QWidget>
+#include <QSplitter>
 
-namespace ui {
-    class MainPage;
-}
+class UiMainPage;
 
-class QDockWidget;
-
-class MainPage : public QWidget
+class MainPage : public QSplitter
 {
 public:
     explicit MainPage(QWidget* parent = nullptr);
 
-    QDockWidget* dockWidget() const;
-    QWidget* centralWidget() const;
-
 private:
-    ui::MainPage* ui_ = nullptr;
+    UiMainPage* ui_ = nullptr;
 };
 
 #endif // MAINPAGE_H

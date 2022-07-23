@@ -1,8 +1,8 @@
 #ifndef UI_MAINPAGE_H
 #define UI_MAINPAGE_H
 
-class ChatListDockWidget;
-class QWidget;
+class SidePanel;
+class QSplitter;
 class QFrame;
 class QLabel;
 class QPushButton;
@@ -11,18 +11,14 @@ class QListView;
 class QVBoxLayout;
 class QHBoxLayout;
 
-namespace ui {
-
-class MainPage
+class UiMainPage
 {
 public:
-    ChatListDockWidget* chatListDockWidget = nullptr;
-
+    SidePanel* sidePanel = nullptr;
     QListView* chatView = nullptr;
 
-    void setupUi(QWidget* mainPage);
+    void setupUi(QSplitter* mainPage);
 };
 
-} // namespace ui
 
 #endif // UI_MAINPAGE_H

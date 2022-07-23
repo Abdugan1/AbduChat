@@ -3,7 +3,7 @@
 
 LoginPage::LoginPage(QWidget *parent)
     : QWidget{parent}
-    , ui_(new ui::LoginPage)
+    , ui_(new UiLoginPage)
 {
     ui_->setupUi(this);
 }

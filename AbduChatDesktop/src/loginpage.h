@@ -3,9 +3,7 @@
 
 #include <QWidget>
 
-namespace ui {
-    class LoginPage;
-}
+class UiLoginPage;
 
 class LoginPage : public QWidget
 {
@@ -14,7 +12,7 @@ public:
     explicit LoginPage(QWidget *parent = nullptr);
 
 private:
-    ui::LoginPage* ui_ = nullptr;
+    UiLoginPage* ui_ = nullptr;
 };
 
 #endif // LOGINPAGE_H

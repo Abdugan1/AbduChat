@@ -1,22 +1,16 @@
 #include "mainpage.h"
 #include "ui_mainpage.h"
-#include "chatlistdockwidget.h"
+#include "chatdelegate.h"
+
+#include <AbduChatLib/sqldatabaseclient.h>
+#include <AbduChatLib/chatsviewtable.h>
 
 #include <QListView>
+#include <QDebug>
 
 MainPage::MainPage(QWidget *parent)
-    : QWidget(parent)
-    , ui_(new ui::MainPage)
+    : QSplitter(parent)
+    , ui_(new UiMainPage)
 {
     ui_->setupUi(this);
-}
-
-QDockWidget *MainPage::dockWidget() const
-{
-    return ui_->chatListDockWidget;
-}
-
-QWidget *MainPage::centralWidget() const
-{
-    return ui_->chatView;
 }
