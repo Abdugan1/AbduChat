@@ -4,6 +4,7 @@
 
 #include <QPainter>
 #include <QDateTime>
+#include <QMouseEvent>
 #include <QDebug>
 
 namespace fieldnames = db::chats_view::fieldnames;
@@ -11,11 +12,6 @@ namespace fieldnums = db::chats_view::fieldnums;
 
 const QMargins ChatDelegate::Padding_ = QMargins(7, 7, 7, 7);
 const int ChatDelegate::SpacingBetweenAvatarAndText_ = 5;
-
-QVariant getData(const QModelIndex& index, int role)
-{
-    return index.data(Qt::UserRole + role);
-}
 
 ChatDelegate::ChatDelegate(QObject *parent)
     : QAbstractItemDelegate(parent)
@@ -31,7 +27,6 @@ void ChatDelegate::paint(QPainter *painter,
     painter->save();
 
     drawBackgrouond(painter, option, index);
-
     drawAvatar(painter, option, index);
     drawText(painter, option, index);
 
@@ -48,7 +43,12 @@ void ChatDelegate::drawBackgrouond(QPainter *painter, const QStyleOptionViewItem
     painter->save();
 
     painter->setPen(Qt::NoPen);
-    painter->setBrush(QBrush(option.state & QStyle::State_MouseOver ? qRgb(240, 240, 240) : qRgb(255, 255, 255)));
+    if (option.state & QStyle::State_Selected) {
+        painter->setBrush(QBrush(QColor(0x41, 0x9f, 0xd9)));
+    } else {
+        painter->setBrush(QBrush(option.state & QStyle::State_MouseOver ? qRgb(240, 240, 240)
+                                                                        : qRgb(255, 255, 255)));
+    }
     painter->drawRect(option.rect);
 
     painter->restore();
@@ -66,6 +66,9 @@ void ChatDelegate::drawAvatar(QPainter *painter, const QStyleOptionViewItem &opt
 void ChatDelegate::drawText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     painter->save();
+
+    if (option.state & QStyle::State_Selected)
+        painter->setPen(QPen(Qt::white));
 
     drawChatUsername(painter, option, index);
     drawLastMessage(painter, option, index);

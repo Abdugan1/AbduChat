@@ -13,12 +13,15 @@ LIBS += -L../AbduChatLib -labduchatlib
 
 HEADERS += \
     src/chatdelegate.h \
+    src/chatsview.h \
     src/constants.h \
+    src/conversationview.h \
     src/label.h \
     src/lineedit.h \
     src/loginpage.h \
     src/mainpage.h \
     src/mainwindow.h \
+    src/messagedelegate.h \
     src/pushbutton.h \
     src/sidepanel.h \
     src/ui_loginpage.h \
@@ -27,13 +30,16 @@ HEADERS += \
 
 SOURCES += \
         src/chatdelegate.cpp \
+        src/chatsview.cpp \
         src/constants.cpp \
+        src/conversationview.cpp \
         src/label.cpp \
         src/lineedit.cpp \
         src/loginpage.cpp \
         src/main.cpp \
         src/mainpage.cpp \
         src/mainwindow.cpp \
+        src/messagedelegate.cpp \
         src/pushbutton.cpp \
         src/sidepanel.cpp \
         src/ui_loginpage.cpp \

@@ -1,15 +1,16 @@
 #include "ui_sidepanel.h"
 #include "constants.h"
 #include "lineedit.h"
+#include "chatsview.h"
 #include "chatdelegate.h"
 
 #include <AbduChatLib/sqldatabaseclient.h>
 #include <AbduChatLib/chatsviewtable.h>
 
 #include <QPushButton>
-#include <QListView>
 #include <QStringListModel>
 #include <QBoxLayout>
+#include <QDebug>
 
 void UiSidePanel::setupUi(QWidget *sidePanel)
 {
@@ -25,15 +26,7 @@ void UiSidePanel::setupUi(QWidget *sidePanel)
     topLayout->addWidget(openSideMenuButton);
     topLayout->addWidget(searchEdit);
 
-    chatsView = new QListView;
-    chatsView->setMouseTracking(true);
-
-    // without this, ChatDelegate option will have wrong size!!!
-#ifdef Q_OS_LINUX
-    chatsView->show();
-#endif
-    chatsView->setModel(SqlDatabaseClient::instance().chatsViewTable());
-    chatsView->setItemDelegate(new ChatDelegate(chatsView));
+    chatsView = new ChatsView;
 
     mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -41,5 +34,6 @@ void UiSidePanel::setupUi(QWidget *sidePanel)
     mainLayout->addLayout(topLayout);
     mainLayout->addWidget(chatsView);
 
+    sidePanel->setObjectName("sidePanel");
     sidePanel->setLayout(mainLayout);
 }

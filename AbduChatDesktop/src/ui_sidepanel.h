@@ -4,7 +4,7 @@
 class QWidget;
 class QPushButton;
 class LineEdit;
-class QListView;
+class ChatsView;
 class QHBoxLayout;
 class QVBoxLayout;
 
@@ -15,7 +15,7 @@ public:
     LineEdit* searchEdit = nullptr;
     QHBoxLayout* topLayout = nullptr;
 
-    QListView* chatsView = nullptr;
+    ChatsView* chatsView = nullptr;
 
     QVBoxLayout* mainLayout = nullptr;
 

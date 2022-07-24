@@ -5,6 +5,7 @@
 
 class ChatDelegate : public QAbstractItemDelegate
 {
+    Q_OBJECT
 public:
     explicit ChatDelegate(QObject *parent = nullptr);
 
