@@ -7,7 +7,7 @@ class QFrame;
 class QLabel;
 class QPushButton;
 class LineEdit;
-class ConversationView;
+class ConversationWidget;
 class QVBoxLayout;
 class QHBoxLayout;
 
@@ -15,7 +15,7 @@ class UiMainPage
 {
 public:
     SidePanel* sidePanel = nullptr;
-    ConversationView* conversationView = nullptr;
+    ConversationWidget* conversationWidget = nullptr;
 
     void setupUi(QSplitter* mainPage);
 };

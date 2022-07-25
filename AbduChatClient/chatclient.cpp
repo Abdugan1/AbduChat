@@ -72,11 +72,10 @@ int messagesTableRowCount()
     return query.value(0).toInt();
 }
 
-ChatClient::ChatClient(SqlDatabaseClient *database, QObject *parent)
+ChatClient::ChatClient(QObject *parent)
     : QObject{parent}
     , socket_(new QTcpSocket(this))
     , user_(new User(this))
-    , database_(database)
 {
     connect(socket_, &QTcpSocket::connected, this, &ChatClient::connected);
     connect(socket_, &QTcpSocket::disconnected, this, &ChatClient::disconnected);
@@ -102,6 +101,12 @@ void ChatClient::resetUser()
 {
     UserPtr emptyUser(new User);
     setUser(emptyUser);
+}
+
+ChatClient &ChatClient::instance()
+{
+    static ChatClient singleton;
+    return singleton;
 }
 
 void ChatClient::connectToHost()
@@ -229,22 +234,22 @@ void ChatClient::parseMessageReply(const QJsonObject &jsonReply)
 {
     MessagePtr message(Message::fromJson(jsonReply.value(reply::headers::Message).toObject()));
 
-    database_->addMessage(message);
+    SqlDatabaseClient::instance().addMessage(message);
 }
 
 void ChatClient::parseChatAddReply(const QJsonObject &jsonReply)
 {
     const QJsonObject chatJson = jsonReply.value(reply::headers::Chat).toObject();
     const ChatPtr chat(Chat::fromJson(chatJson));
-    database_->addChat(chat);
-    database_->chatsViewTable()->select();
+    SqlDatabaseClient::instance().addChat(chat);
+    SqlDatabaseClient::instance().chatsViewTable()->select();
 }
 
 void ChatClient::parseSynchronizeUsersReply(const QJsonObject &jsonReply)
 {
     const QJsonArray users = jsonReply.value(reply::headers::Users).toArray();
     if (!users.isEmpty()) {
-        database_->addUsers(users);
+        SqlDatabaseClient::instance().addUsers(users);
     }
 }
 
@@ -252,7 +257,7 @@ void ChatClient::parseSynchronizeMessagesReply(const QJsonObject &jsonReply)
 {
     const QJsonArray messages = jsonReply.value(reply::headers::Messages).toArray();
     if (!messages.isEmpty()) {
-        database_->addMessages(messages);
+        SqlDatabaseClient::instance().addMessages(messages);
     }
 }
 

@@ -15,15 +15,19 @@ HEADERS += \
     src/chatdelegate.h \
     src/chatsview.h \
     src/constants.h \
+    src/conversationheader.h \
     src/conversationview.h \
+    src/conversationwidget.h \
     src/label.h \
     src/lineedit.h \
     src/loginpage.h \
     src/mainpage.h \
     src/mainwindow.h \
     src/messagedelegate.h \
+    src/messagelineedit.h \
     src/pushbutton.h \
     src/sidepanel.h \
+    src/ui_conversationwidget.h \
     src/ui_loginpage.h \
     src/ui_mainpage.h \
     src/ui_sidepanel.h
@@ -32,7 +36,9 @@ SOURCES += \
         src/chatdelegate.cpp \
         src/chatsview.cpp \
         src/constants.cpp \
+        src/conversationheader.cpp \
         src/conversationview.cpp \
+        src/conversationwidget.cpp \
         src/label.cpp \
         src/lineedit.cpp \
         src/loginpage.cpp \
@@ -40,8 +46,10 @@ SOURCES += \
         src/mainpage.cpp \
         src/mainwindow.cpp \
         src/messagedelegate.cpp \
+        src/messagelineedit.cpp \
         src/pushbutton.cpp \
         src/sidepanel.cpp \
+        src/ui_conversationwidget.cpp \
         src/ui_loginpage.cpp \
         src/ui_mainpage.cpp \
         src/ui_sidepanel.cpp

@@ -12,6 +12,8 @@ SidePanel::SidePanel(QWidget *parent)
 {
     ui_->setupUi(this);
 
+    setAttribute(Qt::WA_StyledBackground);
+
     connect(ui_->chatsView, &QAbstractItemView::pressed, this, [this](const QModelIndex& index) {
         if (index.isValid()) {
             int chatId = index.data(Qt::UserRole + db::chats_view::fieldnums::ChatId).toInt();

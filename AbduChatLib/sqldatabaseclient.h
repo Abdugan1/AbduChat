@@ -9,8 +9,9 @@ class SqlDatabaseClient : public SqlDatabase
 {
     Q_OBJECT
 public:
-    explicit SqlDatabaseClient(QObject *parent = nullptr);
     ChatsViewTable *chatsViewTable() const;
+
+    static SqlDatabaseClient& instance();
 
     void addUsers(const QJsonArray& users);
     void addMessages(const QJsonArray& messages);
@@ -21,6 +22,8 @@ public:
     Q_INVOKABLE void setCurrentChat(int user1Id, int user2Id);
 
 private:
+    explicit SqlDatabaseClient(QObject *parent = nullptr);
+
     void createClientTables();
     void createChatsViewTable();
 

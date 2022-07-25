@@ -1,6 +1,6 @@
 #include "ui_mainpage.h"
 #include "sidepanel.h"
-#include "conversationview.h"
+#include "conversationwidget.h"
 #include "lineedit.h"
 #include "constants.h"
 
@@ -12,13 +12,13 @@ void UiMainPage::setupUi(QSplitter *mainPage)
 {
     sidePanel = new SidePanel;
 
-    conversationView = new ConversationView;
+    conversationWidget = new ConversationWidget;
 
     mainPage->resize(constants::widget::InitPageWidth,
                      constants::widget::InitPageHeight);
 
     mainPage->addWidget(sidePanel);
-    mainPage->addWidget(conversationView);
+    mainPage->addWidget(conversationWidget);
     mainPage->setStretchFactor(1, 1);
 
     mainPage->setHandleWidth(0);

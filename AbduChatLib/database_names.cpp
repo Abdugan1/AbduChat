@@ -1,5 +1,7 @@
 #include "database_names.h"
 
+#include <QModelIndex>
+
 namespace db {
 
     namespace users {
@@ -97,3 +99,8 @@ namespace db {
     } // users_server
 
 } // db
+
+QVariant getData(const QModelIndex& index, int role)
+{
+    return index.data(Qt::UserRole + role);
+}

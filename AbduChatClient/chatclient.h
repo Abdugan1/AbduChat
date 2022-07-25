@@ -8,8 +8,6 @@
 #include <AbduChatLib/chat.h>
 #include <AbduChatLib/message.h>
 
-class SqlDatabaseClient;
-
 class QJSValue;
 
 class ChatClient : public QObject
@@ -17,11 +15,11 @@ class ChatClient : public QObject
     Q_OBJECT
     Q_PROPERTY(User* user READ user NOTIFY userChanged)
 public:
-    explicit ChatClient(SqlDatabaseClient* database, QObject *parent = nullptr);
-
     User* user() const;
     void setUser(const UserPtr& newUser);
     void resetUser();
+
+    static ChatClient& instance();
 
 signals:
     void connected();
@@ -50,6 +48,8 @@ private slots:
     void onReadyRead();
 
 private:
+    explicit ChatClient(QObject *parent = nullptr);
+
     void parseReply(const QJsonObject& jsonReply);
     void parseLogInReply(const QJsonObject& jsonReply);
     void parseMessageReply(const QJsonObject& jsonReply);
@@ -65,8 +65,6 @@ private:
 private:
     QTcpSocket* socket_ = nullptr;
     User* user_;
-
-    SqlDatabaseClient* database_ = nullptr;
 };
 
 #endif // CHATCLIENT_H

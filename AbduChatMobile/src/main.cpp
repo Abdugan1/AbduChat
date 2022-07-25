@@ -26,21 +26,18 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
 
-    SqlDatabaseClient database;
-    ChatClient chatClient(&database);
-
     qmlRegisterType<User>("AbduChatLib", 1, 0, "User");
     qmlRegisterType<Chat>("AbduChatLib", 1, 0, "Chat");
     qmlRegisterType<Message>("AbduChatLib", 1, 0, "Message");
 
     QQmlApplicationEngine engine;
-    engine.setObjectOwnership(chatClient.user(), QQmlEngine::CppOwnership);
-    engine.rootContext()->setContextProperty("chatClient", &chatClient);
-    engine.rootContext()->setContextProperty("database", &database);
-    engine.rootContext()->setContextProperty("usersTable", database.usersTable());
-    engine.rootContext()->setContextProperty("chatsTable", database.chatsTable());
-    engine.rootContext()->setContextProperty("chatsViewTable", database.chatsViewTable());
-    engine.rootContext()->setContextProperty("messagesTable", database.messagesTable());
+    engine.setObjectOwnership(ChatClient::instance().user(), QQmlEngine::CppOwnership);
+    engine.rootContext()->setContextProperty("chatClient", &ChatClient::instance());
+    engine.rootContext()->setContextProperty("database", &SqlDatabaseClient::instance());
+    engine.rootContext()->setContextProperty("usersTable", SqlDatabaseClient::instance().usersTable());
+    engine.rootContext()->setContextProperty("chatsTable", SqlDatabaseClient::instance().chatsTable());
+    engine.rootContext()->setContextProperty("chatsViewTable", SqlDatabaseClient::instance().chatsViewTable());
+    engine.rootContext()->setContextProperty("messagesTable", SqlDatabaseClient::instance().messagesTable());
     engine.load("qrc:/qml/main.qml");
 
     return app.exec();

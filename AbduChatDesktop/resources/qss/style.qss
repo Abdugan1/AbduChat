@@ -13,6 +13,22 @@ QWidget#chatsView {
 }
 
 /* =============================================== */
+/* ConversationHeader                              */
+/* =============================================== */
+ConversationHeader {
+    background-color: white;
+    border: 1px solid #E7E7E7;
+    min-height: 50px;
+}
+
+/* =============================================== */
+/* MessageLineEdit                                 */
+/* =============================================== */
+MessageLineEdit {
+    min-height: 40px;
+}
+
+/* =============================================== */
 /* LineEdit                                        */
 /* =============================================== */
 QLineEdit#lineEdit {

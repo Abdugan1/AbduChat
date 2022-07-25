@@ -32,6 +32,12 @@ ChatsViewTable *SqlDatabaseClient::chatsViewTable() const
     return chatsViewTable_;
 }
 
+SqlDatabaseClient &SqlDatabaseClient::instance()
+{
+    static SqlDatabaseClient singleton;
+    return singleton;
+}
+
 void SqlDatabaseClient::addUsers(const QJsonArray &users)
 {
     for (const auto& userRef : users) {

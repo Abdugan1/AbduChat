@@ -2,6 +2,10 @@
 #define DATABASE_NAMES_H
 
 #include <QString>
+class QVariant;
+class QModelIndex;
+
+QVariant getData(const QModelIndex& index, int role);
 
 namespace db {
 

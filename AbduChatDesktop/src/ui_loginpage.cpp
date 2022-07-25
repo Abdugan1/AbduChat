@@ -11,12 +11,12 @@
 #include <QState>
 #include <QRegularExpressionValidator>
 
-QSpacerItem* createHSpacer()
+inline QSpacerItem* createHSpacer()
 {
     return new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum);
 }
 
-QSpacerItem* createVSpacer()
+inline QSpacerItem* createVSpacer()
 {
     return new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
 }
