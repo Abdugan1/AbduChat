@@ -34,7 +34,6 @@ void MessageDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 
 QSize MessageDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    qDebug() << "sizeHint:" << getAppropriateSize(index);
     return getAppropriateSize(index);
 }
 
@@ -94,7 +93,6 @@ void MessageDelegate::drawTimestamp(QPainter *painter, const QStyleOptionViewIte
 QSize MessageDelegate::getTextSize(const QModelIndex &index) const
 {
     const QString text = getData(index, fieldnums::Text).toString();
-    qDebug() << "text:" << text;
     QRect rect = QRect(0, 0, MaxWidth_, 1000) - Padding_;
     QRect textRect = QFontMetrics(TextFont_).boundingRect(rect, Qt::TextWordWrap, text);
 

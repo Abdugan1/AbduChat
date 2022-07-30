@@ -4,10 +4,12 @@
 #include <QLineEdit>
 
 class Label;
+class QPropertyAnimation;
 
 class LineEdit : public QLineEdit
 {
     Q_OBJECT
+    Q_PROPERTY(QColor borderColor WRITE setBorderColor)
 public:
     explicit LineEdit( QWidget* parent = nullptr);
 
@@ -22,9 +24,20 @@ public:
     Label *leftPixmap() const;
     Label *rightPixmap() const;
 
+    void setBorderColor(const QColor& color);
+
+protected:
+    void focusInEvent(QFocusEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
+
+private:
+    void makeBorderRed();
+
 private:
     Label* leftPixmap_  = nullptr;
     Label* rightPixmap_ = nullptr;
+
+    QPropertyAnimation* borderColorAnimation_ = nullptr;
 };
 
 #endif // LINEEDIT_H

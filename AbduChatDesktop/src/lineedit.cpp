@@ -2,6 +2,8 @@
 #include "label.h"
 
 #include <QBoxLayout>
+#include <QValidator>
+#include <QPropertyAnimation>
 #include <QDebug>
 
 const int Margin = 10;
@@ -19,6 +21,11 @@ LineEdit::LineEdit(QWidget *parent)
 
     setLayout(hLayout);
     setObjectName("lineEdit");
+
+    borderColorAnimation_ = new QPropertyAnimation{this, "borderColor"};
+    borderColorAnimation_->setDuration(300);
+    borderColorAnimation_->setStartValue(QColor{0, 0, 0});
+    borderColorAnimation_->setEndValue(QColor{255, 0, 0});
 }
 
 void LineEdit::setValidator(const QValidator *validator)
@@ -60,4 +67,29 @@ Label *LineEdit::leftPixmap() const
 Label *LineEdit::rightPixmap() const
 {
     return rightPixmap_;
+}
+
+void LineEdit::setBorderColor(const QColor &color)
+{
+    QLineEdit::setStyleSheet(QString("LineEdit{border: 1px solid rgb(%1, %2, %3)}")
+                             .arg(color.red()).arg(color.green()).arg(color.blue()));
+}
+
+void LineEdit::focusInEvent(QFocusEvent *event)
+{
+    setBorderColor(QColor{0, 0, 0});
+    QLineEdit::focusInEvent(event);
+}
+
+void LineEdit::focusOutEvent(QFocusEvent *event)
+{
+    if (validator() && !hasAcceptableInput()) {
+        makeBorderRed();
+    }
+    QLineEdit::focusOutEvent(event);
+}
+
+void LineEdit::makeBorderRed()
+{
+    borderColorAnimation_->start();
 }

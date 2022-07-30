@@ -1,4 +1,4 @@
-QT       += core gui sql
+QT       += core gui sql network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -11,9 +11,14 @@ CONFIG += c++17
 INCLUDEPATH += ../
 LIBS += -L../AbduChatLib -labduchatlib
 
+INCLUDEPATH += ../AbduChatClient/src
+LIBS += -L../AbduChatClient -labduchatclient
+
+
 HEADERS += \
     src/chatdelegate.h \
     src/chatsview.h \
+    src/connectionerrorpage.h \
     src/constants.h \
     src/conversationheader.h \
     src/conversationview.h \
@@ -27,6 +32,8 @@ HEADERS += \
     src/messagelineedit.h \
     src/pushbutton.h \
     src/sidepanel.h \
+    src/slidingstackedwidget.h \
+    src/ui_connectionerrorpage.h \
     src/ui_conversationwidget.h \
     src/ui_loginpage.h \
     src/ui_mainpage.h \
@@ -35,6 +42,7 @@ HEADERS += \
 SOURCES += \
         src/chatdelegate.cpp \
         src/chatsview.cpp \
+        src/connectionerrorpage.cpp \
         src/constants.cpp \
         src/conversationheader.cpp \
         src/conversationview.cpp \
@@ -49,6 +57,8 @@ SOURCES += \
         src/messagelineedit.cpp \
         src/pushbutton.cpp \
         src/sidepanel.cpp \
+        src/slidingstackedwidget.cpp \
+        src/ui_connectionerrorpage.cpp \
         src/ui_conversationwidget.cpp \
         src/ui_loginpage.cpp \
         src/ui_mainpage.cpp \

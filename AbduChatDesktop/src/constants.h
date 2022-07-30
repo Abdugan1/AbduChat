@@ -2,7 +2,9 @@
 #define CONSTANTS_H
 
 #include <QRegularExpression>
-#include <QSizePolicy>
+
+class QSizePolicy;
+class QSpacerItem;
 
 namespace constants {
 
@@ -23,7 +25,11 @@ extern const QRegularExpression NameRegex;
 
 namespace ui {
 
-const QSizePolicy MaximumMaximum = QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+QSpacerItem* createHSpacer();
+
+QSpacerItem* createVSpacer();
+
+extern const QSizePolicy MaximumMaximum;
 
 } // ui
 

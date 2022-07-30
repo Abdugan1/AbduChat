@@ -5,7 +5,8 @@
 
 class LoginPage;
 class MainPage;
-class QStackedWidget;
+class ConnectionErrorPage;
+class SlidingStackedWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -17,10 +18,17 @@ private:
 
 
 private:
+    enum PageIndex {
+        ConnectionError,
+        Login,
+        Main
+    };
+
+    ConnectionErrorPage* connectionErrorPage_ = nullptr;
     LoginPage* loginPage_ = nullptr;
     MainPage* mainPage_ = nullptr;
 
-    QStackedWidget* stackedWidget_ = nullptr;
+    SlidingStackedWidget* stackedWidget_ = nullptr;
 };
 
 #endif // MAINWINDOW_H

@@ -11,16 +11,6 @@
 #include <QState>
 #include <QRegularExpressionValidator>
 
-inline QSpacerItem* createHSpacer()
-{
-    return new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum);
-}
-
-inline QSpacerItem* createVSpacer()
-{
-    return new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
-}
-
 void setPointSize(QWidget* w, int pointSize)
 {
     w->setFont(QFont(w->font().family(), pointSize));
@@ -40,7 +30,7 @@ void UiLoginPage::setupUi(QWidget *loginPage)
     appInfoLayout = new QHBoxLayout;
     appInfoLayout->addWidget(appLogoLabel);
     appInfoLayout->addWidget(appNameLabel);
-    appInfoLayout->addSpacerItem(createHSpacer());
+    appInfoLayout->addSpacerItem(constants::ui::createHSpacer());
 
     welcomeLabel = new QLabel(QObject::tr("Welcome to the official\nAbduChat Desktop app"));
     welcomeLabel->setAlignment(Qt::AlignCenter);
@@ -48,12 +38,12 @@ void UiLoginPage::setupUi(QWidget *loginPage)
 
     leftSideLayout = new QVBoxLayout;
     leftSideLayout->addLayout(appInfoLayout);
-    leftSideLayout->addSpacerItem(createVSpacer());
+    leftSideLayout->addSpacerItem(constants::ui::createVSpacer());
     leftSideLayout->addWidget(welcomeLabel);
-    leftSideLayout->addSpacerItem(createVSpacer());
+    leftSideLayout->addSpacerItem(constants::ui::createVSpacer());
 
     leftSide = new QLabel;
-    leftSide->setMovie(new QMovie(":/images/welcome_background.gif"));
+    leftSide->setMovie(new QMovie{":/images/welcome_background.gif", QByteArray(), leftSide});
     leftSide->movie()->start();
     leftSide->movie()->setSpeed(200);
     leftSide->setLayout(leftSideLayout);
@@ -107,9 +97,9 @@ void UiLoginPage::setupUi(QWidget *loginPage)
     setPointSize(goToSignUpPageLabel, 11);
 
     rightSideLayout = new QVBoxLayout;
-    rightSideLayout->addSpacerItem(createVSpacer());
+    rightSideLayout->addSpacerItem(constants::ui::createVSpacer());
     rightSideLayout->addLayout(editLayout);
-    rightSideLayout->addSpacerItem(createVSpacer());
+    rightSideLayout->addSpacerItem(constants::ui::createVSpacer());
     rightSideLayout->addWidget(goToSignUpPageLabel);
 //    rightSideLayout->addSpacerItem(createVSpacer());
 

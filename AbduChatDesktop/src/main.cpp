@@ -4,7 +4,8 @@
 #include <QDebug>
 
 #include "mainwindow.h"
-#include <QtWidgets>
+
+#include <AbduChatClient/chatclient.h>
 
 int main(int argc, char *argv[])
 {
@@ -17,6 +18,8 @@ int main(int argc, char *argv[])
     app.setStyleSheet(QLatin1String(qssFile.readAll()));
 
     app.setFont(QFont("Montserrat"));
+
+    ChatClient::instance().connectToHost();
 
     MainWindow window;
     window.show();

@@ -1,7 +1,14 @@
 /* =============================================== */
+/* ConnectionErrorPage                             */
+/* =============================================== */
+QWidget#connectionErrorPage {
+    background-color: white;
+}
+
+/* =============================================== */
 /* SidePanel                                       */
 /* =============================================== */
-SidePanel {
+QWidget#sidePanel {
     background-color: white;
 }
 
@@ -31,7 +38,7 @@ MessageLineEdit {
 /* =============================================== */
 /* LineEdit                                        */
 /* =============================================== */
-QLineEdit#lineEdit {
+LineEdit {
     background-color: white;
     border: 1px solid black;
     color: black;
@@ -39,14 +46,16 @@ QLineEdit#lineEdit {
     min-height: 40px;
 }
 
-QLineEdit#searchEdit {
-    min-height: 20px;
+LineEdit#searchEdit {
+    min-height: 27px;
+    border: 1px solid gray;
+    border-radius: 2px;
 }
 
 /* =============================================== */
-/* Button                                          */
+/* PushButton                                      */
 /* =============================================== */
-QPushButton#button {
+PushButton {
     background-color: black;
     border: 1px solid black;
     color: white;
@@ -54,15 +63,21 @@ QPushButton#button {
     min-height: 40px;
 }
 
-QPushButton#button:hover{
+PushButton:hover{
     background-color: rgb(55, 55, 55);
     border-color: rgb(3, 3, 3);
 }
 
-QPushButton#button:pressed
+PushButton:pressed
 {
     background-color: white;
     border: 1px solid black;
     color: black;
     border-width: 1px;
+}
+
+
+PushButton#reconnectButton {
+    min-width: 300px;
+    /*max-width: 400px;*/
 }

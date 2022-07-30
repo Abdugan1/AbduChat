@@ -11,6 +11,12 @@ class LoginPage : public QWidget
 public:
     explicit LoginPage(QWidget *parent = nullptr);
 
+signals:
+    void loggedIn();
+
+private slots:
+    void tryLogin();
+
 private:
     UiLoginPage* ui_ = nullptr;
 };

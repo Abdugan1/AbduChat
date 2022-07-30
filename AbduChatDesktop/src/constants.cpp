@@ -1,4 +1,5 @@
 #include "constants.h"
+#include <QSpacerItem>
 
 namespace constants {
 
@@ -12,5 +13,21 @@ namespace regexes {
     const QRegularExpression PasswordRegex = QRegularExpression("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$");
     const QRegularExpression NameRegex     = QRegularExpression("^[a-z][a-z ,\\.'-]+[a-z\\.]$");
 } // regexes
+
+namespace ui {
+
+QSpacerItem* createHSpacer()
+{
+    return new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum);
+}
+
+QSpacerItem* createVSpacer()
+{
+    return new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
+}
+
+const QSizePolicy MaximumMaximum = QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+
+}
 
 } // constatns
